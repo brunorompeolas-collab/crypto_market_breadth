@@ -38,7 +38,14 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
     Usa formato Markdown limpio y profesional con viñetas.
     """
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # Modelos compatibles a intentar en orden de prioridad
+    candidate_models = [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite-preview-02-05",
+        "gemini-1.5-flash-8b",
+        "gemini-pro"
+    ]
+    
     payload = {
         "contents": [
             {
@@ -46,15 +53,23 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
             }
         ]
     }
-    
-    try:
-        res = requests.post(url, json=payload, timeout=20)
-        data = res.json()
-        
-        if "error" in data:
-            return f"⚠️ Error API Google: {data['error'].get('message', 'Error desconocido')}"
-            
-        return data["candidates"][0]["content"]["parts"][0]["text"]
-        
-    except Exception as e:
-        return f"⚠️ Error en la conexión HTTP con Gemini: {str(e)}"
+
+    last_error = ""
+
+    # Probar endpoint v1 y v1beta con la lista de modelos
+    for version in ["v1", "v1beta"]:
+        for model in candidate_models:
+            url = f"https://generativelanguage.googleapis.com/{version}/models/{model}:generateContent?key={api_key}"
+            try:
+                res = requests.post(url, json=payload, timeout=15)
+                data = res.json()
+                
+                if "candidates" in data and len(data["candidates"]) > 0:
+                    return data["candidates"][0]["content"]["parts"][0]["text"]
+                elif "error" in data:
+                    last_error = data["error"].get("message", "Error desconocido")
+            except Exception as e:
+                last_error = str(e)
+                continue
+
+    return f"⚠️ Error API Google: {last_error}"

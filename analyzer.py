@@ -2,7 +2,7 @@ import os
 import streamlit as st
 
 def get_api_key():
-    # Intenta leer primero de Streamlit Secrets (Cloud) y luego de variables de entorno (.env local)
+    # Lee de Streamlit Secrets o de variables de entorno locales
     try:
         if "GEMINI_API_KEY" in st.secrets:
             return st.secrets["GEMINI_API_KEY"]
@@ -13,13 +13,14 @@ def get_api_key():
 def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
     api_key = get_api_key()
     
-    if not api_key or "tu_clave" in api_key:
+    if not api_key:
         return """
         ⚠️ **No se ha configurado la API Key de Gemini.**
         
-        Para activar el análisis inteligente:
-        1. Ve a [Google AI Studio](https://aistudio.google.com/app/apikey) y crea una clave gratuita (`AIzaSy...`).
-        2. Añádela en los **Settings > Secrets** de Streamlit Cloud como `GEMINI_API_KEY = "tu_clave"`.
+        Añade tu clave en **Settings > Secrets** de Streamlit Cloud como:
+        ```toml
+        GEMINI_API_KEY = "tu_clave"
+        ```
         """
     
     try:
@@ -38,11 +39,11 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
         2. **Riesgo / Oportunidad**: Explicación breve de la salud interna del mercado frente al precio.
         3. **Plan de Acción Táctico**: Directrices para spot y apalancamiento.
         
-        Usa formato Markdown profesional y limpio, con viñetas claras.
+        Usa formato Markdown limpio y profesional.
         """
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
         )
         return response.text

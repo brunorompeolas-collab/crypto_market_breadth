@@ -70,7 +70,7 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets, d
         # 3. Intentar generar con los modelos activos
         for model_path in valid_models:
             generate_url = f"https://generativelanguage.googleapis.com/v1beta/{model_path}:generateContent?key={api_key}"
-            res = requests.post(generate_url, json=payload, timeout=20)
+            res = requests.post(generate_url, json=payload, timeout=40)
             data = res.json()
 
             if "candidates" in data and len(data["candidates"]) > 0:

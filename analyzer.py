@@ -10,33 +10,30 @@ def get_api_key():
         pass
     return os.getenv("GEMINI_API_KEY")
 
-def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
+def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets, data_quality="Alta"):
     api_key = get_api_key()
     
     if not api_key:
-        return """
-        ⚠️ **No se ha configurado la API Key de Gemini.**
-        
-        Configura tu clave en **Settings > Secrets** de Streamlit Cloud:
-        ```toml
-        GEMINI_API_KEY = "tu_clave"
-        ```
-        """
+        return "⚠️ **No se ha configurado la API Key de Gemini.**"
     
     prompt = f"""
-    Actúa como un estratega cuantitativo senior de criptomonedas. Analiza los siguientes datos de amplitud de mercado:
-    - Breadth Score: {breadth_score:.1f}/100
-    - Activos > EMA 20: {ema20:.1f}%
-    - Activos > EMA 50: {ema50:.1f}%
-    - Activos > EMA 200: {ema200:.1f}%
+    Actúa como un estratega cuantitativo senior de criptomonedas.
     
-    Genera un informe táctico conciso con:
-    1. **Régimen de Mercado Actual**: Diagnóstico en una frase (Expansión sana, Divergencia bajista oculta, Rebote técnico o Pánico).
-    2. **Riesgo / Oportunidad**: Explicación breve de la salud interna del mercado frente al precio.
-    3. **Plan de Acción Táctico**: Directrices para spot y apalancamiento.
+    MÉTRICAS TÉCNICAS (Consenso Multi-Exchange: {data_quality}):
+    - Breadth Score Ponderado: {breadth_score:.1f}/100
+    - Activos > EMA 20: {ema20:.1f}% (Corto plazo)
+    - Activos > EMA 50: {ema50:.1f}% (Medio plazo)
+    - Activos > EMA 200: {ema200:.1f}% (Largo plazo)
+    - Activos analizados: {len(df_assets)}
     
-    Usa formato Markdown limpio y profesional con viñetas.
+    INSTRUCCIONES DE AUDITORÍA Y ANÁLISIS:
+    1. **Auditoría de Datos y Régimen**: Dictamen del régimen técnico (Expansión, Acumulación, Distribución o Pánico).
+    2. **Divergencias Estructurales**: Contraste entre el corto plazo (EMA 20) y la estructura macro (EMA 200).
+    3. **Nivel de Convicción / Calidad de Entrada**: Determinar si las condiciones justifican exposición spot o apalancada.
+    
+    Formato Markdown ejecutivo, conciso y con viñetas.
     """
+    # (El resto del código de llamada HTTP a Gemini se mantiene igual)
 
     try:
         # 1. Obtener lista de modelos disponibles para tu clave

@@ -212,10 +212,25 @@ with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
         ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets)
         st.markdown(ai_report)
 
-# Tabla de Activos Filtrables
-st.markdown("### 📋 Escáner de Activos (Top 50)")
-st.dataframe(
-    df_assets[['symbol', 'price', 'change_24h', 'above_ema20', 'above_ema50', 'above_ema200']],
-    use_container_width=True,
-    hide_index=True
+# ==============================================================================
+# Sección: Escáner de Activos con diseño refinado y protegido contra fallos
+# ==============================================================================
+st.markdown("### 📋 Escáner de Activos del Mercado")
+
+# Definir las columnas visuales (las que definimos en collector.py)
+display_cols = ['Activo', 'Precio ($)', 'Var 24h', 'EMA 20', 'EMA 50', 'EMA 200']
+
+# Verificación de seguridad: Comprobamos si las columnas existen en df_assets
+if all(col in df_assets.columns for col in display_cols):
+    # Si existen (es el caso normal), mostramos la tabla limpia y formateada
+    st.dataframe(
+        df_assets[display_cols],
+        use_container_width=True,
+        hide_index=True
+    )
+else:
+    # Si las columnas no coinciden (por ejemplo, si usamos el fallback de collector.py),
+    # mostramos el dataframe completo para evitar el KeyError, pero al menos no rompemos la app.
+    # st.warning("Mostrando datos en formato crudo (algunas columnas no coinciden).") # Opcional: mostrar advertencia
+    st.dataframe(df_assets, use_container_width=True, hide_index=True)
 )

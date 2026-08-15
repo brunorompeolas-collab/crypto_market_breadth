@@ -233,4 +233,5 @@ else:
     # mostramos el dataframe completo para evitar el KeyError, pero al menos no rompemos la app.
     # st.warning("Mostrando datos en formato crudo (algunas columnas no coinciden).") # Opcional: mostrar advertencia
     st.dataframe(df_assets, use_container_width=True, hide_index=True)
+    
 )

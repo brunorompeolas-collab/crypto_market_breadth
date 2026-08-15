@@ -208,8 +208,12 @@ else:
 # Sección de Diagnóstico Gemini IA
 st.markdown("### 🤖 Diagnóstico IA Cuantitativo (Gemini)")
 with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
+   with st.spinner("Verificando consenso multi-exchange (Binance / Bybit)..."):
+    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data()
+    save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
+    st.caption(f"🛡️ **Control de Calidad de Datos:** {data_quality}") 
     with st.spinner("Generando informe con Gemini..."):
-        ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets)
+        ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets, data_quality)
         st.markdown(ai_report)
 
 # ==============================================================================

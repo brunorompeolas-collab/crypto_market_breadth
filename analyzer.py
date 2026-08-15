@@ -2,7 +2,7 @@ import os
 import streamlit as st
 
 def get_api_key():
-    # Lee de Streamlit Secrets o de variables de entorno locales
+    # Prioridad: Streamlit Secrets y luego variables de entorno (.env)
     try:
         if "GEMINI_API_KEY" in st.secrets:
             return st.secrets["GEMINI_API_KEY"]
@@ -39,13 +39,24 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets):
         2. **Riesgo / Oportunidad**: Explicación breve de la salud interna del mercado frente al precio.
         3. **Plan de Acción Táctico**: Directrices para spot y apalancamiento.
         
-        Usa formato Markdown limpio y profesional.
+        Usa formato Markdown limpio y profesional con viñetas.
         """
         
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt,
-        )
-        return response.text
+        # Lista de modelos en orden de preferencia
+        models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro']
+        
+        for model_name in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                )
+                if response and response.text:
+                    return response.text
+            except Exception:
+                continue
+                
+        return "⚠️ No se pudo obtener respuesta con los modelos disponibles. Verifica que la API Key tenga los permisos activos."
+
     except Exception as e:
         return f"⚠️ Error al conectar con Gemini: {str(e)}"

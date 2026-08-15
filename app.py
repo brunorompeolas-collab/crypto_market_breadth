@@ -88,10 +88,11 @@ col_btn, _ = st.columns([1, 3])
 with col_btn:
     refresh = st.button("🔄 Actualizar Datos Binance")
 
-# Carga de datos
-with st.spinner("Conectando con Binance y procesando EMAs..."):
-    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct = get_crypto_breadth_data()
+# Carga de datos con las 6 variables sincronizadas
+with st.spinner("Verificando consenso multi-exchange (Binance / Bybit)..."):
+    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data()
     save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
+    st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
 
 # Métricas Principales en Fila
 c1, c2, c3, c4 = st.columns(4)

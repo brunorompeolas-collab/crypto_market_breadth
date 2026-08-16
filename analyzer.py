@@ -17,28 +17,26 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets, d
         return "⚠️ **No se ha configurado la API Key de Gemini.**"
     
     prompt = f"""
-    Eres un estratega cuantitativo senior de criptomonedas. Analiza en ESPAÑOL los siguientes datos reales de amplitud de mercado:
+    Genera un informe táctico de mercado en ESPAÑOL basado en los siguientes datos cuantitativos:
+    - Puntuación de Amplitud (Breadth Score): {breadth_score:.1f} sobre 100
+    - Activos por encima de EMA 20 (Corto Plazo): {ema20:.1f}%
+    - Activos por encima de EMA 50 (Medio Plazo): {ema50:.1f}%
+    - Activos por encima de EMA 200 (Largo Plazo / Macro): {ema200:.1f}%
 
-    - Breadth Score Compuesto: {breadth_score:.1f} / 100
-    - Activos sobre EMA 20 (Corto plazo): {ema20:.1f}%
-    - Activos sobre EMA 50 (Medio plazo): {ema50:.1f}%
-    - Activos sobre EMA 200 (Largo plazo / Macro): {ema200:.1f}%
-    - Calidad de los datos: {data_quality}
-
-    Redacta un informe táctico conciso con esta estructura exacta (NO uses LaTeX, flechas matemáticas ni código sin renderizar, solo Markdown limpio y viñetas):
+    IMPORTANTE: Escribe TODO el informe únicamente en idioma español. No incluyas texto en inglés, no repitas estas instrucciones y no uses fórmulas LaTeX. Responde directamente con las siguientes 3 secciones en Markdown:
 
     ### 🧭 1. Régimen de Mercado & Diagnóstico
-    * **Régimen:** (Define claramente: Pánico/Capitulación, Expansión, Acumulación o Divergencia Bajista).
-    * **Diagnóstico Técnico:** Evaluación de la salud interna frente a los precios.
+    * **Régimen:** (Indica uno: Pánico/Capitulación, Expansión Alcista, Acumulación o Rebote Técnico Frágil).
+    * **Diagnóstico Cuantitativo:** Explicación directa del estado de salud interna del mercado frente al precio.
 
     ### ⚠️ 2. Divergencias y Estructura
-    * **Análisis de EMAs:** Comparativa entre la fuerza inmediata (EMA 20) y la tendencia estructural (EMA 200).
-    * **Riesgo Estructural:** Señala si estamos ante un rebote de gato muerto o capitulación real.
+    * **Comportamiento de EMAs:** Contraste entre el corto plazo (EMA 20) y la estructura macro (EMA 200).
+    * **Riesgo Estructural:** Evaluación de si se trata de un rebote falso o de una capitulación con oportunidad.
 
     ### 🎯 3. Plan de Acción Táctico
-    * **Estrategia Spot:** (Pauta clara de gestión de liquidez o entradas DCA).
-    * **Estrategia Apalancamiento / Futuros:** (Nivel de riesgo y sesgo recomendado).
-    * **Veredicto:** Una conclusión directa y accionable.
+    * **Estrategia Spot:** Directrices de liquidez y gestión de compras.
+    * **Estrategia Futuros / Apalancamiento:** Nivel de riesgo y sesgo operativo recomendado.
+    * **Veredicto:** Conclusión final en una frase clara.
     """
 
     try:
@@ -60,7 +58,13 @@ def analyze_market_with_gemini(breadth_score, ema20, ema50, ema200, df_assets, d
         if not valid_models:
             valid_models = all_models
 
-        payload = {"contents": [{"parts": [{"text": prompt}]}]}
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.2
+            }
+        }
+        
         last_error = ""
 
         for model_path in valid_models:

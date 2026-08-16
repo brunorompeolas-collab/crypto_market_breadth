@@ -2,13 +2,26 @@ import ccxt
 import pandas as pd
 import numpy as np
 
-# Top activos con formato estándar
-TOP_SYMBOLS = [
-    'BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'XRP/USDT',
-    'ADA/USDT', 'AVAX/USDT', 'DOGE/USDT', 'DOT/USDT', 'LINK/USDT',
-    'NEAR/USDT', 'SUI/USDT', 'APT/USDT', 'LTC/USDT', 'UNI/USDT',
-    'ATOM/USDT', 'FIL/USDT', 'ICP/USDT', 'TRX/USDT', 'BCH/USDT'
-]
+# Agrupación por ecosistemas y mercado general
+ECOSYSTEMS = {
+    "Mercado Global (Top)": [
+        'BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'XRP/USDT',
+        'ADA/USDT', 'AVAX/USDT', 'DOGE/USDT', 'DOT/USDT', 'LINK/USDT',
+        'NEAR/USDT', 'SUI/USDT', 'APT/USDT', 'LTC/USDT', 'UNI/USDT',
+        'ATOM/USDT', 'FIL/USDT', 'ICP/USDT', 'TRX/USDT', 'BCH/USDT'
+    ],
+    "Ecosistema Bitcoin / PoW": [
+        'BTC/USDT', 'BCH/USDT', 'LTC/USDT', 'DOGE/USDT', 'ETC/USDT', 'STX/USDT'
+    ],
+    "Ecosistema Ethereum / L2 / DeFi": [
+        'ETH/USDT', 'UNI/USDT', 'LINK/USDT', 'AAVE/USDT', 'OP/USDT', 
+        'ARB/USDT', 'MATIC/USDT', 'LDO/USDT', 'MKR/USDT', 'CRV/USDT'
+    ],
+    "Ecosistema Solana / L1s Alternativas": [
+        'SOL/USDT', 'RAY/USDT', 'JTO/USDT', 'PYTH/USDT', 'BONK/USDT',
+        'AVAX/USDT', 'NEAR/USDT', 'SUI/USDT', 'APT/USDT', 'SEI/USDT'
+    ]
+}
 
 def calculate_emas(closes):
     if len(closes) < 30:
@@ -19,8 +32,9 @@ def calculate_emas(closes):
     ema200 = s.ewm(span=200, adjust=False).mean().iloc[-1] if len(closes) >= 200 else s.ewm(span=len(closes), adjust=False).mean().iloc[-1]
     return ema20, ema50, ema200
 
-def get_crypto_breadth_data():
-    # Exchanges sin bloqueo geográfico de IP en servidores cloud
+def get_crypto_breadth_data(selected_ecosystem="Mercado Global (Top)"):
+    symbols_to_fetch = ECOSYSTEMS.get(selected_ecosystem, ECOSYSTEMS["Mercado Global (Top)"])
+    
     exchanges = [
         ('Kraken', ccxt.kraken({'enableRateLimit': True, 'timeout': 5000})),
         ('KuCoin', ccxt.kucoin({'enableRateLimit': True, 'timeout': 5000})),
@@ -34,8 +48,7 @@ def get_crypto_breadth_data():
         records = []
         try:
             exchange.load_markets()
-            for sym in TOP_SYMBOLS:
-                # Adaptar símbolo si el exchange usa USD en lugar de USDT (ej. Kraken)
+            for sym in symbols_to_fetch:
                 target_sym = sym
                 if sym not in exchange.markets:
                     usd_sym = sym.replace('/USDT', '/USD')
@@ -72,7 +85,7 @@ def get_crypto_breadth_data():
                 except Exception:
                     continue
             
-            if len(records) >= 8:
+            if len(records) >= max(3, len(symbols_to_fetch) // 3):
                 used_exchange = name
                 break
         except Exception:
@@ -89,6 +102,6 @@ def get_crypto_breadth_data():
     ema50_pct = (df['raw_above_ema50'].sum() / total) * 100
     ema200_pct = (df['raw_above_ema200'].sum() / total) * 100
     breadth_score = (ema20_pct * 0.2) + (ema50_pct * 0.3) + (ema200_pct * 0.5)
-    data_quality = f"Datos en vivo ({used_exchange}) - {total} activos procesados"
+    data_quality = f"Datos en vivo ({used_exchange}) - {total} activos de {selected_ecosystem}"
 
     return df, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality

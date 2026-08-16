@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import os
 from collector import get_crypto_breadth_data
 from database import init_db, save_breadth_snapshot, get_breadth_history
@@ -15,23 +14,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Inyección CSS Ultra-Limpio (Sin texto en bruto)
+# Estilos CSS
 st.markdown("""
 <style>
-    /* Fondo y estructura general */
     .stApp {
         background-color: #0b0e14;
         color: #e2e8f0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
+    header[data-testid="stHeader"] { background: transparent; }
+    #MainMenu, footer { visibility: hidden; }
     
-    /* Ocultar barra superior y decoraciones por defecto */
-    header[data-testid="stHeader"] {
-        background: transparent;
-    }
-    #MainMenu, footer {visibility: hidden;}
-    
-    /* Tarjetas de métricas modernas */
     .metric-card {
         background: rgba(22, 27, 34, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -57,8 +50,6 @@ st.markdown("""
         font-size: 0.75rem;
         color: #64748b;
     }
-    
-    /* Botón de recarga estilizado */
     .stButton>button {
         background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: white;
@@ -69,32 +60,28 @@ st.markdown("""
         width: 100%;
         transition: all 0.2s ease;
     }
-    .stButton>button:hover {
-        background: linear-gradient(135deg, #1d4ed8, #1e40af);
-        transform: translateY(-1px);
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# Inicializar Base de Datos
+# Inicializar DB
 init_db()
 
-# Encabezado Principal
+# Título
 st.markdown("<h2 style='text-align: center; margin-bottom: 4px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;'>Monitor de Amplitud de Mercado & Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
 
 # Botón de actualización
 col_btn, _ = st.columns([1, 3])
 with col_btn:
-    refresh = st.button("🔄 Actualizar Datos Binance")
+    refresh = st.button("🔄 Actualizar Datos de Mercado")
 
-# Carga de datos con las 6 variables sincronizadas
-with st.spinner("Verificando consenso multi-exchange (Binance / Bybit)..."):
+# Carga de datos
+with st.spinner("Procesando datos multi-exchange y calculando EMAs..."):
     df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data()
     save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
     st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
 
-# Métricas Principales en Fila
+# Métricas Principales
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     color = "#00F59B" if breadth_score >= 60 else ("#FF3366" if breadth_score <= 40 else "#FACC15")
@@ -133,108 +120,77 @@ with c4:
     </div>
     """, unsafe_allow_html=True)
 
-# Gráfica Histórica Estilo TradingView
+# Gráfica Histórica
 st.markdown("### 📈 Histórico de Amplitud de Mercado")
 df_hist = get_breadth_history()
 
 if not df_hist.empty:
     fig = go.Figure()
     
-    # Línea de Breadth Score con gradiente suave
     fig.add_trace(go.Scatter(
         x=df_hist['timestamp'],
         y=df_hist['breadth_score'],
-        mode='lines',
+        mode='lines+markers',
         name='Breadth Score',
         line=dict(color='#00F59B', width=2.5),
+        marker=dict(size=6),
         fill='tozeroy',
         fillcolor='rgba(0, 245, 155, 0.05)'
     ))
     
-    # EMAs secundarias
     fig.add_trace(go.Scatter(
         x=df_hist['timestamp'],
         y=df_hist['pct_above_ema50'],
-        mode='lines',
+        mode='lines+markers',
         name='% > EMA 50',
-        line=dict(color='#38BDF8', width=1.5, dash='dot')
+        line=dict(color='#38BDF8', width=1.5, dash='dot'),
+        marker=dict(size=4)
     ))
     
     fig.add_trace(go.Scatter(
         x=df_hist['timestamp'],
         y=df_hist['pct_above_ema200'],
-        mode='lines',
+        mode='lines+markers',
         name='% > EMA 200',
-        line=dict(color='#F43F5E', width=1.5, dash='dash')
+        line=dict(color='#F43F5E', width=1.5, dash='dash'),
+        marker=dict(size=4)
     ))
     
-    # Zonas de referencia (Sobrecompra / Sobreventa)
     fig.add_hline(y=80, line_dash="dash", line_color="rgba(255,255,255,0.15)", annotation_text="Euforia (80)")
     fig.add_hline(y=20, line_dash="dash", line_color="rgba(255,255,255,0.15)", annotation_text="Pánico (20)")
     
-    # Estilizado oscuro profesional
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
         margin=dict(l=10, r=10, t=20, b=20),
-        height=340,
+        height=320,
         hovermode="x unified",
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
-            bgcolor="rgba(0,0,0,0)"
-        ),
-        xaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(255, 255, 255, 0.05)",
-            showline=False
-        ),
-        yaxis=dict(
-            range=[0, 100],
-            showgrid=True,
-            gridcolor="rgba(255, 255, 255, 0.05)",
-            showline=False
-        )
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)"),
+        xaxis=dict(showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)"),
+        yaxis=dict(range=[0, 100], showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)")
     )
     
-    # Configuración móvil (evita bloqueos de scroll)
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
-else:
-    st.info("Registrando primeras muestras para construir el histórico temporal...")
 
-# Sección de Diagnóstico Gemini IA
+# Diagnóstico IA Gemini con Descarga
 st.markdown("### 🤖 Diagnóstico IA Cuantitativo (Gemini)")
 with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
-   with st.spinner("Verificando consenso multi-exchange (Binance / Bybit)..."):
-    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data()
-    save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
-    st.caption(f"🛡️ **Control de Calidad de Datos:** {data_quality}") 
-    with st.spinner("Generando informe con Gemini..."):
+    with st.spinner("Generando informe táctico con Gemini..."):
         ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets, data_quality)
         st.markdown(ai_report)
+        
+        st.download_button(
+            label="📥 Descargar Informe Táctico (.txt)",
+            data=ai_report,
+            file_name="informe_tactico_breadth.txt",
+            mime="text/plain"
+        )
 
-# ==============================================================================
-# Sección: Escáner de Activos con diseño refinado y protegido contra fallos
-# ==============================================================================
+# Escáner de Activos
 st.markdown("### 📋 Escáner de Activos del Mercado")
-
-# Definir las columnas visuales (las que definimos en collector.py)
 display_cols = ['Activo', 'Precio ($)', 'Var 24h', 'EMA 20', 'EMA 50', 'EMA 200']
-
-# Verificación de seguridad: Comprobamos si las columnas existen en df_assets
 if all(col in df_assets.columns for col in display_cols):
-    # Si existen (es el caso normal), mostramos la tabla limpia y formateada
-    st.dataframe(
-        df_assets[display_cols],
-        use_container_width=True,
-        hide_index=True
-    )
+    st.dataframe(df_assets[display_cols], use_container_width=True, hide_index=True)
 else:
-    # Si las columnas no coinciden (por ejemplo, si usamos el fallback de collector.py),
-    # mostramos el dataframe completo para evitar el KeyError, pero al menos no rompemos la app.
-    # st.warning("Mostrando datos en formato crudo (algunas columnas no coinciden).") # Opcional: mostrar advertencia
     st.dataframe(df_assets, use_container_width=True, hide_index=True)

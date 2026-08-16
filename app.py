@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import os
 from collector import get_crypto_breadth_data
-from database import init_db, save_breadth_snapshot, get_breadth_history
 from analyzer import analyze_market_with_gemini
 
 # Configuración de página
@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Estilos CSS
+# Estilos CSS Limpios
 st.markdown("""
 <style>
     .stApp {
@@ -29,25 +29,26 @@ st.markdown("""
         background: rgba(22, 27, 34, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
-        padding: 16px;
+        padding: 14px;
         text-align: center;
         backdrop-filter: blur(10px);
+        margin-top: 6px;
         margin-bottom: 12px;
     }
     .metric-title {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #94a3b8;
         margin-bottom: 4px;
     }
     .metric-value {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #f8fafc;
     }
     .metric-sub {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #64748b;
     }
     .stButton>button {
@@ -56,25 +57,23 @@ st.markdown("""
         border: none;
         border-radius: 8px;
         font-weight: 600;
-        padding: 8px 18px;
+        padding: 8px 16px;
         width: 100%;
+        margin-top: 28px;
         transition: all 0.2s ease;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Inicializar DB
-init_db()
+# Título de Cabecera
+st.markdown("<h2 style='text-align: center; margin-bottom: 2px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 15px;'>Monitor Cuantitativo de Amplitud de Mercado y Divergencias</p>", unsafe_allow_html=True)
 
-# Título
-st.markdown("<h2 style='text-align: center; margin-bottom: 4px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 15px;'>Monitor de Amplitud & Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
-
-# Selector de Ecosistema / Mercado y Botón de Recarga
-col_select, col_btn = st.columns([2.5, 1.5])
-with col_select:
+# Barra de Control y Selectores
+col1, col2, col3, col4 = st.columns([2.2, 1.4, 1.4, 1.0])
+with col1:
     ecosystem = st.selectbox(
-        "Seleccionar Cesta / Ecosistema:",
+        "Cesta / Ecosistema:",
         [
             "Mercado Global (Top)",
             "Ecosistema Bitcoin / PoW",
@@ -83,18 +82,29 @@ with col_select:
         ],
         index=0
     )
-with col_btn:
-    st.write("")
-    st.write("")
-    refresh = st.button("🔄 Actualizar Datos")
+with col2:
+    timeframe = st.selectbox(
+        "Velas / Frecuencia:",
+        ["Diario (1D)", "Semanal (1W)", "Mensual (1M)"],
+        index=0
+    )
+with col3:
+    history_range = st.selectbox(
+        "Rango Histórico:",
+        ["1 Mes", "3 Meses", "6 Meses", "1 Año", "4 Años", "10 Años / Histórico"],
+        index=1
+    )
+with col4:
+    refresh = st.button("🔄 Actualizar")
 
-# Carga de datos según la cesta seleccionada
-with st.spinner(f"Analizando amplitud para {ecosystem}..."):
-    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data(ecosystem)
-    save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
+# Carga de Datos
+with st.spinner(f"Analizando amplitud ({timeframe} | {history_range})..."):
+    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, df_history, data_quality = get_crypto_breadth_data(
+        ecosystem, timeframe, history_range
+    )
     st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
 
-# Métricas Principales
+# Tarjetas de Métricas en Fila
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     color = "#00F59B" if breadth_score >= 60 else ("#FF3366" if breadth_score <= 40 else "#FACC15")
@@ -133,58 +143,84 @@ with c4:
     </div>
     """, unsafe_allow_html=True)
 
-# Gráfica Histórica
-st.markdown("### 📈 Histórico de Amplitud")
-df_hist = get_breadth_history()
+# Gráfica Histórica con Doble Eje (Amplitud + BTC)
+st.markdown(f"### 📈 Histórico de Amplitud & Precio BTC ({history_range})")
 
-if not df_hist.empty:
-    fig = go.Figure()
+if not df_history.empty:
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'],
-        y=df_hist['breadth_score'],
-        mode='lines+markers',
-        name='Breadth Score',
-        line=dict(color='#00F59B', width=2.5),
-        marker=dict(size=6),
-        fill='tozeroy',
-        fillcolor='rgba(0, 245, 155, 0.05)'
-    ))
+    # Curva de Breadth Score (Eje Primario)
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['breadth_score'],
+            mode='lines',
+            name='Breadth Score (0-100)',
+            line=dict(color='#00F59B', width=2.5),
+            fill='tozeroy',
+            fillcolor='rgba(0, 245, 155, 0.06)'
+        ),
+        secondary_y=False
+    )
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'],
-        y=df_hist['pct_above_ema50'],
-        mode='lines+markers',
-        name='% > EMA 50',
-        line=dict(color='#38BDF8', width=1.5, dash='dot'),
-        marker=dict(size=4)
-    ))
+    # % sobre EMA 50
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['pct_above_ema50'],
+            mode='lines',
+            name='% > EMA 50',
+            line=dict(color='#38BDF8', width=1.5, dash='dot')
+        ),
+        secondary_y=False
+    )
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'],
-        y=df_hist['pct_above_ema200'],
-        mode='lines+markers',
-        name='% > EMA 200',
-        line=dict(color='#F43F5E', width=1.5, dash='dash'),
-        marker=dict(size=4)
-    ))
+    # % sobre EMA 200
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['pct_above_ema200'],
+            mode='lines',
+            name='% > EMA 200',
+            line=dict(color='#F43F5E', width=1.5, dash='dash')
+        ),
+        secondary_y=False
+    )
     
-    fig.add_hline(y=80, line_dash="dash", line_color="rgba(255,255,255,0.15)", annotation_text="Euforia (80)")
-    fig.add_hline(y=20, line_dash="dash", line_color="rgba(255,255,255,0.15)", annotation_text="Pánico (20)")
+    # Superposición de Precio BTC (Eje Secundario - Y2)
+    if 'btc_price' in df_history.columns and df_history['btc_price'].dropna().any():
+        fig.add_trace(
+            go.Scatter(
+                x=df_history['timestamp'],
+                y=df_history['btc_price'],
+                mode='lines',
+                name='Precio BTC ($)',
+                line=dict(color='#F59E0B', width=1.8)
+            ),
+            secondary_y=True
+        )
+
+    # Zonas de referencia de Amplitud
+    fig.add_hline(y=80, line_dash="dash", line_color="rgba(255,255,255,0.18)", annotation_text="Euforia (80)", secondary_y=False)
+    fig.add_hline(y=20, line_dash="dash", line_color="rgba(255,255,255,0.18)", annotation_text="Pánico (20)", secondary_y=False)
     
+    # Estilizado oscuro profesional
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
-        margin=dict(l=10, r=10, t=20, b=20),
-        height=320,
+        margin=dict(l=10, r=10, t=25, b=20),
+        height=360,
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)"),
         xaxis=dict(showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)"),
-        yaxis=dict(range=[0, 100], showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)")
+        yaxis=dict(title="Amplitud (%)", range=[0, 100], showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)"),
+        yaxis2=dict(title="Precio BTC ($)", showgrid=False, overlaying='y', side='right')
     )
     
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
+else:
+    st.info("Cargando serie temporal histórica...")
 
 # Diagnóstico IA Gemini
 st.markdown("### 🤖 Diagnóstico IA Cuantitativo (Gemini)")
@@ -196,7 +232,7 @@ with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
         st.download_button(
             label="📥 Descargar Informe Táctico (.txt)",
             data=ai_report,
-            file_name=f"informe_{ecosystem.replace(' ', '_')}.txt",
+            file_name=f"informe_{ecosystem.replace(' ', '_')}_{timeframe}.txt",
             mime="text/plain"
         )
 

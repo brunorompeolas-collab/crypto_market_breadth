@@ -6,7 +6,6 @@ import os
 from collector import get_crypto_breadth_data
 from analyzer import analyze_market_with_gemini
 
-# Configuración de página
 st.set_page_config(
     page_title="Crypto Market Breadth Terminal",
     page_icon="⚡",
@@ -14,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Estilos CSS Limpios
+# CSS Profesional: Píldoras / Botones circulares con color activo
 st.markdown("""
 <style>
     .stApp {
@@ -24,7 +23,48 @@ st.markdown("""
     }
     header[data-testid="stHeader"] { background: transparent; }
     #MainMenu, footer { visibility: hidden; }
-    
+
+    /* Estilo de los selectores tipo Píldora / Radio Horizontal */
+    div[role="radiogroup"] {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        background: rgba(22, 27, 34, 0.6);
+        padding: 4px 6px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        width: fit-content;
+    }
+    div[role="radiogroup"] label {
+        background: transparent !important;
+        border: none !important;
+        padding: 4px 12px !important;
+        border-radius: 16px !important;
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
+        color: #94a3b8 !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    /* Ocultar el circulito de radio nativo */
+    div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] {
+        padding: 0px !important;
+    }
+    div[role="radiogroup"] label input {
+        display: none !important;
+    }
+    div[role="radiogroup"] label span {
+        display: none !important;
+    }
+    /* Elemento Activo en Neón/Azul */
+    div[role="radiogroup"] label[data-checked="true"],
+    div[role="radiogroup"] label:has(input:checked) {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+    }
+
     .metric-card {
         background: rgba(22, 27, 34, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -32,7 +72,7 @@ st.markdown("""
         padding: 14px;
         text-align: center;
         backdrop-filter: blur(10px);
-        margin-top: 6px;
+        margin-top: 8px;
         margin-bottom: 12px;
     }
     .metric-title {
@@ -51,58 +91,62 @@ st.markdown("""
         font-size: 0.72rem;
         color: #64748b;
     }
-    .stButton>button {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        color: white;
-        border: none;
-        border-radius: 8px;
+    .control-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        text-transform: uppercase;
         font-weight: 600;
-        padding: 8px 16px;
-        width: 100%;
-        margin-top: 28px;
-        transition: all 0.2s ease;
+        margin-bottom: 4px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Título de Cabecera
 st.markdown("<h2 style='text-align: center; margin-bottom: 2px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 15px;'>Monitor Cuantitativo de Amplitud de Mercado y Divergencias</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 16px;'>Terminal Cuantitativo de Amplitud y Régimen de Mercado</p>", unsafe_allow_html=True)
 
-# Barra de Control y Selectores
-col1, col2, col3, col4 = st.columns([2.2, 1.4, 1.4, 1.0])
-with col1:
-    ecosystem = st.selectbox(
-        "Cesta / Ecosistema:",
-        [
-            "Mercado Global (Top)",
-            "Ecosistema Bitcoin / PoW",
-            "Ecosistema Ethereum / L2 / DeFi",
-            "Ecosistema Solana / L1s Alternativas"
-        ],
-        index=0
-    )
-with col2:
-    timeframe = st.selectbox(
-        "Velas / Frecuencia:",
-        ["Diario (1D)", "Semanal (1W)", "Mensual (1M)"],
-        index=0
-    )
-with col3:
-    history_range = st.selectbox(
-        "Rango Histórico:",
-        ["1 Mes", "3 Meses", "6 Meses", "1 Año", "4 Años", "10 Años / Histórico"],
-        index=1
-    )
-with col4:
-    refresh = st.button("🔄 Actualizar")
+# Selectores en Píldoras / Botones Circulares
+c_eco, c_tf, c_rng, c_ref = st.columns([1.8, 1.2, 2.0, 0.8])
 
-# Carga de Datos
-with st.spinner(f"Analizando amplitud ({timeframe} | {history_range})..."):
-    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, df_history, data_quality = get_crypto_breadth_data(
-        ecosystem, timeframe, history_range
+with c_eco:
+    st.markdown("<div class='control-label'>Ecosistema</div>", unsafe_allow_html=True)
+    ecosystem = st.radio(
+        "Ecosistema",
+        ["Global", "Bitcoin", "Ethereum", "Solana"],
+        index=0,
+        horizontal=True,
+        label_visibility="collapsed"
     )
-    st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
+
+with c_tf:
+    st.markdown("<div class='control-label'>Velas</div>", unsafe_allow_html=True)
+    timeframe = st.radio(
+        "Temporalidad",
+        ["1D", "1W", "1M"],
+        index=0,
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+
+with c_rng:
+    st.markdown("<div class='control-label'>Rango Histórico</div>", unsafe_allow_html=True)
+    history_range = st.radio(
+        "Rango",
+        ["1M", "3M", "6M", "1A", "4A", "Todo"],
+        index=1,
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+
+with c_ref:
+    st.markdown("<div class='control-label'>Caché</div>", unsafe_allow_html=True)
+    if st.button("🔄 Recargar"):
+        st.cache_data.clear()
+
+# Obtención de datos instantánea desde memoria caché
+df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, df_history, data_quality = get_crypto_breadth_data(
+    ecosystem, timeframe, history_range
+)
+st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
 
 # Tarjetas de Métricas en Fila
 c1, c2, c3, c4 = st.columns(4)
@@ -112,7 +156,7 @@ with c1:
     <div class="metric-card">
         <div class="metric-title">Breadth Score</div>
         <div class="metric-value" style="color: {color};">{breadth_score:.1f} / 100</div>
-        <div class="metric-sub">{ecosystem.split('/')[0]}</div>
+        <div class="metric-sub">{ecosystem}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -143,51 +187,19 @@ with c4:
     </div>
     """, unsafe_allow_html=True)
 
-# Gráfica Histórica con Doble Eje (Amplitud + BTC)
-st.markdown(f"### 📈 Histórico de Amplitud & Precio BTC ({history_range})")
+# Gráfico Estructurado en 2 Paneles Sincronizados
+st.markdown(f"### 📈 Dinámica de Mercado: Precio BTC vs. Amplitud ({history_range})")
 
 if not df_history.empty:
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    
-    # Curva de Breadth Score (Eje Primario)
-    fig.add_trace(
-        go.Scatter(
-            x=df_history['timestamp'],
-            y=df_history['breadth_score'],
-            mode='lines',
-            name='Breadth Score (0-100)',
-            line=dict(color='#00F59B', width=2.5),
-            fill='tozeroy',
-            fillcolor='rgba(0, 245, 155, 0.06)'
-        ),
-        secondary_y=False
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.06,
+        row_heights=[0.55, 0.45],
+        subplot_titles=("Precio Bitcoin (Referencia Macro)", "Oscilador de Amplitud de Mercado (Breadth Score %)")
     )
-    
-    # % sobre EMA 50
-    fig.add_trace(
-        go.Scatter(
-            x=df_history['timestamp'],
-            y=df_history['pct_above_ema50'],
-            mode='lines',
-            name='% > EMA 50',
-            line=dict(color='#38BDF8', width=1.5, dash='dot')
-        ),
-        secondary_y=False
-    )
-    
-    # % sobre EMA 200
-    fig.add_trace(
-        go.Scatter(
-            x=df_history['timestamp'],
-            y=df_history['pct_above_ema200'],
-            mode='lines',
-            name='% > EMA 200',
-            line=dict(color='#F43F5E', width=1.5, dash='dash')
-        ),
-        secondary_y=False
-    )
-    
-    # Superposición de Precio BTC (Eje Secundario - Y2)
+
+    # Panel 1: Precio Bitcoin
     if 'btc_price' in df_history.columns and df_history['btc_price'].dropna().any():
         fig.add_trace(
             go.Scatter(
@@ -195,44 +207,71 @@ if not df_history.empty:
                 y=df_history['btc_price'],
                 mode='lines',
                 name='Precio BTC ($)',
-                line=dict(color='#F59E0B', width=1.8)
+                line=dict(color='#F59E0B', width=2),
+                fill='tozeroy',
+                fillcolor='rgba(245, 158, 11, 0.04)'
             ),
-            secondary_y=True
+            row=1, col=1
         )
 
-    # Zonas de referencia de Amplitud
-    fig.add_hline(y=80, line_dash="dash", line_color="rgba(255,255,255,0.18)", annotation_text="Euforia (80)", secondary_y=False)
-    fig.add_hline(y=20, line_dash="dash", line_color="rgba(255,255,255,0.18)", annotation_text="Pánico (20)", secondary_y=False)
-    
-    # Estilizado oscuro profesional
+    # Panel 2: Amplitud Suavizada
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['breadth_smooth'],
+            mode='lines',
+            name='Breadth Score',
+            line=dict(color='#00F59B', width=2.5),
+            fill='tozeroy',
+            fillcolor='rgba(0, 245, 155, 0.06)'
+        ),
+        row=2, col=1
+    )
+
+    # % sobre EMA 200
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['pct_above_ema200'],
+            mode='lines',
+            name='% > EMA 200',
+            line=dict(color='#F43F5E', width=1.4, dash='dash')
+        ),
+        row=2, col=1
+    )
+
+    fig.add_hline(y=80, line_dash="dot", line_color="rgba(239, 68, 68, 0.4)", annotation_text="Euforia (80)", row=2, col=1)
+    fig.add_hline(y=20, line_dash="dot", line_color="rgba(34, 197, 94, 0.4)", annotation_text="Pánico (20)", row=2, col=1)
+
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
-        margin=dict(l=10, r=10, t=25, b=20),
-        height=360,
+        margin=dict(l=10, r=10, t=30, b=10),
+        height=460,
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)"),
-        xaxis=dict(showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)"),
-        yaxis=dict(title="Amplitud (%)", range=[0, 100], showgrid=True, gridcolor="rgba(255, 255, 255, 0.05)"),
-        yaxis2=dict(title="Precio BTC ($)", showgrid=False, overlaying='y', side='right')
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)")
     )
     
+    fig.update_yaxes(title_text="Precio ($)", row=1, col=1, showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+    fig.update_yaxes(title_text="Amplitud (%)", range=[0, 100], row=2, col=1, showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
 else:
-    st.info("Cargando serie temporal histórica...")
+    st.info("Cargando histórico...")
 
-# Diagnóstico IA Gemini
+# Informe Gemini IA
 st.markdown("### 🤖 Diagnóstico IA Cuantitativo (Gemini)")
 with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
-    with st.spinner("Generando informe táctico con Gemini..."):
+    with st.spinner("Generando informe táctico..."):
         ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets, data_quality)
         st.markdown(ai_report)
         
         st.download_button(
             label="📥 Descargar Informe Táctico (.txt)",
             data=ai_report,
-            file_name=f"informe_{ecosystem.replace(' ', '_')}_{timeframe}.txt",
+            file_name=f"informe_{ecosystem}_{timeframe}.txt",
             mime="text/plain"
         )
 

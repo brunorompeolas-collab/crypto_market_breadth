@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS Profesional: Píldoras / Botones circulares con color activo
+# Estilos CSS Profesionales estilo TradingView Terminal
 st.markdown("""
 <style>
     .stApp {
@@ -24,45 +24,39 @@ st.markdown("""
     header[data-testid="stHeader"] { background: transparent; }
     #MainMenu, footer { visibility: hidden; }
 
-    /* Estilo de los selectores tipo Píldora / Radio Horizontal */
+    /* Estilo de Píldoras Segmentadas */
     div[role="radiogroup"] {
-        display: flex;
-        flex-direction: row;
-        gap: 6px;
-        background: rgba(22, 27, 34, 0.6);
-        padding: 4px 6px;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        width: fit-content;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        background: #161b22 !important;
+        padding: 3px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        gap: 2px !important;
     }
-    div[role="radiogroup"] label {
+    div[role="radiogroup"] > label {
+        margin: 0 !important;
+        padding: 4px 10px !important;
+        border-radius: 6px !important;
         background: transparent !important;
-        border: none !important;
-        padding: 4px 12px !important;
-        border-radius: 16px !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
         color: #94a3b8 !important;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    /* Ocultar el circulito de radio nativo */
-    div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] {
-        padding: 0px !important;
-    }
-    div[role="radiogroup"] label input {
-        display: none !important;
-    }
-    div[role="radiogroup"] label span {
-        display: none !important;
-    }
-    /* Elemento Activo en Neón/Azul */
-    div[role="radiogroup"] label[data-checked="true"],
-    div[role="radiogroup"] label:has(input:checked) {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-        color: #ffffff !important;
+        font-size: 0.78rem !important;
         font-weight: 600 !important;
-        box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+        cursor: pointer !important;
+        transition: all 0.15s ease-in-out !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    /* Ocultar el círculo nativo de radio */
+    div[role="radiogroup"] > label > div:first-child {
+        display: none !important;
+    }
+    div[role="radiogroup"] > label:has(input:checked) {
+        background: #2563eb !important;
+        color: #ffffff !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
     }
 
     .metric-card {
@@ -72,18 +66,17 @@ st.markdown("""
         padding: 14px;
         text-align: center;
         backdrop-filter: blur(10px);
-        margin-top: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
     .metric-title {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #94a3b8;
         margin-bottom: 4px;
     }
     .metric-value {
-        font-size: 1.5rem;
+        font-size: 1.55rem;
         font-weight: 700;
         color: #f8fafc;
     }
@@ -91,24 +84,16 @@ st.markdown("""
         font-size: 0.72rem;
         color: #64748b;
     }
-    .control-label {
-        font-size: 0.75rem;
-        color: #64748b;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
+# Cabecera
 st.markdown("<h2 style='text-align: center; margin-bottom: 2px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 16px;'>Terminal Cuantitativo de Amplitud y Régimen de Mercado</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 12px;'>Monitor Cuantitativo de Amplitud & Divergencias de Mercado</p>", unsafe_allow_html=True)
 
-# Selectores en Píldoras / Botones Circulares
-c_eco, c_tf, c_rng, c_ref = st.columns([1.8, 1.2, 2.0, 0.8])
-
-with c_eco:
-    st.markdown("<div class='control-label'>Ecosistema</div>", unsafe_allow_html=True)
+# Selector de Ecosistema Superior
+col_eco, col_empty, col_btn = st.columns([3, 3, 1])
+with col_eco:
     ecosystem = st.radio(
         "Ecosistema",
         ["Global", "Bitcoin", "Ethereum", "Solana"],
@@ -116,19 +101,24 @@ with c_eco:
         horizontal=True,
         label_visibility="collapsed"
     )
+with col_btn:
+    if st.button("🔄 Refrescar"):
+        st.cache_data.clear()
 
-with c_tf:
-    st.markdown("<div class='control-label'>Velas</div>", unsafe_allow_html=True)
+# Barra Integrada de Controles del Gráfico
+st.markdown("---")
+g_col1, g_col2, g_col3 = st.columns([2.5, 1.5, 2.5])
+with g_col1:
+    st.markdown("<span style='font-size: 0.85rem; font-weight: 700; color: #f8fafc;'>📈 Amplitud de Mercado & Precio Superpuesto</span>", unsafe_allow_html=True)
+with g_col2:
     timeframe = st.radio(
-        "Temporalidad",
+        "Velas",
         ["1D", "1W", "1M"],
         index=0,
         horizontal=True,
         label_visibility="collapsed"
     )
-
-with c_rng:
-    st.markdown("<div class='control-label'>Rango Histórico</div>", unsafe_allow_html=True)
+with g_col3:
     history_range = st.radio(
         "Rango",
         ["1M", "3M", "6M", "1A", "4A", "Todo"],
@@ -137,12 +127,7 @@ with c_rng:
         label_visibility="collapsed"
     )
 
-with c_ref:
-    st.markdown("<div class='control-label'>Caché</div>", unsafe_allow_html=True)
-    if st.button("🔄 Recargar"):
-        st.cache_data.clear()
-
-# Obtención de datos instantánea desde memoria caché
+# Carga de datos con caché
 df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, df_history, data_quality = get_crypto_breadth_data(
     ecosystem, timeframe, history_range
 )
@@ -187,34 +172,11 @@ with c4:
     </div>
     """, unsafe_allow_html=True)
 
-# Gráfico Estructurado en 2 Paneles Sincronizados
-st.markdown(f"### 📈 Dinámica de Mercado: Precio BTC vs. Amplitud ({history_range})")
-
+# Gráfico Unificado con Doble Eje Y (Amplitud en Y1, BTC en Y2)
 if not df_history.empty:
-    fig = make_subplots(
-        rows=2, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.06,
-        row_heights=[0.55, 0.45],
-        subplot_titles=("Precio Bitcoin (Referencia Macro)", "Oscilador de Amplitud de Mercado (Breadth Score %)")
-    )
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-    # Panel 1: Precio Bitcoin
-    if 'btc_price' in df_history.columns and df_history['btc_price'].dropna().any():
-        fig.add_trace(
-            go.Scatter(
-                x=df_history['timestamp'],
-                y=df_history['btc_price'],
-                mode='lines',
-                name='Precio BTC ($)',
-                line=dict(color='#F59E0B', width=2),
-                fill='tozeroy',
-                fillcolor='rgba(245, 158, 11, 0.04)'
-            ),
-            row=1, col=1
-        )
-
-    # Panel 2: Amplitud Suavizada
+    # 1. Breadth Score Principal (Y1)
     fig.add_trace(
         go.Scatter(
             x=df_history['timestamp'],
@@ -223,38 +185,76 @@ if not df_history.empty:
             name='Breadth Score',
             line=dict(color='#00F59B', width=2.5),
             fill='tozeroy',
-            fillcolor='rgba(0, 245, 155, 0.06)'
+            fillcolor='rgba(0, 245, 155, 0.05)'
         ),
-        row=2, col=1
+        secondary_y=False
     )
 
-    # % sobre EMA 200
+    # 2. % > EMA 20 (Y1)
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['pct_above_ema20'],
+            mode='lines',
+            name='% > EMA 20',
+            line=dict(color='#A855F7', width=1.4, dash='dot')
+        ),
+        secondary_y=False
+    )
+
+    # 3. % > EMA 50 (Y1)
+    fig.add_trace(
+        go.Scatter(
+            x=df_history['timestamp'],
+            y=df_history['pct_above_ema50'],
+            mode='lines',
+            name='% > EMA 50',
+            line=dict(color='#38BDF8', width=1.5, dash='dot')
+        ),
+        secondary_y=False
+    )
+
+    # 4. % > EMA 200 (Y1)
     fig.add_trace(
         go.Scatter(
             x=df_history['timestamp'],
             y=df_history['pct_above_ema200'],
             mode='lines',
             name='% > EMA 200',
-            line=dict(color='#F43F5E', width=1.4, dash='dash')
+            line=dict(color='#F43F5E', width=1.6, dash='dash')
         ),
-        row=2, col=1
+        secondary_y=False
     )
 
-    fig.add_hline(y=80, line_dash="dot", line_color="rgba(239, 68, 68, 0.4)", annotation_text="Euforia (80)", row=2, col=1)
-    fig.add_hline(y=20, line_dash="dot", line_color="rgba(34, 197, 94, 0.4)", annotation_text="Pánico (20)", row=2, col=1)
+    # 5. Precio BTC Referencia (Y2 - Eje Derecho)
+    if 'btc_price' in df_history.columns and df_history['btc_price'].dropna().any():
+        fig.add_trace(
+            go.Scatter(
+                x=df_history['timestamp'],
+                y=df_history['btc_price'],
+                mode='lines',
+                name='Precio BTC ($)',
+                line=dict(color='#F59E0B', width=2.0)
+            ),
+            secondary_y=True
+        )
+
+    # Líneas de referencia de Pánico y Euforia
+    fig.add_hline(y=80, line_dash="dash", line_color="rgba(239, 68, 68, 0.35)", annotation_text="Euforia (80)", secondary_y=False)
+    fig.add_hline(y=20, line_dash="dash", line_color="rgba(34, 197, 94, 0.35)", annotation_text="Pánico (20)", secondary_y=False)
 
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
-        margin=dict(l=10, r=10, t=30, b=10),
-        height=460,
+        margin=dict(l=10, r=10, t=20, b=10),
+        height=450,
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)")
     )
     
-    fig.update_yaxes(title_text="Precio ($)", row=1, col=1, showgrid=True, gridcolor="rgba(255,255,255,0.05)")
-    fig.update_yaxes(title_text="Amplitud (%)", range=[0, 100], row=2, col=1, showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+    fig.update_yaxes(title_text="Amplitud (%)", range=[0, 100], secondary_y=False, showgrid=True, gridcolor="rgba(255,255,255,0.05)")
+    fig.update_yaxes(title_text="Precio BTC ($)", secondary_y=True, showgrid=False)
     fig.update_xaxes(showgrid=True, gridcolor="rgba(255,255,255,0.05)")
 
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})

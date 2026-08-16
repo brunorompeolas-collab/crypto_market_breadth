@@ -68,16 +68,29 @@ init_db()
 
 # Título
 st.markdown("<h2 style='text-align: center; margin-bottom: 4px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;'>Monitor de Amplitud de Mercado & Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 15px;'>Monitor de Amplitud & Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
 
-# Botón de actualización
-col_btn, _ = st.columns([1, 3])
+# Selector de Ecosistema / Mercado y Botón de Recarga
+col_select, col_btn = st.columns([2.5, 1.5])
+with col_select:
+    ecosystem = st.selectbox(
+        "Seleccionar Cesta / Ecosistema:",
+        [
+            "Mercado Global (Top)",
+            "Ecosistema Bitcoin / PoW",
+            "Ecosistema Ethereum / L2 / DeFi",
+            "Ecosistema Solana / L1s Alternativas"
+        ],
+        index=0
+    )
 with col_btn:
-    refresh = st.button("🔄 Actualizar Datos de Mercado")
+    st.write("")
+    st.write("")
+    refresh = st.button("🔄 Actualizar Datos")
 
-# Carga de datos
-with st.spinner("Procesando datos multi-exchange y calculando EMAs..."):
-    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data()
+# Carga de datos según la cesta seleccionada
+with st.spinner(f"Analizando amplitud para {ecosystem}..."):
+    df_assets, breadth_score, ema20_pct, ema50_pct, ema200_pct, data_quality = get_crypto_breadth_data(ecosystem)
     save_breadth_snapshot(breadth_score, ema20_pct, ema50_pct, ema200_pct)
     st.caption(f"🛡️ **Control de Calidad:** {data_quality}")
 
@@ -89,7 +102,7 @@ with c1:
     <div class="metric-card">
         <div class="metric-title">Breadth Score</div>
         <div class="metric-value" style="color: {color};">{breadth_score:.1f} / 100</div>
-        <div class="metric-sub">Salud Global</div>
+        <div class="metric-sub">{ecosystem.split('/')[0]}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -121,7 +134,7 @@ with c4:
     """, unsafe_allow_html=True)
 
 # Gráfica Histórica
-st.markdown("### 📈 Histórico de Amplitud de Mercado")
+st.markdown("### 📈 Histórico de Amplitud")
 df_hist = get_breadth_history()
 
 if not df_hist.empty:
@@ -173,7 +186,7 @@ if not df_hist.empty:
     
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False, 'scrollZoom': False})
 
-# Diagnóstico IA Gemini con Descarga
+# Diagnóstico IA Gemini
 st.markdown("### 🤖 Diagnóstico IA Cuantitativo (Gemini)")
 with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
     with st.spinner("Generando informe táctico con Gemini..."):
@@ -183,12 +196,12 @@ with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
         st.download_button(
             label="📥 Descargar Informe Táctico (.txt)",
             data=ai_report,
-            file_name="informe_tactico_breadth.txt",
+            file_name=f"informe_{ecosystem.replace(' ', '_')}.txt",
             mime="text/plain"
         )
 
 # Escáner de Activos
-st.markdown("### 📋 Escáner de Activos del Mercado")
+st.markdown("### 📋 Escáner de Activos del Ecosistema")
 display_cols = ['Activo', 'Precio ($)', 'Var 24h', 'EMA 20', 'EMA 50', 'EMA 200']
 if all(col in df_assets.columns for col in display_cols):
     st.dataframe(df_assets[display_cols], use_container_width=True, hide_index=True)

@@ -126,6 +126,7 @@ def test_provider_06_hf6_auth_tiers():
 
 def test_timeframe_04_hf5_weekly_alignment():
     # HF5: Weekly canonical boundaries and closures
+    import normalizer
     from normalizer import is_candle_closed, resample_provider_prices
     import pandas as pd
     from datetime import datetime, timezone
@@ -144,6 +145,13 @@ def test_timeframe_04_hf5_weekly_alignment():
         assert is_candle_closed(closed_monday, '1w') is True, "Previous week should be closed"
         assert is_candle_closed(open_monday, '1w') is False, "Current week should be open"
         
+        # HF7 test: expected candle
+        expected = normalizer.get_expected_last_closed_candle('1w')
+        assert expected == "2026-01-05 00:00:00"
+        
+        expected_1d = normalizer.get_expected_last_closed_candle('1d')
+        assert expected_1d == "2026-01-13 00:00:00"
+
         # Test resampling boundary
         prices = [
             {"timestamp": 1768003200000, "price": 100}, # Jan 10, 2026 (Saturday)

@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from collector import get_crypto_breadth_data, run_backfill
 from database import init_db, get_historical_breadth
 from analyzer import analyze_market_with_gemini
+from normalizer import get_expected_last_closed_candle
 from universe import BR1_BREADTH_UNIVERSE_V1
 
 # Configuración de página
@@ -80,8 +81,16 @@ with st.sidebar:
 if refresh:
     st.cache_data.clear()
 
+@st.cache_data
+def cached_get_breadth_data(tf, expected_time, provider_name='coingecko'):
+    # The expected_time argument acts as a cache invalidation key.
+    # When a new candle closes, expected_time changes, triggering a fresh fetch.
+    return get_crypto_breadth_data(timeframe=tf, provider_name=provider_name)
+
+expected_candle_time = get_expected_last_closed_candle(timeframe)
+
 with st.spinner("Conectando con CoinGecko y procesando Market Breadth..."):
-    df_assets, snapshot = get_crypto_breadth_data(timeframe=timeframe, provider_name='coingecko')
+    df_assets, snapshot = cached_get_breadth_data(timeframe, expected_candle_time, 'coingecko')
 
 # P0-HF3: Correct DATA_UNAVAILABLE handling
 if not snapshot or snapshot.get('status') != "SUCCESS":

@@ -250,6 +250,29 @@ def test_benchmark_01_btc_eth_isolation():
 # DATABASE TESTS
 # ----------------------------------------
 
+import pytest
+import os
+
+# P0-C2: DB Isolation Fixture
+@pytest.fixture(autouse=True)
+def isolate_db(tmp_path, monkeypatch):
+    test_db = tmp_path / "test_crypto_breadth.db"
+    monkeypatch.setattr('database.DB_PATH', str(test_db))
+    import database
+    database.init_db()
+    yield
+    database.reset_db()
+
+def test_database_04_c2_isolation(tmp_path, monkeypatch):
+    import database
+    assert "test_crypto_breadth.db" in database.DB_PATH
+    assert "crypto_breadth.db" not in database.DB_PATH.split(os.sep)[-1]
+    # DATABASE-01: Duplicate candle is UPSERTED, not duplicated
+    from database import save_breadth_snapshot, get_historical_breadth, get_connection
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM breadth_snapshots")
+
 def test_database_01_upsert():
     # DATABASE-01: Duplicate candle is UPSERTED, not duplicated
     from database import save_breadth_snapshot, get_historical_breadth, get_connection
@@ -446,3 +469,90 @@ def test_regression_05_no_synthetic_data():
         mock_get.return_value = {"status": "DATA_UNAVAILABLE", "reason": "Fail"}
         df, snap = get_crypto_breadth_data()
         assert df is None
+
+# ----------------------------------------
+# TIMEFRAME TESTS (C3)
+# ----------------------------------------
+
+def test_timeframe_01_4h_candles():
+    # P0-C3: 30 days / 4h produces approx 180 snapshots
+    from collector import execute_breadth_pipeline
+    from unittest.mock import patch, MagicMock
+    import pandas as pd
+    
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        
+        # Build fake data of length = (30 * 6) + 200 = 380
+        timestamps = pd.date_range(end='2026-08-17', periods=380, freq='4h')
+        fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
+        
+        mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
+        mock_bench = {"BTC": fake_prices.copy()}
+        
+        mock_instance.get_historical_data.return_value = {
+            "status": "SUCCESS",
+            "data": mock_data,
+            "benchmarks": mock_bench
+        }
+        
+        with patch('collector.BR1_BREADTH_UNIVERSE_V1', [1]*11):
+            snaps, dfs = execute_breadth_pipeline('coingecko', '4h', display_days=30)
+            
+            # The last 30 days at 4h intervals = 30 * 6 = 180 snapshots
+            assert len(snaps) == 180
+
+def test_timeframe_02_1d_candles():
+    # P0-C3: 365 days / 1d produces approx 365 completed observations
+    from collector import execute_breadth_pipeline
+    from unittest.mock import patch, MagicMock
+    import pandas as pd
+    
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        
+        timestamps = pd.date_range(end='2026-08-17', periods=565, freq='1d')
+        fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
+        
+        mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
+        mock_bench = {"BTC": fake_prices.copy()}
+        
+        mock_instance.get_historical_data.return_value = {
+            "status": "SUCCESS",
+            "data": mock_data,
+            "benchmarks": mock_bench
+        }
+        
+        with patch('collector.BR1_BREADTH_UNIVERSE_V1', [1]*11):
+            snaps, dfs = execute_breadth_pipeline('coingecko', '1d', display_days=365)
+            assert len(snaps) == 365
+
+def test_timeframe_03_1w_candles():
+    # P0-C3: 365 days / 1w produces approx 52 completed observations
+    from collector import execute_breadth_pipeline
+    from unittest.mock import patch, MagicMock
+    import pandas as pd
+    
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        
+        # 365 // 7 = 52. 52 + 200 = 252 weeks
+        timestamps = pd.date_range(end='2026-08-17', periods=252, freq='W-MON')
+        fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
+        
+        mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
+        mock_bench = {"BTC": fake_prices.copy()}
+        
+        mock_instance.get_historical_data.return_value = {
+            "status": "SUCCESS",
+            "data": mock_data,
+            "benchmarks": mock_bench
+        }
+        
+        with patch('collector.BR1_BREADTH_UNIVERSE_V1', [1]*11):
+            snaps, dfs = execute_breadth_pipeline('coingecko', '1w', display_days=365)
+            # Depending on how exact dates align, could be 52 or 53.
+            assert 51 <= len(snaps) <= 53

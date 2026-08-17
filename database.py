@@ -4,7 +4,7 @@ import pandas as pd
 from typing import Dict, Any, List
 import logging
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'crypto_breadth.db')
+DB_PATH = os.environ.get('BREADTH_DB_PATH', os.path.join(os.path.dirname(__file__), 'crypto_breadth.db'))
 
 def get_connection():
     return sqlite3.connect(DB_PATH, check_same_thread=False)

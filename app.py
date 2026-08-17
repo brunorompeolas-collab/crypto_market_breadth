@@ -195,17 +195,17 @@ if not df_assets.empty:
             except:
                 return ''
                 
-        def color_bool(val):
-            val_str = str(val).lower().strip()
-            if val == True or val_str in ['true', 'yes', '1', 'sí']: return 'color: #00F59B'
-            if val == False or val_str in ['false', 'no', '0']: return 'color: #FF3366'
-            return ''
-
         styled = df.style.map(color_change, subset=['change_24h'])
-        styled = styled.map(color_bool, subset=['above_ema20', 'above_ema50', 'above_ema200'])
         return styled
         
-    df_to_show = df_assets[['symbol', 'price', 'change_24h', 'above_ema20', 'above_ema50', 'above_ema200']]
+    df_to_show = df_assets[['symbol', 'price', 'change_24h', 'above_ema20', 'above_ema50', 'above_ema200']].copy()
+    
+    # Reemplazar booleanos por círculos verde/rojo
+    for col in ['above_ema20', 'above_ema50', 'above_ema200']:
+        df_to_show[col] = df_to_show[col].apply(
+            lambda x: '🟢' if str(x).lower().strip() in ['true', 'yes', '1', 'sí'] or x is True else ('🔴' if str(x).lower().strip() in ['false', 'no', '0'] or x is False else x)
+        )
+        
     st.dataframe(style_dataframe(df_to_show), use_container_width=True, hide_index=True)
 else:
     st.warning("No se obtuvieron datos de activos en esta extracción.")

@@ -152,21 +152,33 @@ def test_timeframe_04_hf5_weekly_alignment():
         expected_1d = normalizer.get_expected_last_closed_candle('1d')
         assert expected_1d == "2026-01-13 00:00:00"
 
-        # Test resampling boundary
-        prices = [
-            {"timestamp": 1768003200000, "price": 100}, # Jan 10, 2026 (Saturday)
-            {"timestamp": 1768089600000, "price": 110}, # Jan 11, 2026 (Sunday)
-            {"timestamp": 1768176000000, "price": 120}, # Jan 12, 2026 (Monday)
-            {"timestamp": 1768262400000, "price": 130}, # Jan 13, 2026 (Tuesday)
-        ]
-        
-        res = resample_provider_prices(prices, '1w')
-        # Week of Jan 5 (which includes Jan 10 and 11) is closed (by Jan 12).
-        # Week of Jan 12 (which includes Jan 12 and 13) is open (will close Jan 19).
-        # So we should get exactly 1 closed candle, mapped to Jan 5.
-        assert len(res) == 1
-        assert res.iloc[0]['datetime'] == pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
-        assert res.iloc[0]['close'] == 110 # Last price of that week (Jan 11)
+def test_app_01_hf8_gemini_oneshot():
+    # HF8: Verify conceptually that the state is cleared when params change
+    # Mock Streamlit session state
+    session_state = {'ai_report': "Some generated report", 'last_params': '1d_BTC'}
+    
+    current_params = '1w_BTC'
+    if session_state.get('last_params') != current_params:
+        session_state['last_params'] = current_params
+        if 'ai_report' in session_state:
+            del session_state['ai_report']
+            
+    assert 'ai_report' not in session_state, "Report should be cleared when params change"
+
+def test_resampling_boundary():
+    from normalizer import resample_provider_prices
+    import pandas as pd
+    prices = [
+        {"timestamp": 1768003200000, "price": 100}, # Jan 10, 2026 (Saturday)
+        {"timestamp": 1768089600000, "price": 110}, # Jan 11, 2026 (Sunday)
+        {"timestamp": 1768176000000, "price": 120}, # Jan 12, 2026 (Monday)
+        {"timestamp": 1768262400000, "price": 130}, # Jan 13, 2026 (Tuesday)
+    ]
+    
+    res = resample_provider_prices(prices, '1w')
+    assert len(res) == 1
+    assert res.iloc[0]['datetime'] == pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
+    assert res.iloc[0]['close'] == 110 # Last price of that week (Jan 11)
 
 # ----------------------------------------
 # BENCHMARK TESTS

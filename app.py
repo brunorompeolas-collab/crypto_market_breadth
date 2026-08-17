@@ -274,15 +274,21 @@ else:
 
 st.write("---")
 
+# HF8: Gemini Button Must Be One-Shot
+current_params = f"{timeframe}_{benchmark}"
+if st.session_state.get('last_params') != current_params:
+    st.session_state['last_params'] = current_params
+    if 'ai_report' in st.session_state:
+        del st.session_state['ai_report']
+
 col_ai1, col_ai2 = st.columns([1, 4])
 with col_ai1:
     if st.button("🤖 Generar Análisis IA"):
-        st.session_state['generate_ai'] = True
+        with st.spinner("Gemini está evaluando los datos de Market Breadth..."):
+            st.session_state['ai_report'] = analyze_market_with_gemini(snapshot, df_assets, benchmark)
 
-if st.session_state.get('generate_ai', False):
-    with st.spinner("Gemini está evaluando los datos de Market Breadth..."):
-        ai_report = analyze_market_with_gemini(snapshot, df_assets, benchmark)
-        st.markdown(ai_report)
+if 'ai_report' in st.session_state:
+    st.markdown(st.session_state['ai_report'])
 
 st.write("---")
 st.markdown("### Escáner de Activos (Universo v1)")

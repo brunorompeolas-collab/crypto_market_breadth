@@ -108,6 +108,22 @@ def test_timeframe_03_1w_candles():
         args, kwargs = mock_instance.get_historical_data.call_args
         assert args[2] == (365 // 7) + 200 # 52 + 200 = 252
 
+def test_provider_06_hf6_auth_tiers():
+    # HF6: Support demo and pro CoinGecko tiers
+    from providers.coingecko import CoinGeckoProvider
+    import os
+    from unittest.mock import patch
+    
+    provider = CoinGeckoProvider()
+    
+    with patch.dict(os.environ, {"COINGECKO_API_KEY": "test_key", "COINGECKO_API_TIER": "demo"}):
+        assert provider._get_api_url() == "https://api.coingecko.com/api/v3"
+        assert provider._get_headers() == {"x-cg-demo-api-key": "test_key"}
+        
+    with patch.dict(os.environ, {"COINGECKO_API_KEY": "test_key_pro", "COINGECKO_API_TIER": "pro"}):
+        assert provider._get_api_url() == "https://pro-api.coingecko.com/api/v3"
+        assert provider._get_headers() == {"x-cg-pro-api-key": "test_key_pro"}
+
 def test_timeframe_04_hf5_weekly_alignment():
     # HF5: Weekly canonical boundaries and closures
     from normalizer import is_candle_closed, resample_provider_prices

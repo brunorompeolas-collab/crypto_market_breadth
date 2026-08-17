@@ -11,15 +11,18 @@ class CoinGeckoProvider(MarketDataProvider):
         return "coingecko"
 
     def _get_api_url(self) -> str:
-        # If user has a Pro API key, use pro API, otherwise use public
-        key = os.getenv("COINGECKO_API_KEY", "")
-        if key.startswith("CG-"):
-            return "https://api.coingecko.com/api/v3" # Demo key prefix for public API is sometimes used but usually it's just header
+        # HF6: Explicitly support Demo/Pro tiers
+        tier = os.getenv("COINGECKO_API_TIER", "demo").lower()
+        if tier == "pro":
+            return "https://pro-api.coingecko.com/api/v3"
         return "https://api.coingecko.com/api/v3"
 
     def _get_headers(self) -> dict:
         key = os.getenv("COINGECKO_API_KEY", "")
+        tier = os.getenv("COINGECKO_API_TIER", "demo").lower()
         if key:
+            if tier == "pro":
+                return {"x-cg-pro-api-key": key}
             return {"x-cg-demo-api-key": key}
         return {}
         

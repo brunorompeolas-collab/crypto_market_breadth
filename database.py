@@ -17,11 +17,11 @@ def init_db():
     conn = get_connection()
     c = conn.cursor()
     
-    # We are authorized to recreate the DB because old data is not trusted
-    c.execute("DROP TABLE IF EXISTS breadth_snapshots")
+    # HF1: Never drop history on start
+    # c.execute("DROP TABLE IF EXISTS breadth_snapshots")
     
     c.execute('''
-        CREATE TABLE breadth_snapshots (
+        CREATE TABLE IF NOT EXISTS breadth_snapshots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             candle_time TEXT NOT NULL,
             collected_at TEXT NOT NULL,
@@ -48,6 +48,18 @@ def init_db():
     
     conn.commit()
     conn.close()
+
+def reset_db():
+    """
+    HF1: Explicitly drop and recreate the database schema.
+    NEVER call this from app.py. Used only for manual dev resets.
+    """
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DROP TABLE IF EXISTS breadth_snapshots")
+    conn.commit()
+    conn.close()
+    init_db()
 
 def save_breadth_snapshot(snapshot: Dict[str, Any]):
     """

@@ -167,6 +167,42 @@ def test_database_01_upsert():
     df = get_historical_breadth(timeframe='1d', provider='coingecko')
     assert len(df) == 1 # Only 1 row despite 2 saves
 
+def test_database_02_hf1_no_drop():
+    # HF1: init_db() must not drop history
+    from database import reset_db, init_db, save_breadth_snapshot, get_historical_breadth
+    
+    # 1. Start fresh
+    reset_db()
+    
+    # 2. Save a snapshot
+    snap = {
+        'candle_time': '2026-02-01 00:00:00',
+        'collected_at': 'now',
+        'provider': 'coingecko',
+        'timeframe': '1d',
+        'universe_version': 'BR1',
+        'breadth_score': 60.0,
+        'pct_above_ema20': 60,
+        'pct_above_ema50': 60,
+        'pct_above_ema200': 60,
+        'btc_price': 50000,
+        'eth_price': 3000,
+        'assets_total': 50,
+        'assets_ema20_valid': 50,
+        'assets_ema50_valid': 50,
+        'assets_ema200_valid': 50,
+        'data_status': 'HIGH',
+        'status': 'SUCCESS'
+    }
+    save_breadth_snapshot(snap)
+    
+    # 3. Call init_db() simulating app restart
+    init_db()
+    
+    # 4. Verify snapshot exists
+    df = get_historical_breadth(timeframe='1d', provider='coingecko')
+    assert len(df) == 1
+
 def test_error_01_ui_protection():
     # ERROR-01: Provider failure cannot reach metric rendering code
     with patch('providers.coingecko.CoinGeckoProvider.get_historical_data') as mock_get:

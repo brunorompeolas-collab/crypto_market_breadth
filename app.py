@@ -118,62 +118,102 @@ st.markdown("### 📈 Histórico de Amplitud vs Precio BTC")
 df_hist = get_historical_breadth(timeframe=timeframe)
 
 if not df_hist.empty:
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    from streamlit_lightweight_charts import renderLightweightCharts
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'], y=df_hist['breadth_score'], mode='lines', name='Breadth Score',
-        line=dict(color='#00F59B', width=2.5), fill='tozeroy', fillcolor='rgba(0, 245, 155, 0.05)'
-    ), secondary_y=False)
+    def format_time(ts):
+        try:
+            import pandas as pd
+            dt = pd.to_datetime(ts)
+            if timeframe in ["1d", "1w"]:
+                return dt.strftime('%Y-%m-%d')
+            else:
+                return int(dt.timestamp())
+        except:
+            return ts
+            
+    df_hist['time'] = df_hist['timestamp'].apply(format_time)
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'], y=df_hist['pct_above_ema50'], mode='lines', name='% > EMA 50',
-        line=dict(color='#38BDF8', width=1.5, dash='dot')
-    ), secondary_y=False)
+    breadth_data = df_hist[['time', 'breadth_score']].rename(columns={'breadth_score': 'value'}).to_dict('records')
+    ema50_data = df_hist[['time', 'pct_above_ema50']].rename(columns={'pct_above_ema50': 'value'}).to_dict('records')
+    ema200_data = df_hist[['time', 'pct_above_ema200']].rename(columns={'pct_above_ema200': 'value'}).to_dict('records')
+    btc_data = df_hist[['time', 'btc_price']].rename(columns={'btc_price': 'value'}).to_dict('records')
     
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'], y=df_hist['pct_above_ema200'], mode='lines', name='% > EMA 200',
-        line=dict(color='#F43F5E', width=1.5, dash='dash')
-    ), secondary_y=False)
+    chartOptions = {
+        "height": 450,
+        "layout": {
+            "background": {"type": "solid", "color": "#0e1117"},
+            "textColor": "#d1d4dc"
+        },
+        "grid": {
+            "vertLines": {"color": "rgba(255,255,255,0.05)"},
+            "horzLines": {"color": "rgba(255,255,255,0.05)"}
+        },
+        "rightPriceScale": {
+            "scaleMargins": {"top": 0.1, "bottom": 0.1},
+            "borderVisible": False,
+        },
+        "leftPriceScale": {
+            "visible": True,
+            "scaleMargins": {"top": 0.1, "bottom": 0.1},
+            "borderVisible": False,
+        },
+        "timeScale": {
+            "borderVisible": False,
+            "timeVisible": True if timeframe not in ["1d", "1w"] else False
+        },
+        "crosshair": {
+            "mode": 1
+        }
+    }
     
-    # Eje secundario para BTC
-    fig.add_trace(go.Scatter(
-        x=df_hist['timestamp'], y=df_hist['btc_price'], mode='lines', name='BTC Price',
-        line=dict(color='#F59E0B', width=2)
-    ), secondary_y=True)
+    series = [
+        {
+            "type": "Line",
+            "data": btc_data,
+            "options": {
+                "color": "#F59E0B",
+                "lineWidth": 2,
+                "priceScaleId": "right",
+                "title": "BTC Price"
+            }
+        },
+        {
+            "type": "Area",
+            "data": breadth_data,
+            "options": {
+                "topColor": "rgba(0, 245, 155, 0.2)",
+                "bottomColor": "rgba(0, 245, 155, 0.0)",
+                "lineColor": "#00F59B",
+                "lineWidth": 2,
+                "priceScaleId": "left",
+                "title": "Breadth Score"
+            }
+        },
+        {
+            "type": "Line",
+            "data": ema50_data,
+            "options": {
+                "color": "#38BDF8",
+                "lineWidth": 1,
+                "lineStyle": 2,
+                "priceScaleId": "left",
+                "title": "> EMA 50"
+            }
+        },
+        {
+            "type": "Line",
+            "data": ema200_data,
+            "options": {
+                "color": "#F43F5E",
+                "lineWidth": 1,
+                "lineStyle": 2,
+                "priceScaleId": "left",
+                "title": "> EMA 200"
+            }
+        }
+    ]
     
-    fig.add_hline(y=80, line_dash="dash", line_color="rgba(255,255,255,0.15)", secondary_y=False)
-    fig.add_hline(y=20, line_dash="dash", line_color="rgba(255,255,255,0.15)", secondary_y=False)
-    
-    fig.update_layout(
-        template="plotly_dark", paper_bgcolor="#0e1117", plot_bgcolor="#0e1117",
-        margin=dict(l=10, r=10, t=20, b=20), height=450, hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)"),
-    )
-    
-    fig.update_xaxes(
-        rangeslider_visible=False,
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1, label="1d", step="day", stepmode="backward"),
-                dict(count=7, label="1w", step="day", stepmode="backward"),
-                dict(count=1, label="1m", step="month", stepmode="backward"),
-                dict(count=6, label="6m", step="month", stepmode="backward"),
-                dict(count=1, label="1y", step="year", stepmode="backward"),
-                dict(count=5, label="5y", step="year", stepmode="backward"),
-                dict(count=10, label="10y", step="year", stepmode="backward"),
-                dict(step="all", label="Total")
-            ]),
-            bgcolor="#161b22",
-            activecolor="#2563eb",
-            font=dict(color="#f8fafc", size=11)
-        ),
-        showgrid=True, gridcolor="rgba(255,255,255,0.05)"
-    )
-    
-    fig.update_yaxes(title_text="Amplitud (%)", range=[0, 100], showgrid=True, gridcolor="rgba(255,255,255,0.05)", secondary_y=False)
-    fig.update_yaxes(title_text="BTC Price (USDT)", showgrid=False, secondary_y=True)
-    
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    renderLightweightCharts([{"chart": chartOptions, "series": series}], key="lw_chart")
 else:
     st.info("Registrando primeras muestras para construir el histórico temporal...")
 

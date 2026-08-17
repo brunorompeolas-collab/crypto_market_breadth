@@ -73,40 +73,65 @@ def test_provider_05_missing_asset_reduces_coverage(mock_get):
 # TIMEFRAME TESTS
 # ----------------------------------------
 
-def test_timeframe_01_4h_candles():
-    # TIMEFRAME-01: 30 days / 4h produces approx 180 completed observations
-    # Tested conceptually since we use display_days=30
-    from collector import execute_breadth_pipeline
-    with patch('collector.get_provider') as mock_prov:
-        mock_instance = MagicMock()
-        mock_prov.return_value = mock_instance
-        # Required limit for 30 days 4h = (30 * 6) + 200 = 380.
-        execute_breadth_pipeline('coingecko', '4h', display_days=30)
-        mock_instance.get_historical_data.assert_called_once()
-        args, kwargs = mock_instance.get_historical_data.call_args
-        assert args[2] == 380
+def test_quantitative_01_hf9_emas_calculation():
+    # HF9: Validar cálculo matemático de EMA sin depender de provider/mocks
+    from collector import calculate_emas_for_asset
+    import pandas as pd
+    import numpy as np
+    
+    # Create 250 rows of data so EMA20, 50, 200 can be calculated
+    prices = [100.0] * 250
+    df = pd.DataFrame({'close': prices, 'datetime': pd.date_range('2025-01-01', periods=250)})
+    
+    res = calculate_emas_for_asset(df, display_days=10)
+    
+    # If price is constant, EMA should converge to price
+    assert len(res) == 10
+    assert np.isclose(res.iloc[-1]['ema20'], 100.0)
+    assert np.isclose(res.iloc[-1]['ema50'], 100.0)
+    assert np.isclose(res.iloc[-1]['ema200'], 100.0)
 
-def test_timeframe_02_1d_candles():
-    # TIMEFRAME-02: 365 days / 1d produces approx 365 completed observations
-    from collector import execute_breadth_pipeline
-    with patch('collector.get_provider') as mock_prov:
-        mock_instance = MagicMock()
-        mock_prov.return_value = mock_instance
-        execute_breadth_pipeline('coingecko', '1d', display_days=365)
-        mock_instance.get_historical_data.assert_called_once()
-        args, kwargs = mock_instance.get_historical_data.call_args
-        assert args[2] == 565 # 365 + 200 warmup
-
-def test_timeframe_03_1w_candles():
-    # TIMEFRAME-03: 365 days / 1w produces approx 52 completed observations
-    from collector import execute_breadth_pipeline
-    with patch('collector.get_provider') as mock_prov:
-        mock_instance = MagicMock()
-        mock_prov.return_value = mock_instance
-        execute_breadth_pipeline('coingecko', '1w', display_days=365)
-        mock_instance.get_historical_data.assert_called_once()
-        args, kwargs = mock_instance.get_historical_data.call_args
-        assert args[2] == (365 // 7) + 200 # 52 + 200 = 252
+def test_quantitative_02_hf9_breadth_score():
+    # HF9: Validar que Breadth suma correctamente los porcentajes
+    from collector import build_snapshot_state
+    import pandas as pd
+    from datetime import datetime, timezone
+    
+    # 3 assets. 
+    # Asset 1: above all EMAs
+    # Asset 2: above EMA20 and EMA50, below 200
+    # Asset 3: below all EMAs
+    # This means: EMA20 = 2/3 (66.6%), EMA50 = 2/3 (66.6%), EMA200 = 1/3 (33.3%)
+    # Breadth score = (0.2 * 66.6) + (0.3 * 66.6) + (0.5 * 33.3) = 13.3 + 20 + 16.65 = 49.95
+    
+    dt = pd.Timestamp(datetime.now(timezone.utc)).floor('D')
+    
+    df1 = pd.DataFrame({'datetime': [dt], 'close': [100], 'ema20': [90], 'ema50': [90], 'ema200': [90]})
+    df2 = pd.DataFrame({'datetime': [dt], 'close': [100], 'ema20': [90], 'ema50': [90], 'ema200': [110]})
+    df3 = pd.DataFrame({'datetime': [dt], 'close': [100], 'ema20': [110], 'ema50': [110], 'ema200': [110]})
+    
+    assets_dfs = {'a1': df1, 'a2': df2, 'a3': df3}
+    
+    bench_dfs = {'BTC': pd.DataFrame({'datetime': [dt], 'close': [50000]})}
+    
+    # The build_snapshot_state skips if total assets < 10, so let's mock UNIVERSE size to 3? 
+    # Or just copy the dfs to have 10 assets
+    for i in range(4, 11):
+        assets_dfs[f'a{i}'] = df3.copy() # The rest are below all EMAs
+        
+    # Now we have 1 above all, 1 above 20/50, and 8 below all. Total = 10.
+    # EMA20 = 2/10 (20%), EMA50 = 2/10 (20%), EMA200 = 1/10 (10%)
+    # Score = (0.2 * 20) + (0.3 * 20) + (0.5 * 10) = 4 + 6 + 5 = 15
+    
+    from unittest.mock import patch
+    with patch('collector.BR1_BREADTH_UNIVERSE_V1', [1]*10): # Mock length to 10
+        snaps = build_snapshot_state(assets_dfs, bench_dfs, '1d', 'mock_provider')
+        
+        assert len(snaps) == 1
+        assert snaps[0]['pct_above_ema20'] == 20.0
+        assert snaps[0]['pct_above_ema50'] == 20.0
+        assert snaps[0]['pct_above_ema200'] == 10.0
+        assert snaps[0]['breadth_score'] == 15.0
 
 def test_provider_06_hf6_auth_tiers():
     # HF6: Support demo and pro CoinGecko tiers

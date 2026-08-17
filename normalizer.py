@@ -30,12 +30,17 @@ def resample_provider_prices(prices: List[Dict[str, float]], timeframe: str) -> 
     df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms', utc=True)
     df = df.set_index('datetime')
     
-    # Resampling rule
-    rule = '4h' if timeframe == '4h' else '1d' if timeframe == '1d' else 'W-MON'
-    
-    # For Breadth we only strictly need the closing price of the period
-    # We take the last price in the period bucket as the 'close'
-    resampled = df['price'].resample(rule).last().dropna().reset_index()
+    # HF5: Explicitly anchor to period starts without relying on ambiguous resample defaults
+    if timeframe == '4h':
+        df['datetime'] = df['datetime'].dt.floor('4h')
+    elif timeframe == '1d':
+        df['datetime'] = df['datetime'].dt.floor('D') # usually alias for 1D
+    elif timeframe == '1w':
+        # Monday is weekday=0
+        df['datetime'] = df['datetime'] - pd.to_timedelta(df['datetime'].dt.weekday, unit='D')
+        df['datetime'] = df['datetime'].dt.floor('D')
+        
+    resampled = df.groupby('datetime')['price'].last().dropna().reset_index()
     resampled = resampled.rename(columns={'price': 'close'})
     
     # Filter out the open (incomplete) candle

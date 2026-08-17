@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 from database import get_historical_breadth
 from quantitative import determine_data_status
 from collector import get_crypto_breadth_data, run_backfill
-from normalizer import is_candle_closed
+from normalizer import is_candle_closed, resample_provider_prices
 from providers.coingecko import CoinGeckoProvider
 from datetime import datetime, timezone
 
@@ -107,6 +107,42 @@ def test_timeframe_03_1w_candles():
         mock_instance.get_historical_data.assert_called_once()
         args, kwargs = mock_instance.get_historical_data.call_args
         assert args[2] == (365 // 7) + 200 # 52 + 200 = 252
+
+def test_timeframe_04_hf5_weekly_alignment():
+    # HF5: Weekly canonical boundaries and closures
+    from normalizer import is_candle_closed, resample_provider_prices
+    import pandas as pd
+    from datetime import datetime, timezone
+    from unittest.mock import patch
+    
+    # Mock 'now' inside is_candle_closed
+    with patch('normalizer.datetime') as mock_dt:
+        # Let's say today is Wednesday, Jan 14, 2026 12:00 UTC
+        mock_dt.now.return_value = datetime(2026, 1, 14, 12, 0, tzinfo=timezone.utc)
+        
+        # A candle starting on Monday, Jan 5, 2026 00:00 UTC
+        closed_monday = pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
+        # A candle starting on Monday, Jan 12, 2026 00:00 UTC
+        open_monday = pd.Timestamp('2026-01-12 00:00:00', tz='UTC')
+        
+        assert is_candle_closed(closed_monday, '1w') is True, "Previous week should be closed"
+        assert is_candle_closed(open_monday, '1w') is False, "Current week should be open"
+        
+        # Test resampling boundary
+        prices = [
+            {"timestamp": 1768003200000, "price": 100}, # Jan 10, 2026 (Saturday)
+            {"timestamp": 1768089600000, "price": 110}, # Jan 11, 2026 (Sunday)
+            {"timestamp": 1768176000000, "price": 120}, # Jan 12, 2026 (Monday)
+            {"timestamp": 1768262400000, "price": 130}, # Jan 13, 2026 (Tuesday)
+        ]
+        
+        res = resample_provider_prices(prices, '1w')
+        # Week of Jan 5 (which includes Jan 10 and 11) is closed (by Jan 12).
+        # Week of Jan 12 (which includes Jan 12 and 13) is open (will close Jan 19).
+        # So we should get exactly 1 closed candle, mapped to Jan 5.
+        assert len(res) == 1
+        assert res.iloc[0]['datetime'] == pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
+        assert res.iloc[0]['close'] == 110 # Last price of that week (Jan 11)
 
 # ----------------------------------------
 # BENCHMARK TESTS

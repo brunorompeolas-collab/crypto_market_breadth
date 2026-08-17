@@ -47,10 +47,11 @@ def analyze_market_with_gemini(snapshot: Dict[str, Any], df_assets, benchmark: s
     key_to_use = key_to_use.strip()
     
     tf = snapshot.get("timeframe", "1d")
-    exchange = snapshot.get("exchange", "binance")
+    # HF3: Fetch the last 7 periods to detect divergence using 'provider' instead of 'exchange'
+    provider = snapshot.get('provider', 'coingecko')
     universe = snapshot.get("universe_version", "BR1")
     
-    recent_trend = get_recent_snapshots_trend(timeframe=tf, limit=7, exchange=exchange, universe=universe)
+    recent_trend = get_recent_snapshots_trend(timeframe=tf, limit=7, provider=provider, universe=universe)
     divergence_data = evaluate_divergence(recent_trend, benchmark=benchmark)
     
     summary_payload = {

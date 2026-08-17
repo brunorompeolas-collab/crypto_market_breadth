@@ -246,6 +246,44 @@ def test_error_01_ui_protection():
         assert df is None
         assert snap["status"] == "DATA_UNAVAILABLE"
 
+def test_analyzer_01_hf3_provider_integration():
+    # HF3: Analyzer must read 'provider', not 'exchange', and not throw TypeError in trend lookup
+    from analyzer import analyze_market_with_gemini
+    from database import reset_db, save_breadth_snapshot
+    import pandas as pd
+    
+    reset_db()
+    
+    # 1. Insert 2 valid snapshots for 'coingecko'
+    for i in range(2):
+        save_breadth_snapshot({
+            'candle_time': f'2026-02-0{i+1} 00:00:00', 'collected_at': 'now',
+            'provider': 'coingecko', 'timeframe': '1d', 'universe_version': 'BR1',
+            'breadth_score': 50 + i, 'pct_above_ema20': 50, 'pct_above_ema50': 50, 'pct_above_ema200': 50,
+            'btc_price': 50000, 'eth_price': 3000,
+            'assets_total': 50, 'assets_ema20_valid': 50, 'assets_ema50_valid': 50, 'assets_ema200_valid': 50,
+            'data_status': 'HIGH', 'status': 'SUCCESS'
+        })
+    
+    # 2. Simulate the snapshot object passed from UI
+    current_snap = {
+        'provider': 'coingecko',
+        'timeframe': '1d',
+        'universe_version': 'BR1',
+        'breadth_score': 51
+    }
+    
+    # Mock requests.post to stop Gemini from actually triggering network request, 
+    # but we just want to ensure it gets to the payload building phase without crashing.
+    with patch('requests.post') as mock_post:
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {"candidates": [{"content": {"parts": [{"text": "Mock IA Response"}]}}]}
+        
+        # Will crash here with TypeError if it still calls get_recent_snapshots_trend(..., exchange=...)
+        resp = analyze_market_with_gemini(current_snap, pd.DataFrame(), "BTC", "fake_key")
+        
+    assert "Mock IA Response" in resp
+
 # ----------------------------------------
 # REGRESSION TESTS
 # ----------------------------------------

@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from collector import get_crypto_breadth_data, run_backfill
 from database import init_db, get_historical_breadth
 from analyzer import analyze_market_with_gemini
+from universe import BR1_BREADTH_UNIVERSE_V1
 
 # Configuración de página
 st.set_page_config(
@@ -32,21 +33,8 @@ st.markdown("""
 
 init_db()
 
-with st.sidebar:
-    st.markdown("### ⚙️ Mantenimiento")
-    st.markdown("Este backfill sigue las reglas de **Data Integrity** estrictas.")
-    if st.button("Generar Histórico (300 Velas)", help="Reconstruye Breadth Score sin datos falsos."):
-        with st.spinner("Procesando histórico seguro... (No cierres la pestaña)"):
-            # En la UI actual podemos usar Binance por defecto para el backfill
-            success, msg = run_backfill(ecosystem='binance', timeframe='1d') # Podemos hardcodear 1d o leer del estado
-            if success:
-                st.success(f"¡Backfill completado! {msg} snapshots guardados.")
-                st.cache_data.clear()
-            else:
-                st.error(f"Error en backfill: {msg}")
-
 st.markdown("<h2 style='text-align: center; margin-bottom: 4px;'>⚡ CRYPTO BREADTH TERMINAL v1</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;'>Monitor Cuantitativo & Integridad de Datos</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;'>Monitor Cuantitativo & Integridad de Datos (CoinGecko Canonical Provider)</p>", unsafe_allow_html=True)
 
 metrics_container = st.container()
 gauge_container = st.container()
@@ -54,11 +42,9 @@ gauge_container = st.container()
 st.write("") # spacer
 
 # Selectores principales
-col_eco, col_tf, col_bench, col_btn = st.columns([2, 2, 2, 1])
-with col_eco:
-    ecosystem = st.radio("Fuente de Datos", ["Binance", "KuCoin", "OKX", "Kraken"], horizontal=True)
+col_tf, col_bench, col_btn = st.columns([2, 2, 1])
 with col_tf:
-    timeframe = st.radio("Temporalidad", ["1d", "4h", "1w"], horizontal=True)
+    timeframe = st.radio("Temporalidad", ["4h", "1d", "1w"], index=1, horizontal=True)
 with col_bench:
     benchmark = st.radio("Benchmark", ["BTC", "ETH"], horizontal=True)
 with col_btn:
@@ -66,24 +52,51 @@ with col_btn:
     st.write("")
     refresh = st.button("🔄 Refrescar")
 
+with st.sidebar:
+    st.markdown("### ⚙️ Mantenimiento")
+    st.markdown("Backfill usando el Canonical Provider (CoinGecko).")
+    bf_timeframe = st.radio("Temporalidad Backfill", ["4h", "1d", "1w"], index=1)
+    
+    # HF4: Days mapping based on timeframe
+    if bf_timeframe == "4h":
+        display_days = 30 # 30 days = 180 candles
+        st.caption("30 días (aprox 180 velas 4h)")
+    elif bf_timeframe == "1w":
+        display_days = 365
+        st.caption("1 año (aprox 52 velas semanales)")
+    else:
+        display_days = 365
+        st.caption("1 año (aprox 365 velas diarias)")
+        
+    if st.button("Generar Histórico"):
+        with st.spinner("Procesando histórico seguro vía CoinGecko API... (Esto puede tardar unos minutos debido a Rate Limits)"):
+            success, msg = run_backfill(timeframe=bf_timeframe, display_days=display_days, provider_name='coingecko')
+            if success:
+                st.success(f"¡Backfill completado! {msg}")
+                st.cache_data.clear()
+            else:
+                st.error(f"Error en backfill: {msg}")
+
 if refresh:
     st.cache_data.clear()
 
-with st.spinner("Conectando con exchange y procesando Market Breadth..."):
-    df_assets, snapshot = get_crypto_breadth_data(ecosystem=ecosystem, timeframe=timeframe)
+with st.spinner("Conectando con CoinGecko y procesando Market Breadth..."):
+    df_assets, snapshot = get_crypto_breadth_data(timeframe=timeframe, provider_name='coingecko')
 
-if not snapshot:
-    st.error("🚨 **DATA UNAVAILABLE**\n\nNo se ha podido recuperar la información del exchange. No se utilizan datos simulados en producción.")
+# P0-HF3: Correct DATA_UNAVAILABLE handling
+if not snapshot or snapshot.get('status') != "SUCCESS":
+    reason = snapshot.get("reason", "Unknown Error") if snapshot else "Null Snapshot"
+    st.error(f"🚨 **DATA UNAVAILABLE**\n\nNo se ha podido recuperar la información del proveedor. (Razón: {reason})")
     st.stop()
 
 # Info adicional de calidad
 st.markdown(f"""
 <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
-    <span class="status-badge">📡 Source: <b>{snapshot['exchange'].upper()}</b></span>
+    <span class="status-badge">📡 Provider: <b>{snapshot['provider'].upper()}</b></span>
     <span class="status-badge">📦 Universe: <b>{snapshot['universe_version']}</b></span>
-    <span class="status-badge">✅ Coverage: <b>{snapshot['assets_total']} / 50</b></span>
+    <span class="status-badge">✅ Coverage: <b>{snapshot['assets_total']} / {len(BR1_BREADTH_UNIVERSE_V1)}</b></span>
     <span class="status-badge">🎯 Quality: <b>{snapshot['data_status']}</b></span>
-    <span class="status-badge">🕒 Last Candle: <b>{snapshot['candle_time']}</b></span>
+    <span class="status-badge">🕒 Last Closed Candle: <b>{snapshot['candle_time']}</b></span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -144,12 +157,12 @@ time_window = st.radio(
 )
 
 days_map = {"1d": 1, "1w": 7, "1m": 30, "6m": 180, "1y": 365, "Total": 0}
-df_hist = get_historical_breadth(timeframe=timeframe, days=days_map[time_window], exchange=ecosystem)
+df_hist = get_historical_breadth(timeframe=timeframe, days=days_map[time_window], provider='coingecko')
 
 if df_hist.empty or len(df_hist) == 0:
-    st.warning("No historical observations available. (Prueba a ejecutar el Backfill en el panel lateral)")
+    st.warning("No historical observations available. (Ejecuta el Backfill en el panel lateral)")
 elif len(df_hist) == 1:
-    st.warning("Insufficient historical data: 1 observation available. (Prueba a ejecutar el Backfill)")
+    st.warning("Insufficient historical data: 1 observation available. (Ejecuta el Backfill)")
 else:
     if len(df_hist) < 10:
         st.info(f"Limited historical coverage: {len(df_hist)} observations.")
@@ -276,6 +289,6 @@ if not df_assets.empty:
     df_display['above_ema200'] = df_display['above_ema200'].apply(format_bool_color)
     
     df_display = df_display[['symbol', 'price', 'above_ema20', 'above_ema50', 'above_ema200']]
-    df_display.columns = ['Par', 'Precio ($)', '> EMA 20', '> EMA 50', '> EMA 200']
+    df_display.columns = ['Activo', 'Precio ($)', '> EMA 20', '> EMA 50', '> EMA 200']
     
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)

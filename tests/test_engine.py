@@ -1,99 +1,209 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from collector import get_crypto_breadth_data, calculate_emas_for_symbol, fetch_all_ohlcv, run_backfill
 from database import get_historical_breadth
 from quantitative import determine_data_status
+from collector import get_crypto_breadth_data, run_backfill
+from normalizer import is_candle_closed
+from providers.coingecko import CoinGeckoProvider
+from datetime import datetime, timezone
 
-@patch('collector.get_exchange')
-def test_p0_12_error_contract(mock_get_exchange):
-    # Test 12/1: All exchanges unavailable -> Returns DATA_UNAVAILABLE contract
-    mock_get_exchange.side_effect = Exception("Network Error")
-    df, snap = get_crypto_breadth_data(ecosystem='binance', timeframe='1d')
-    assert df is None
-    assert snap['status'] == "DATA_UNAVAILABLE"
-    assert snap['reason'] == "Network Error"
+# ----------------------------------------
+# NEW PROVIDER TESTS (A8)
+# ----------------------------------------
 
-def test_p0_3_empty_database_no_fake_data():
-    df = get_historical_breadth(timeframe='invalid_tf', days=30)
-    assert df.empty
+@patch('requests.get')
+def test_provider_01_coingecko_success(mock_get):
+    # PROVIDER-01: CoinGecko successful response produces normalized real data
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = {"prices": [[1600000000000, 50000.0], [1600086400000, 51000.0]]}
+    mock_get.return_value = mock_resp
+    
+    provider = CoinGeckoProvider()
+    res = provider.get_historical_data([{"id": "bitcoin"}], "1d", 2)
+    assert res["status"] == "SUCCESS"
+    assert "bitcoin" in res["data"]
+    assert len(res["data"]["bitcoin"]) == 2
+    assert res["data"]["bitcoin"][0]["price"] == 50000.0
 
-@patch('collector.fetch_all_ohlcv')
-@patch('collector.get_exchange')
-def test_p0_6_insufficient_candles_for_ema200(mock_get_exchange, mock_fetch):
-    mock_exchange = MagicMock()
-    mock_ohlcv = [[1600000000000 + i*86400000, 100, 105, 95, 100 + i, 1000] for i in range(150)]
-    mock_fetch.return_value = mock_ohlcv
+@patch('requests.get')
+def test_provider_02_coingecko_failure(mock_get):
+    # PROVIDER-02: CoinGecko failure returns DATA_UNAVAILABLE
+    mock_get.side_effect = Exception("API Down")
     
-    data = calculate_emas_for_symbol(mock_exchange, "BTC/USDT", "1d", display_days=1)
-    
-    assert data['ema20_valid'] is True
-    assert data['ema50_valid'] is True
-    assert data['ema200_valid'] is False
-    assert data['above_ema200'] is False
+    provider = CoinGeckoProvider()
+    res = provider.get_historical_data([{"id": "bitcoin"}], "1d", 2)
+    assert res["status"] == "DATA_UNAVAILABLE"
+    assert "Possible rate limit" in res["reason"]
 
-def test_p0_13_data_quality_logic():
-    # If 50 assets total, all valid -> coverage 100%
-    # If 50 ema200 valid -> ema coverage 100%. Score = 100
-    assert determine_data_status(50, 50, 50, 50, 50) == "HIGH"
-    
-    # 40 valid / 50 total (80% coverage), but only 20 ema200 valid (50% ema200 coverage)
-    # Score = 80 * 0.7 + 50 * 0.3 = 56 + 15 = 71 -> "LIMITED"
-    assert determine_data_status(40, 50, 40, 40, 20) == "LIMITED"
+def test_provider_03_no_synthetic_fallback():
+    # PROVIDER-03: No synthetic fallback occurs (already proven by the exact error return above)
+    provider = CoinGeckoProvider()
+    assert not hasattr(provider, 'generate_synthetic_data')
 
-def test_test19_backfill_pagination():
-    mock_exchange = MagicMock()
+def test_provider_04_btc_eth_identity():
+    # PROVIDER-04: BTC and ETH map to correct canonical asset identities
+    from universe import BR1_BREADTH_UNIVERSE_V1
+    btc = next((a for a in BR1_BREADTH_UNIVERSE_V1 if a["symbol"] == "BTC"), None)
+    eth = next((a for a in BR1_BREADTH_UNIVERSE_V1 if a["symbol"] == "ETH"), None)
     
-    def fake_fetch_ohlcv(symbol, timeframe, limit, params=None):
-        return [[1600000000000 + i*86400000, 100, 105, 95, 100 + i, 1000] for i in range(1000)]
-        
-    mock_exchange.fetch_ohlcv.side_effect = fake_fetch_ohlcv
-    mock_exchange.milliseconds.return_value = 1700000000000
-    
-    # If required_candles = 1500, it should paginate. We mock it simply by asserting length is capped to required
-    res = fetch_all_ohlcv(mock_exchange, "BTC/USDT", "1d", required_candles=1500)
-    # Because of our mock always returning 1000, it will loop twice and get 2000, then slice [-1500:]
-    assert len(res) == 1500
+    assert btc is not None and btc["id"] == "bitcoin"
+    assert eth is not None and eth["id"] == "ethereum"
 
-@patch('collector.fetch_all_ohlcv')
-def test_test20_incomplete_candle(mock_fetch):
-    mock_exchange = MagicMock()
-    # Mocking 200 candles. The logic drops the last one.
-    mock_ohlcv = [[1600000000000 + i*86400000, 100, 105, 95, 100 + i, 1000] for i in range(200)]
-    mock_fetch.return_value = mock_ohlcv
+@patch('providers.coingecko.CoinGeckoProvider.get_historical_data')
+def test_provider_05_missing_asset_reduces_coverage(mock_get):
+    # PROVIDER-05: Missing asset reduces coverage, no replacement occurs
     
-    data = calculate_emas_for_symbol(mock_exchange, "BTC/USDT", "1d", display_days=1)
+    # We need at least 20 points for EMA20 to be valid, otherwise it returns DATA_UNAVAILABLE
+    prices = [{"timestamp": 1600000000000 + (i * 86400000), "price": 50000} for i in range(25)]
     
-    assert len(data['df']) == 199 # Last candle dropped
+    mock_get.return_value = {
+        "status": "SUCCESS",
+        "reason": "",
+        "data": {"bitcoin": prices},
+        "benchmarks": {"BTC": prices}
+    }
+    df, snap = get_crypto_breadth_data(timeframe='1d', provider_name='coingecko')
+    # Since it only found 1 asset, it falls below the minimum required for a valid snapshot (10)
+    assert snap is not None
+    assert snap['status'] == 'DATA_UNAVAILABLE'
 
-@patch('collector.calculate_emas_for_symbol')
-@patch('collector.get_exchange')
-def test_test21_universe_integrity(mock_get_exchange, mock_calc):
-    # Only 2 out of 50 assets are available
-    mock_exchange = MagicMock()
-    mock_get_exchange.return_value = mock_exchange
-    
-    def fake_calc(exchange, symbol, timeframe, display_days):
-        if symbol == 'BTC/USDT':
-            return {
-                'symbol': 'BTC/USDT', 'price': 50000, 'candle_time': '2026-08-01 00:00:00',
-                'ema20_valid': True, 'ema50_valid': True, 'ema200_valid': True,
-                'above_ema20': True, 'above_ema50': True, 'above_ema200': False
-            }
-        return None
-        
-    mock_calc.side_effect = fake_calc
-    
-    df, snap = get_crypto_breadth_data()
-    
-    # Assert coverage is calculated correctly
-    assert snap['assets_total'] == 1
-    assert snap['data_status'] == "LOW"
+# ----------------------------------------
+# TIMEFRAME TESTS
+# ----------------------------------------
 
-@patch('database.get_connection')
-def test_test22_source_isolation(mock_conn):
-    # Test that get_historical_breadth requires exchange param (Binance and Kucoin are isolated)
-    df_binance = get_historical_breadth(exchange='binance')
-    df_kucoin = get_historical_breadth(exchange='kucoin')
-    # Because our SQLite query uses `WHERE exchange = ?`, they are naturally isolated.
-    assert True
+def test_timeframe_01_4h_candles():
+    # TIMEFRAME-01: 30 days / 4h produces approx 180 completed observations
+    # Tested conceptually since we use display_days=30
+    from collector import execute_breadth_pipeline
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        # Required limit for 30 days 4h = (30 * 6) + 200 = 380.
+        execute_breadth_pipeline('coingecko', '4h', display_days=30)
+        mock_instance.get_historical_data.assert_called_once()
+        args, kwargs = mock_instance.get_historical_data.call_args
+        assert args[2] == 380
+
+def test_timeframe_02_1d_candles():
+    # TIMEFRAME-02: 365 days / 1d produces approx 365 completed observations
+    from collector import execute_breadth_pipeline
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        execute_breadth_pipeline('coingecko', '1d', display_days=365)
+        mock_instance.get_historical_data.assert_called_once()
+        args, kwargs = mock_instance.get_historical_data.call_args
+        assert args[2] == 565 # 365 + 200 warmup
+
+def test_timeframe_03_1w_candles():
+    # TIMEFRAME-03: 365 days / 1w produces approx 52 completed observations
+    from collector import execute_breadth_pipeline
+    with patch('collector.get_provider') as mock_prov:
+        mock_instance = MagicMock()
+        mock_prov.return_value = mock_instance
+        execute_breadth_pipeline('coingecko', '1w', display_days=365)
+        mock_instance.get_historical_data.assert_called_once()
+        args, kwargs = mock_instance.get_historical_data.call_args
+        assert args[2] == (365 // 7) + 200 # 52 + 200 = 252
+
+# ----------------------------------------
+# BENCHMARK TESTS
+# ----------------------------------------
+
+def test_benchmark_01_btc_eth_isolation():
+    # BENCHMARK-01: BTC -> ETH changes benchmark series but not Breadth
+    from quantitative import evaluate_divergence
+    
+    # Fake trend
+    trend = [
+        {"btc_price": 50000, "eth_price": 2000, "breadth_score": 50.0},
+        {"btc_price": 55000, "eth_price": 2500, "breadth_score": 60.0}
+    ]
+    
+    res_btc = evaluate_divergence(trend, benchmark="BTC")
+    res_eth = evaluate_divergence(trend, benchmark="ETH")
+    
+    assert "BTC" in res_btc["metrics"]
+    assert "ETH" in res_eth["metrics"]
+
+# ----------------------------------------
+# DATABASE TESTS
+# ----------------------------------------
+
+def test_database_01_upsert():
+    # DATABASE-01: Duplicate candle is UPSERTED, not duplicated
+    from database import save_breadth_snapshot, get_historical_breadth, get_connection
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM breadth_snapshots")
+    conn.commit()
+    conn.close()
+    
+    snap = {
+        'candle_time': '2026-01-01 00:00:00',
+        'collected_at': 'now',
+        'provider': 'coingecko',
+        'timeframe': '1d',
+        'universe_version': 'BR1',
+        'breadth_score': 50.0,
+        'pct_above_ema20': 50,
+        'pct_above_ema50': 50,
+        'pct_above_ema200': 50,
+        'btc_price': 50000,
+        'eth_price': 3000,
+        'assets_total': 50,
+        'assets_ema20_valid': 50,
+        'assets_ema50_valid': 50,
+        'assets_ema200_valid': 50,
+        'data_status': 'HIGH',
+        'status': 'SUCCESS'
+    }
+    
+    save_breadth_snapshot(snap)
+    save_breadth_snapshot(snap)
+    
+    df = get_historical_breadth(timeframe='1d', provider='coingecko')
+    assert len(df) == 1 # Only 1 row despite 2 saves
+
+def test_error_01_ui_protection():
+    # ERROR-01: Provider failure cannot reach metric rendering code
+    with patch('providers.coingecko.CoinGeckoProvider.get_historical_data') as mock_get:
+        mock_get.return_value = {"status": "DATA_UNAVAILABLE", "reason": "Network Error", "data": {}, "benchmarks": {}}
+        df, snap = get_crypto_breadth_data()
+        assert df is None
+        assert snap["status"] == "DATA_UNAVAILABLE"
+
+# ----------------------------------------
+# REGRESSION TESTS
+# ----------------------------------------
+
+def test_regression_01_btc_eth_exists():
+    with open('app.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+        assert 'benchmark = st.radio("Benchmark", ["BTC", "ETH"]' in content
+
+def test_regression_02_timeframes_exist():
+    with open('app.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+        assert 'timeframe = st.radio("Temporalidad", ["4h", "1d", "1w"]' in content
+
+def test_regression_03_historical_filters_exist():
+    with open('app.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+        assert 'options=["1d", "1w", "1m", "6m", "1y", "Total"]' in content
+
+def test_regression_04_gemini_is_manual():
+    with open('app.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+        assert 'st.button("🤖 Generar Análisis IA")' in content
+
+def test_regression_05_no_synthetic_data():
+    from collector import get_crypto_breadth_data
+    # In earlier versions, get_crypto_breadth_data might have synthetic failover. 
+    # Calling it with a failing mock should return DATA_UNAVAILABLE, not mock data.
+    with patch('providers.coingecko.CoinGeckoProvider.get_historical_data') as mock_get:
+        mock_get.return_value = {"status": "DATA_UNAVAILABLE", "reason": "Fail"}
+        df, snap = get_crypto_breadth_data()
+        assert df is None

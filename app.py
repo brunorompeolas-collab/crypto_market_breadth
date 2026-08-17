@@ -146,9 +146,30 @@ if not df_hist.empty:
     
     fig.update_layout(
         template="plotly_dark", paper_bgcolor="#0e1117", plot_bgcolor="#0e1117",
-        margin=dict(l=10, r=10, t=20, b=20), height=400, hovermode="x unified",
+        margin=dict(l=10, r=10, t=20, b=20), height=450, hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor="rgba(0,0,0,0)"),
     )
+    
+    fig.update_xaxes(
+        rangeslider_visible=False,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label="1d", step="day", stepmode="backward"),
+                dict(count=7, label="1w", step="day", stepmode="backward"),
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
+                dict(count=5, label="5y", step="year", stepmode="backward"),
+                dict(count=10, label="10y", step="year", stepmode="backward"),
+                dict(step="all", label="Total")
+            ]),
+            bgcolor="#161b22",
+            activecolor="#2563eb",
+            font=dict(color="#f8fafc", size=11)
+        ),
+        showgrid=True, gridcolor="rgba(255,255,255,0.05)"
+    )
+    
     fig.update_yaxes(title_text="Amplitud (%)", range=[0, 100], showgrid=True, gridcolor="rgba(255,255,255,0.05)", secondary_y=False)
     fig.update_yaxes(title_text="BTC Price (USDT)", showgrid=False, secondary_y=True)
     
@@ -164,6 +185,27 @@ with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
 
 st.markdown("### 📋 Escáner de Activos")
 if not df_assets.empty:
-    st.dataframe(df_assets[['symbol', 'price', 'change_24h', 'above_ema20', 'above_ema50', 'above_ema200']], use_container_width=True, hide_index=True)
+    def style_dataframe(df):
+        def color_change(val):
+            try:
+                numeric_val = float(str(val).replace('%', '').strip())
+                if numeric_val > 0: return 'color: #00F59B'
+                elif numeric_val < 0: return 'color: #FF3366'
+                return 'color: #FACC15'
+            except:
+                return ''
+                
+        def color_bool(val):
+            val_str = str(val).lower().strip()
+            if val == True or val_str in ['true', 'yes', '1', 'sí']: return 'color: #00F59B'
+            if val == False or val_str in ['false', 'no', '0']: return 'color: #FF3366'
+            return ''
+
+        styled = df.style.map(color_change, subset=['change_24h'])
+        styled = styled.map(color_bool, subset=['above_ema20', 'above_ema50', 'above_ema200'])
+        return styled
+        
+    df_to_show = df_assets[['symbol', 'price', 'change_24h', 'above_ema20', 'above_ema50', 'above_ema200']]
+    st.dataframe(style_dataframe(df_to_show), use_container_width=True, hide_index=True)
 else:
     st.warning("No se obtuvieron datos de activos en esta extracción.")

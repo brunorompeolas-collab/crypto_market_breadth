@@ -167,11 +167,14 @@ if not df_hist.empty:
     
     def format_time(ts):
         try:
-            # Forzamos siempre a Timestamp UNIX entero para evitar colisiones
-            # de fechas y strings repetidos, sea cual sea el timeframe
-            return int(ts.timestamp())
+            # Si es gráfico diario, devolvemos formato string YYYY-MM-DD para que TradingView
+            # dibuje correctamente las fechas en el eje X.
+            if timeframe in ["1d", "1w"]:
+                return ts.strftime('%Y-%m-%d')
+            else:
+                return int(ts.timestamp())
         except:
-            return int(pd.Timestamp.now().timestamp())
+            return str(ts)
             
     df_hist['time'] = df_hist['datetime'].apply(format_time)
     

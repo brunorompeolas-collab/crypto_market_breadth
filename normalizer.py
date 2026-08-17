@@ -28,7 +28,6 @@ def resample_provider_prices(prices: List[Dict[str, float]], timeframe: str) -> 
         
     df = pd.DataFrame(prices)
     df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms', utc=True)
-    df = df.set_index('datetime')
     
     # HF5: Explicitly anchor to period starts without relying on ambiguous resample defaults
     if timeframe == '4h':
@@ -40,6 +39,7 @@ def resample_provider_prices(prices: List[Dict[str, float]], timeframe: str) -> 
         df['datetime'] = df['datetime'] - pd.to_timedelta(df['datetime'].dt.weekday, unit='D')
         df['datetime'] = df['datetime'].dt.floor('D')
         
+    df = df.set_index('datetime')
     resampled = df.groupby('datetime')['price'].last().dropna().reset_index()
     resampled = resampled.rename(columns={'price': 'close'})
     

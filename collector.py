@@ -160,3 +160,77 @@ def get_crypto_breadth_data(ecosystem: str = 'Auto', timeframe: str = '1d', limi
             
     # If all fail
     return generate_fallback_market_data(limit=limit, timeframe=timeframe)
+
+def run_backfill(ecosystem: str = 'binance', timeframe: str = '1d', limit: int = 50):
+    """
+    Descarga el histórico de las criptos y reconstruye el Breadth Score retrospectivamente.
+    Guarda directamente en la base de datos local usando save_breadth_snapshot.
+    """
+    logging.info(f"Iniciando BACKFILL de datos históricos con {ecosystem}...")
+    try:
+        exchange = get_exchange(ecosystem)
+        top_pairs = fetch_top_usdt_pairs(exchange, limit=limit)
+        
+        history_map = {}
+        
+        for item in top_pairs:
+            symbol = item['symbol']
+            try:
+                ohlcv = exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=250)
+                if len(ohlcv) < 50:
+                    continue
+                
+                df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+                df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
+                
+                df['ema20'] = df['close'].ewm(span=20, adjust=False).mean()
+                df['ema50'] = df['close'].ewm(span=50, adjust=False).mean()
+                df['ema200'] = df['close'].ewm(span=200, adjust=False).mean() if len(df) >= 200 else df['close'].ewm(span=len(df), adjust=False).mean()
+                
+                for _, row in df.iterrows():
+                    dt_str = row['datetime'].strftime('%Y-%m-%d %H:%M:%S')
+                    price = float(row['close'])
+                    
+                    if dt_str not in history_map:
+                        history_map[dt_str] = {'total': 0, 'above20': 0, 'above50': 0, 'above200': 0, 'btc_price': 0.0}
+                        
+                    history_map[dt_str]['total'] += 1
+                    if price > float(row['ema20']): history_map[dt_str]['above20'] += 1
+                    if price > float(row['ema50']): history_map[dt_str]['above50'] += 1
+                    if price > float(row['ema200']): history_map[dt_str]['above200'] += 1
+                    
+                    if symbol == 'BTC/USDT':
+                        history_map[dt_str]['btc_price'] = price
+            except Exception as e:
+                logging.warning(f"Error backfill {symbol}: {e}")
+                continue
+                
+        saved_count = 0
+        from database import save_breadth_snapshot
+        
+        last_btc = 60000.0
+        
+        for dt_str in sorted(history_map.keys()):
+            data = history_map[dt_str]
+            total = data['total']
+            if total == 0: continue
+            
+            btc_val = data['btc_price']
+            if btc_val > 0:
+                last_btc = btc_val
+            else:
+                btc_val = last_btc
+                
+            pct20 = (data['above20'] / total) * 100
+            pct50 = (data['above50'] / total) * 100
+            pct200 = (data['above200'] / total) * 100
+            breadth_score = (0.20 * pct20) + (0.30 * pct50) + (0.50 * pct200)
+            
+            save_breadth_snapshot(dt_str, breadth_score, pct20, pct50, pct200, btc_val, timeframe)
+            saved_count += 1
+            
+        logging.info(f"Backfill completado. {saved_count} snapshots generados.")
+        return True, saved_count
+    except Exception as e:
+        logging.error(f"Error global en backfill: {e}")
+        return False, str(e)

@@ -33,6 +33,18 @@ st.markdown("""
 
 init_db()
 
+with st.sidebar:
+    st.markdown("### ⚙️ Mantenimiento")
+    if st.button("Generar Histórico (250 Días)", help="Descarga el historial de Binance para reconstruir el Breadth Score de los últimos 250 días. Tardará ~45 segundos."):
+        with st.spinner("Procesando histórico masivo... (No cierres la pestaña)"):
+            from collector import run_backfill
+            success, msg = run_backfill(ecosystem='binance', timeframe='1d', limit=50)
+            if success:
+                st.success(f"¡Backfill completado! Se generaron {msg} snapshots.")
+                st.cache_data.clear()
+            else:
+                st.error(f"Error en backfill: {msg}")
+
 st.markdown("<h2 style='text-align: center; margin-bottom: 4px;'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;'>Monitor de Amplitud de Mercado & Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
 

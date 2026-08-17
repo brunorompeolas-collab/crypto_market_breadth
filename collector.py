@@ -67,14 +67,14 @@ def build_snapshot_state(assets_data: Dict[str, pd.DataFrame], benchmarks_data: 
 
     # Build final snapshots
     snapshots = []
-    last_btc, last_eth = 60000.0, 3000.0
     
     for dt_str in sorted(history_map.keys()):
         hm = history_map[dt_str]
         if hm['assets_total'] < 10: continue
         
-        if hm['btc_price'] > 0: last_btc = hm['btc_price']
-        if hm['eth_price'] > 0: last_eth = hm['eth_price']
+        # P0-C1: Require real benchmark prices, no fabricated fallback.
+        if hm['btc_price'] <= 0 or hm['eth_price'] <= 0:
+            continue
         
         pct20 = (hm['above20'] / hm['ema20_valid'] * 100) if hm['ema20_valid'] > 0 else 0
         pct50 = (hm['above50'] / hm['ema50_valid'] * 100) if hm['ema50_valid'] > 0 else 0
@@ -92,8 +92,8 @@ def build_snapshot_state(assets_data: Dict[str, pd.DataFrame], benchmarks_data: 
             'pct_above_ema20': pct20,
             'pct_above_ema50': pct50,
             'pct_above_ema200': pct200,
-            'btc_price': hm['btc_price'] or last_btc,
-            'eth_price': hm['eth_price'] or last_eth,
+            'btc_price': hm['btc_price'],
+            'eth_price': hm['eth_price'],
             'assets_total': hm['assets_total'],
             'assets_ema20_valid': hm['ema20_valid'],
             'assets_ema50_valid': hm['ema50_valid'],

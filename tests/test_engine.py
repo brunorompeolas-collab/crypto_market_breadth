@@ -133,6 +133,27 @@ def test_quantitative_02_hf9_breadth_score():
         assert snaps[0]['pct_above_ema200'] == 10.0
         assert snaps[0]['breadth_score'] == 15.0
 
+def test_quantitative_03_c1_no_fabricated_benchmarks():
+    # P0-C1: Verify snapshots are skipped if benchmark is missing (no fabricated 60000/3000)
+    from collector import build_snapshot_state
+    import pandas as pd
+    from datetime import datetime, timezone
+    
+    dt = pd.Timestamp(datetime.now(timezone.utc)).floor('D')
+    
+    df = pd.DataFrame({'datetime': [dt], 'close': [100], 'ema20': [90], 'ema50': [90], 'ema200': [90]})
+    assets_dfs = {f'a{i}': df.copy() for i in range(11)} # 11 assets
+    
+    # Missing benchmarks
+    bench_dfs = {}
+    
+    from unittest.mock import patch
+    with patch('collector.BR1_BREADTH_UNIVERSE_V1', [1]*11):
+        snaps = build_snapshot_state(assets_dfs, bench_dfs, '1d', 'mock_provider')
+        
+        # Snapshots should be empty because there is no benchmark
+        assert len(snaps) == 0
+
 def test_provider_06_hf6_auth_tiers():
     # HF6: Support demo and pro CoinGecko tiers
     from providers.coingecko import CoinGeckoProvider

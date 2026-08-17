@@ -112,7 +112,10 @@ def test_quantitative_02_hf9_breadth_score():
     
     assets_dfs = {'a1': df1, 'a2': df2, 'a3': df3}
     
-    bench_dfs = {'BTC': pd.DataFrame({'datetime': [dt], 'close': [50000]})}
+    bench_dfs = {
+        'BTC': pd.DataFrame({'datetime': [dt], 'close': [50000]}),
+        'ETH': pd.DataFrame({'datetime': [dt], 'close': [3000]})
+    }
     
     # The build_snapshot_state skips if total assets < 10, so let's mock UNIVERSE size to 3? 
     # Or just copy the dfs to have 10 assets
@@ -221,10 +224,14 @@ def test_resampling_boundary():
         {"timestamp": 1768262400000, "price": 130}, # Jan 13, 2026 (Tuesday)
     ]
     
-    res = resample_provider_prices(prices, '1w')
-    assert len(res) == 1
-    assert res.iloc[0]['datetime'] == pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
-    assert res.iloc[0]['close'] == 110 # Last price of that week (Jan 11)
+    from unittest.mock import patch
+    from datetime import datetime, timezone
+    with patch('normalizer.datetime') as mock_dt:
+        mock_dt.now.return_value = datetime(2026, 1, 14, 12, 0, tzinfo=timezone.utc)
+        res = resample_provider_prices(prices, '1w')
+        assert len(res) == 1
+        assert res.iloc[0]['datetime'] == pd.Timestamp('2026-01-05 00:00:00', tz='UTC')
+        assert res.iloc[0]['close'] == 110 # Last price of that week (Jan 11)
 
 # ----------------------------------------
 # BENCHMARK TESTS
@@ -256,9 +263,9 @@ import os
 # P0-C2: DB Isolation Fixture
 @pytest.fixture(autouse=True)
 def isolate_db(tmp_path, monkeypatch):
-    test_db = tmp_path / "test_crypto_breadth.db"
-    monkeypatch.setattr('database.DB_PATH', str(test_db))
     import database
+    test_db = tmp_path / "test_crypto_breadth.db"
+    monkeypatch.setattr(database, 'DB_PATH', str(test_db))
     database.init_db()
     yield
     database.reset_db()
@@ -266,12 +273,14 @@ def isolate_db(tmp_path, monkeypatch):
 def test_database_04_c2_isolation(tmp_path, monkeypatch):
     import database
     assert "test_crypto_breadth.db" in database.DB_PATH
-    assert "crypto_breadth.db" not in database.DB_PATH.split(os.sep)[-1]
+    assert "crypto_breadth.db" != database.DB_PATH.split(os.sep)[-1]
     # DATABASE-01: Duplicate candle is UPSERTED, not duplicated
     from database import save_breadth_snapshot, get_historical_breadth, get_connection
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM breadth_snapshots")
+    conn.commit()
+    conn.close()
 
 def test_database_01_upsert():
     # DATABASE-01: Duplicate candle is UPSERTED, not duplicated
@@ -305,7 +314,7 @@ def test_database_01_upsert():
     save_breadth_snapshot(snap)
     save_breadth_snapshot(snap)
     
-    df = get_historical_breadth(timeframe='1d', provider='coingecko')
+    df = get_historical_breadth(timeframe='1d', provider='coingecko', days=0)
     assert len(df) == 1 # Only 1 row despite 2 saves
 
 def test_database_02_hf1_no_drop():
@@ -341,7 +350,7 @@ def test_database_02_hf1_no_drop():
     init_db()
     
     # 4. Verify snapshot exists
-    df = get_historical_breadth(timeframe='1d', provider='coingecko')
+    df = get_historical_breadth(timeframe='1d', provider='coingecko', days=0)
     assert len(df) == 1
 
 def test_database_03_hf2_temporal_window():
@@ -489,7 +498,7 @@ def test_timeframe_01_4h_candles():
         fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
         
         mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
-        mock_bench = {"BTC": fake_prices.copy()}
+        mock_bench = {"BTC": fake_prices.copy(), "ETH": fake_prices.copy()}
         
         mock_instance.get_historical_data.return_value = {
             "status": "SUCCESS",
@@ -513,11 +522,11 @@ def test_timeframe_02_1d_candles():
         mock_instance = MagicMock()
         mock_prov.return_value = mock_instance
         
-        timestamps = pd.date_range(end='2026-08-17', periods=565, freq='1d')
+        timestamps = pd.date_range(end='2026-08-17', periods=565, freq='D')
         fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
         
         mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
-        mock_bench = {"BTC": fake_prices.copy()}
+        mock_bench = {"BTC": fake_prices.copy(), "ETH": fake_prices.copy()}
         
         mock_instance.get_historical_data.return_value = {
             "status": "SUCCESS",
@@ -544,7 +553,7 @@ def test_timeframe_03_1w_candles():
         fake_prices = [{'timestamp': int(ts.timestamp() * 1000), 'price': 100} for ts in timestamps]
         
         mock_data = {f"a{i}": fake_prices.copy() for i in range(11)}
-        mock_bench = {"BTC": fake_prices.copy()}
+        mock_bench = {"BTC": fake_prices.copy(), "ETH": fake_prices.copy()}
         
         mock_instance.get_historical_data.return_value = {
             "status": "SUCCESS",

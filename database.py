@@ -1,10 +1,9 @@
 import sqlite3
 import os
 import logging
-import random
 from datetime import datetime, timedelta
 import pandas as pd
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "breadth_data.db")
 
@@ -17,103 +16,119 @@ def get_connection():
     return conn
 
 def init_db():
-    """Creates daily_breadth table and indices if they do not exist."""
+    """Creates breadth_snapshots table if it does not exist."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS daily_breadth (
+            CREATE TABLE IF NOT EXISTS breadth_snapshots (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp TEXT NOT NULL,
-                timeframe TEXT NOT NULL DEFAULT '1d',
+                candle_time TEXT NOT NULL,
+                collected_at TEXT NOT NULL,
+                exchange TEXT NOT NULL,
+                timeframe TEXT NOT NULL,
+                universe_version TEXT NOT NULL,
+                
                 breadth_score REAL NOT NULL,
                 pct_above_ema20 REAL NOT NULL,
                 pct_above_ema50 REAL NOT NULL,
                 pct_above_ema200 REAL NOT NULL,
+                
                 btc_price REAL NOT NULL,
-                UNIQUE(timestamp, timeframe) ON CONFLICT REPLACE
+                eth_price REAL NOT NULL,
+                
+                assets_total INTEGER NOT NULL,
+                assets_ema20_valid INTEGER NOT NULL,
+                assets_ema50_valid INTEGER NOT NULL,
+                assets_ema200_valid INTEGER NOT NULL,
+                
+                data_status TEXT NOT NULL,
+                
+                UNIQUE(exchange, timeframe, universe_version, candle_time) ON CONFLICT REPLACE
             )
         """)
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_timeframe_ts ON daily_breadth (timeframe, timestamp)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_breadth_query ON breadth_snapshots (exchange, timeframe, universe_version, candle_time)")
         conn.commit()
     logging.info(f"Database initialized at {DB_PATH}")
 
-def save_breadth_snapshot(data: Dict[str, Any], timeframe: str = '1d') -> bool:
+def save_breadth_snapshot(snapshot: Dict[str, Any]) -> bool:
     """
-    Saves a market breadth snapshot to SQLite.
-    Returns True if successfully inserted/updated.
+    Saves a single market breadth snapshot to SQLite using the clean data model.
     """
     try:
         init_db()
-        timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        
-        breadth_score = float(data.get('market_breadth_score', 0.0))
-        pct_ema20 = float(data.get('pct_above_ema20', 0.0))
-        pct_ema50 = float(data.get('pct_above_ema50', 0.0))
-        pct_ema200 = float(data.get('pct_above_ema200', 0.0))
-        btc_price = float(data.get('btc_price', 65000.0))
-        
         with get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT OR REPLACE INTO daily_breadth 
-                (timestamp, timeframe, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (timestamp, timeframe, breadth_score, pct_ema20, pct_ema50, pct_ema200, btc_price))
+                INSERT OR REPLACE INTO breadth_snapshots 
+                (candle_time, collected_at, exchange, timeframe, universe_version, 
+                 breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, 
+                 btc_price, eth_price, assets_total, assets_ema20_valid, 
+                 assets_ema50_valid, assets_ema200_valid, data_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                snapshot.get('candle_time'),
+                snapshot.get('collected_at', datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")),
+                snapshot.get('exchange', 'unknown'),
+                snapshot.get('timeframe', '1d'),
+                snapshot.get('universe_version', 'BR1-BREADTH-UNIVERSE-v1'),
+                snapshot.get('breadth_score', 0.0),
+                snapshot.get('pct_above_ema20', 0.0),
+                snapshot.get('pct_above_ema50', 0.0),
+                snapshot.get('pct_above_ema200', 0.0),
+                snapshot.get('btc_price', 0.0),
+                snapshot.get('eth_price', 0.0),
+                snapshot.get('assets_total', 0),
+                snapshot.get('assets_ema20_valid', 0),
+                snapshot.get('assets_ema50_valid', 0),
+                snapshot.get('assets_ema200_valid', 0),
+                snapshot.get('data_status', 'UNKNOWN')
+            ))
             conn.commit()
-            
-        logging.info(f"Saved breadth snapshot [{timeframe}]: Score={breadth_score}, BTC=${btc_price:,.2f}")
         return True
     except Exception as e:
         logging.error(f"Failed to save breadth snapshot to DB: {e}")
         return False
 
-def get_historical_breadth(timeframe: str = '1d', days: int = 30) -> pd.DataFrame:
+def get_historical_breadth(timeframe: str = '1d', days: int = 365, exchange: str = 'binance', universe: str = 'BR1-BREADTH-UNIVERSE-v1') -> pd.DataFrame:
     """
-    Queries historical breadth metrics for a specific timeframe over the last N days.
-    Returns a pandas DataFrame sorted by timestamp ascending.
+    Queries historical breadth metrics. No synthetic data fallback.
     """
     init_db()
-    seed_mock_history_if_empty()
     
-    cutoff_date = (datetime.utcnow() - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
+    cutoff_date = (datetime.utcnow() - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S") if days > 0 else "1970-01-01 00:00:00"
     
     query = """
-        SELECT timestamp, timeframe, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price
-        FROM daily_breadth
-        WHERE timeframe = ? AND timestamp >= ?
-        ORDER BY timestamp ASC
+        SELECT candle_time as timestamp, timeframe, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price, eth_price
+        FROM breadth_snapshots
+        WHERE timeframe = ? AND exchange = ? AND universe_version = ? AND candle_time >= ?
+        ORDER BY candle_time ASC
     """
     
     try:
         with get_connection() as conn:
-            df = pd.read_sql_query(query, conn, params=(timeframe, cutoff_date))
-            if df.empty:
-                query_all = "SELECT * FROM daily_breadth WHERE timeframe = ? ORDER BY timestamp ASC"
-                df = pd.read_sql_query(query_all, conn, params=(timeframe,))
+            df = pd.read_sql_query(query, conn, params=(timeframe, exchange, universe, cutoff_date))
             return df
     except Exception as e:
         logging.error(f"Error querying historical breadth: {e}")
         return pd.DataFrame()
 
-def get_recent_snapshots_trend(timeframe: str = '1d', limit: int = 7) -> List[Dict[str, Any]]:
+def get_recent_snapshots_trend(timeframe: str = '1d', limit: int = 7, exchange: str = 'binance', universe: str = 'BR1-BREADTH-UNIVERSE-v1') -> List[Dict[str, Any]]:
     """
-    Retrieves the last N snapshots for a given timeframe, returned in ascending chronological order.
-    Useful for trend analysis and divergence detection between BTC price and Market Breadth.
+    Retrieves the last N snapshots in ascending chronological order for trend analysis.
     """
     init_db()
-    seed_mock_history_if_empty()
     
     query = """
-        SELECT timestamp, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price
-        FROM daily_breadth
-        WHERE timeframe = ?
-        ORDER BY timestamp DESC
+        SELECT candle_time as timestamp, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price, eth_price
+        FROM breadth_snapshots
+        WHERE timeframe = ? AND exchange = ? AND universe_version = ?
+        ORDER BY candle_time DESC
         LIMIT ?
     """
     try:
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(query, (timeframe, limit))
+            cursor.execute(query, (timeframe, exchange, universe, limit))
             rows = cursor.fetchall()
             
         results = [dict(row) for row in reversed(rows)]
@@ -122,61 +137,5 @@ def get_recent_snapshots_trend(timeframe: str = '1d', limit: int = 7) -> List[Di
         logging.error(f"Error fetching recent snapshots trend: {e}")
         return []
 
-def seed_mock_history_if_empty():
-    """Populates synthetic historical data for 4h, 1d, and 1w if table is empty."""
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) as count FROM daily_breadth")
-        row = cursor.fetchone()
-        if row and row['count'] > 0:
-            return
-
-    logging.info("Seeding realistic historical market breadth data for testing...")
-    
-    now = datetime.utcnow()
-    timeframes_days = [('1d', 90), ('4h', 30), ('1w', 180)]
-    
-    records = []
-    base_btc = 58000.0
-    
-    for tf, max_days in timeframes_days:
-        step_hours = 24 if tf == '1d' else (4 if tf == '4h' else 168)
-        num_steps = int((max_days * 24) / step_hours)
-        
-        current_btc = base_btc
-        current_score = 55.0
-        
-        for i in range(num_steps, 0, -1):
-            dt = now - timedelta(hours=i * step_hours)
-            ts_str = dt.strftime("%Y-%m-%d %H:%M:%S")
-            
-            price_change_pct = random.uniform(-2.5, 2.8)
-            current_btc = round(max(30000.0, current_btc * (1 + price_change_pct / 100)), 2)
-            
-            score_delta = (price_change_pct * 3.5) + random.uniform(-4.0, 4.0)
-            current_score = round(max(10.0, min(95.0, current_score + score_delta)), 1)
-            
-            ema20 = round(max(5.0, min(100.0, current_score * 1.1 + random.uniform(-5, 5))), 1)
-            ema50 = round(max(5.0, min(100.0, current_score * 1.0 + random.uniform(-4, 4))), 1)
-            ema200 = round(max(5.0, min(100.0, current_score * 0.85 + random.uniform(-3, 3))), 1)
-            
-            records.append((ts_str, tf, current_score, ema20, ema50, ema200, current_btc))
-            
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.executemany("""
-            INSERT OR REPLACE INTO daily_breadth 
-            (timestamp, timeframe, breadth_score, pct_above_ema20, pct_above_ema50, pct_above_ema200, btc_price)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, records)
-        conn.commit()
-        
-    logging.info(f"Seeded {len(records)} historical breadth records into SQLite.")
-
 if __name__ == "__main__":
-    print("Initializing Database...")
     init_db()
-    seed_mock_history_if_empty()
-    df_1d = get_historical_breadth(timeframe='1d', days=30)
-    print(f"Retrieved {len(df_1d)} historical records for 1d timeframe:")
-    print(df_1d.tail(5))

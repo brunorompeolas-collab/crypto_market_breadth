@@ -115,14 +115,43 @@ with gauge_container:
     st.plotly_chart(fig_gauge, use_container_width=True, config={'displayModeBar': False})
 
 st.markdown("### 📈 Histórico de Amplitud vs Precio BTC")
+
+time_window = st.radio(
+    "Filtro temporal:",
+    options=["1d", "1w", "1m", "6m", "1y", "Total"],
+    index=5,
+    horizontal=True,
+    label_visibility="collapsed"
+)
+
 df_hist = get_historical_breadth(timeframe=timeframe)
 
 if not df_hist.empty:
+    import pandas as pd
     from streamlit_lightweight_charts import renderLightweightCharts
+    
+    # Fix zigzag: sort ascending
+    df_hist = df_hist.sort_values('timestamp', ascending=True)
+    
+    # Filter by time_window
+    df_hist['datetime'] = pd.to_datetime(df_hist['timestamp'])
+    if time_window != "Total":
+        last_date = df_hist['datetime'].max()
+        if time_window == "1d":
+            start_date = last_date - pd.Timedelta(days=1)
+        elif time_window == "1w":
+            start_date = last_date - pd.Timedelta(weeks=1)
+        elif time_window == "1m":
+            start_date = last_date - pd.Timedelta(days=30)
+        elif time_window == "6m":
+            start_date = last_date - pd.Timedelta(days=180)
+        elif time_window == "1y":
+            start_date = last_date - pd.Timedelta(days=365)
+        
+        df_hist = df_hist[df_hist['datetime'] >= start_date]
     
     def format_time(ts):
         try:
-            import pandas as pd
             dt = pd.to_datetime(ts)
             if timeframe in ["1d", "1w"]:
                 return dt.strftime('%Y-%m-%d')

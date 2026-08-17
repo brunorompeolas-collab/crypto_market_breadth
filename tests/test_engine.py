@@ -203,6 +203,41 @@ def test_database_02_hf1_no_drop():
     df = get_historical_breadth(timeframe='1d', provider='coingecko')
     assert len(df) == 1
 
+def test_database_03_hf2_temporal_window():
+    # HF2: Window by time, not record limit
+    from database import reset_db, save_breadth_snapshot, get_historical_breadth
+    from datetime import datetime, timezone, timedelta
+    
+    reset_db()
+    
+    now = datetime.now(timezone.utc)
+    # Insert a snapshot every day for the last 60 days
+    for i in range(60):
+        t = now - timedelta(days=i)
+        snap = {
+            'candle_time': t.strftime('%Y-%m-%d %H:%M:%S'),
+            'collected_at': 'now',
+            'provider': 'coingecko',
+            'timeframe': '1d',
+            'universe_version': 'BR1',
+            'breadth_score': 50,
+            'pct_above_ema20': 50, 'pct_above_ema50': 50, 'pct_above_ema200': 50,
+            'btc_price': 50000, 'eth_price': 3000,
+            'assets_total': 50,
+            'assets_ema20_valid': 50, 'assets_ema50_valid': 50, 'assets_ema200_valid': 50,
+            'data_status': 'HIGH',
+            'status': 'SUCCESS'
+        }
+        save_breadth_snapshot(snap)
+        
+    # Check 30 days window -> should return ~30 or 31 rows depending on exact fractional timing
+    df_30 = get_historical_breadth(timeframe='1d', days=30)
+    assert 29 <= len(df_30) <= 31
+    
+    # Check total -> should return all 60
+    df_tot = get_historical_breadth(timeframe='1d', days=0)
+    assert len(df_tot) == 60
+
 def test_error_01_ui_protection():
     # ERROR-01: Provider failure cannot reach metric rendering code
     with patch('providers.coingecko.CoinGeckoProvider.get_historical_data') as mock_get:

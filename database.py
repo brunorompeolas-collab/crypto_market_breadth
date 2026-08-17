@@ -103,18 +103,22 @@ def get_historical_breadth(timeframe: str = '1d', days: int = 30, provider: str 
     """
     Retrieves history for chart rendering.
     If days == 0, fetch ALL history (Total).
+    HF2: `days` represents physical days, not number of snapshots.
     """
     conn = get_connection()
     
     if days > 0:
+        from datetime import datetime, timezone, timedelta
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        cutoff_str = cutoff.strftime('%Y-%m-%d %H:%M:%S')
+        
         query = '''
             SELECT candle_time as timestamp, breadth_score, pct_above_ema50, pct_above_ema200, btc_price, eth_price
             FROM breadth_snapshots
-            WHERE timeframe = ? AND provider = ?
+            WHERE timeframe = ? AND provider = ? AND candle_time >= ?
             ORDER BY candle_time DESC
-            LIMIT ?
         '''
-        df = pd.read_sql_query(query, conn, params=(timeframe, provider, days))
+        df = pd.read_sql_query(query, conn, params=(timeframe, provider, cutoff_str))
     else:
         query = '''
             SELECT candle_time as timestamp, breadth_score, pct_above_ema50, pct_above_ema200, btc_price, eth_price

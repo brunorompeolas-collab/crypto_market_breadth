@@ -6,6 +6,7 @@ import logging
 import requests
 from typing import Dict, Any, Optional
 from database import get_recent_snapshots_trend
+from quantitative import evaluate_divergence
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -33,62 +34,6 @@ def get_best_model(api_key: str) -> str:
     except Exception as e:
         logging.warning(f"Failed to fetch models: {e}")
     return "gemini-1.5-flash"
-
-def evaluate_divergence(recent_trend: list, benchmark: str = 'BTC') -> Dict[str, str]:
-    """
-    P0.11 - Deterministic Divergence Engine.
-    Compares 7-period change in benchmark vs 7-period change in breadth.
-    """
-    if len(recent_trend) < 2:
-        return {
-            "type": "NEUTRAL / INCONCLUSIVE",
-            "desc": "No hay suficientes datos históricos para detectar divergencias.",
-            "metrics": ""
-        }
-        
-    first_snap = recent_trend[0]
-    last_snap = recent_trend[-1]
-    
-    # We want the oldest to the newest. The array from DB is already ascending (oldest first) if we use get_recent_snapshots_trend
-    # Wait, get_recent_snapshots_trend returns ascending chronological order. 
-    # So index 0 is oldest, index -1 is newest.
-    
-    b_key = 'btc_price' if benchmark == 'BTC' else 'eth_price'
-    
-    first_price = first_snap.get(b_key, 0.0)
-    last_price = last_snap.get(b_key, 0.0)
-    first_score = first_snap.get('breadth_score', 0.0)
-    last_score = last_snap.get('breadth_score', 0.0)
-    
-    if first_price == 0.0:
-        return {"type": "NEUTRAL", "desc": "Precio base 0", "metrics": ""}
-        
-    price_change_pct = ((last_price - first_price) / first_price) * 100
-    score_change = last_score - first_score
-    
-    metrics_str = f"{benchmark} 7-period change: {price_change_pct:+.1f}%\nBreadth change: {score_change:+.1f} points"
-    
-    if price_change_pct <= 0.5 and score_change >= 5.0:
-        div_type = "BULLISH BREADTH DIVERGENCE"
-        div_desc = f"El precio de {benchmark} retrocedió o lateralizó, pero la amplitud mejoró. Indica acumulación silenciosa."
-    elif price_change_pct >= 0.5 and score_change <= -5.0:
-        div_type = "BEARISH BREADTH DIVERGENCE"
-        div_desc = f"El precio de {benchmark} subió, pero la amplitud se deterioró. Indica debilidad estructural y falta de liquidez."
-    elif price_change_pct > 2.0 and score_change > 2.0:
-        div_type = "ALIGNED EXPANSION"
-        div_desc = f"El precio y la amplitud crecen orgánicamente juntos."
-    elif price_change_pct < -2.0 and score_change < -2.0:
-        div_type = "ALIGNED DETERIORATION"
-        div_desc = f"El precio y la amplitud caen de la mano, confirmando presión vendedora."
-    else:
-        div_type = "NEUTRAL / INCONCLUSIVE"
-        div_desc = "Precio y amplitud no muestran divergencias extremas significativas."
-        
-    return {
-        "type": div_type,
-        "desc": div_desc,
-        "metrics": metrics_str
-    }
 
 def analyze_market_with_gemini(snapshot: Dict[str, Any], df_assets, benchmark: str, api_key: Optional[str] = None) -> str:
     """

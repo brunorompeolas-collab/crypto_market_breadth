@@ -130,11 +130,14 @@ if not df_hist.empty:
     import pandas as pd
     from streamlit_lightweight_charts import renderLightweightCharts
     
-    # Fix zigzag: sort ascending
-    df_hist = df_hist.sort_values('timestamp', ascending=True)
+    # Asegurar el formato datetime correcto y ordenar cronológicamente de verdad
+    df_hist['datetime'] = pd.to_datetime(df_hist['timestamp'])
+    df_hist = df_hist.sort_values('datetime', ascending=True)
+    
+    # Eliminar posibles valores nulos que rompan el gráfico de TradingView
+    df_hist = df_hist.dropna(subset=['breadth_score', 'pct_above_ema50', 'pct_above_ema200', 'btc_price'])
     
     # Filter by time_window
-    df_hist['datetime'] = pd.to_datetime(df_hist['timestamp'])
     if time_window != "Total":
         last_date = df_hist['datetime'].max()
         if time_window == "1d":
@@ -152,15 +155,14 @@ if not df_hist.empty:
     
     def format_time(ts):
         try:
-            dt = pd.to_datetime(ts)
             if timeframe in ["1d", "1w"]:
-                return dt.strftime('%Y-%m-%d')
+                return ts.strftime('%Y-%m-%d')
             else:
-                return int(dt.timestamp())
+                return int(ts.timestamp())
         except:
-            return ts
+            return str(ts)
             
-    df_hist['time'] = df_hist['timestamp'].apply(format_time)
+    df_hist['time'] = df_hist['datetime'].apply(format_time)
     
     breadth_data = df_hist[['time', 'breadth_score']].rename(columns={'breadth_score': 'value'}).to_dict('records')
     ema50_data = df_hist[['time', 'pct_above_ema50']].rename(columns={'pct_above_ema50': 'value'}).to_dict('records')
@@ -251,6 +253,12 @@ with st.expander("Ver Análisis Táctico & Divergencias", expanded=True):
     with st.spinner("Generando informe con Gemini..."):
         ai_report = analyze_market_with_gemini(breadth_score, ema20_pct, ema50_pct, ema200_pct, df_assets)
         st.markdown(ai_report)
+        st.download_button(
+            label="Descargar Análisis (TXT)",
+            data=ai_report,
+            file_name="diagnostico_gemini.txt",
+            mime="text/plain"
+        )
 
 st.markdown("### 📋 Escáner de Activos")
 if not df_assets.empty:

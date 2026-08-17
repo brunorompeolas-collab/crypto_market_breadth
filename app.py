@@ -167,14 +167,16 @@ if not df_hist.empty:
     
     def format_time(ts):
         try:
-            if timeframe in ["1d", "1w"]:
-                return ts.strftime('%Y-%m-%d')
-            else:
-                return int(ts.timestamp())
+            # Forzamos siempre a Timestamp UNIX entero para evitar colisiones
+            # de fechas y strings repetidos, sea cual sea el timeframe
+            return int(ts.timestamp())
         except:
-            return str(ts)
+            return int(pd.Timestamp.now().timestamp())
             
     df_hist['time'] = df_hist['datetime'].apply(format_time)
+    
+    # MUY IMPORTANTE: Lightweight charts crashea/zigzaguea si hay 2 timestamps idénticos
+    df_hist = df_hist.drop_duplicates(subset=['time'], keep='last')
     
     breadth_data = df_hist[['time', 'breadth_score']].rename(columns={'breadth_score': 'value'}).to_dict('records')
     ema50_data = df_hist[['time', 'pct_above_ema50']].rename(columns={'pct_above_ema50': 'value'}).to_dict('records')

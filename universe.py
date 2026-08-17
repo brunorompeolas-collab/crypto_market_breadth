@@ -6,7 +6,6 @@ Version: BR1-BREADTH-UNIVERSE-v1
 BR1_BREADTH_UNIVERSE_V1 = [
     {"id": "bitcoin", "symbol": "BTC", "name": "Bitcoin"},
     {"id": "ethereum", "symbol": "ETH", "name": "Ethereum"},
-    {"id": "tether", "symbol": "USDT", "name": "Tether"}, # WAIT! "excluding stablecoins"
     {"id": "binancecoin", "symbol": "BNB", "name": "BNB"},
     {"id": "solana", "symbol": "SOL", "name": "Solana"},
     {"id": "ripple", "symbol": "XRP", "name": "XRP"},

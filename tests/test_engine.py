@@ -284,6 +284,18 @@ def test_analyzer_01_hf3_provider_integration():
         
     assert "Mock IA Response" in resp
 
+def test_universe_01_hf4_exact_contract():
+    # HF4: BR1_BREADTH_UNIVERSE_V1 must be exactly 50 and contain NO stablecoins
+    from universe import BR1_BREADTH_UNIVERSE_V1
+    
+    assert len(BR1_BREADTH_UNIVERSE_V1) == 50, f"Universe must be exactly 50, found {len(BR1_BREADTH_UNIVERSE_V1)}"
+    
+    stablecoins = ["tether", "usd-coin", "dai", "true-usd", "first-digital-usd", "usdd"]
+    symbols = [a["id"] for a in BR1_BREADTH_UNIVERSE_V1]
+    
+    for stable in stablecoins:
+        assert stable not in symbols, f"Stablecoin {stable} not allowed in Universe v1"
+
 # ----------------------------------------
 # REGRESSION TESTS
 # ----------------------------------------

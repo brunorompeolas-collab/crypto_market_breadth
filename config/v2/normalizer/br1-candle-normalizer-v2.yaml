@@ -1,0 +1,13 @@
+{
+  "version": "BR1-CANDLE-NORMALIZER-v2",
+  "status": "FROZEN",
+  "timezone": "UTC",
+  "snapshot_timestamp": "EXCLUSIVE_CANDLE_CLOSE_TIME",
+  "timeframes": {
+    "4h": {"duration_seconds": 14400, "utc_open_hours": [0, 4, 8, 12, 16, 20], "collection_grace_seconds": 600},
+    "1d": {"duration_seconds": 86400, "utc_open_hour": 0, "collection_grace_seconds": 900},
+    "1w": {"duration_seconds": 604800, "utc_open_weekday": 0, "utc_open_hour": 0, "collection_grace_seconds": 1500, "derived_from": "SEVEN_CANONICAL_1D_CANDLES"}
+  },
+  "completed_candle": ["EXACT_UTC_BOUNDARIES", "CLOSE_TIME_NOT_AFTER_AS_OF", "PROVIDER_COMPLETE", "VALID_OHLC"],
+  "weekly": {"native_provider_weekly_allowed": false, "daily_candles_required": 7, "missing_daily_result": "UNAVAILABLE"}
+}

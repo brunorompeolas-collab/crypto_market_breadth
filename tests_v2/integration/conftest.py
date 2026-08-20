@@ -237,6 +237,7 @@ def candle_values(*, payload_hash: str = "1" * 64, candle_id=None):
         "asset_id": ASSET_ID,
         "mapping_id": MAPPING_ID,
         "source_version_id": SOURCE_VERSION_ID,
+        "source_id": "kraken-spot-usd",
         "normalizer_version": "normalizer-v2",
         "timeframe": "4h",
         "open_time": UTC_NOW,

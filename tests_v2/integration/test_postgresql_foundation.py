@@ -15,8 +15,10 @@ from src.crypto_breadth_v2.storage.models import (
     Asset,
     BreadthSnapshot,
     CanonicalCandleRecord,
+    DataSource,
     ScannerStateRecord,
     SnapshotMember,
+    SourceVersion,
 )
 from src.crypto_breadth_v2.storage.repositories import (
     AdvisoryLockRepository,
@@ -198,6 +200,39 @@ def test_canonical_candle_idempotency_and_conflict(seeded_database):
 def test_mapping_asset_foreign_key_integrity(seeded_database):
     values = candle_values()
     values["asset_id"] = OTHER_ASSET_ID
+    with pytest.raises(IntegrityError):
+        with seeded_database.begin() as connection:
+            connection.execute(CanonicalCandleRecord.__table__.insert().values(**values))
+
+
+def test_candle_mapping_and_source_version_must_share_source(seeded_database):
+    other_source_version = uuid4()
+    with seeded_database.begin() as connection:
+        connection.execute(
+            DataSource.__table__.insert().values(
+                source_id="other-spot-usd",
+                provider="other",
+                venue="other",
+                market_type="SPOT",
+                api_base_url="https://example.invalid/other",
+                terms_url="https://example.invalid/other/terms",
+                terms_review_status="ACCEPTED",
+                active=True,
+            )
+        )
+        connection.execute(
+            SourceVersion.__table__.insert().values(
+                source_version_id=other_source_version,
+                source_id="other-spot-usd",
+                adapter_version="other-v1",
+                api_contract_date=UTC_NOW,
+                api_schema_hash="7" * 64,
+                archive_release="NONE",
+                effective_from=UTC_NOW,
+            )
+        )
+    values = candle_values()
+    values["source_version_id"] = other_source_version
     with pytest.raises(IntegrityError):
         with seeded_database.begin() as connection:
             connection.execute(CanonicalCandleRecord.__table__.insert().values(**values))

@@ -125,6 +125,7 @@ def upgrade() -> None:
     sa.Column('effective_from', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['source_id'], ['breadth_v2.data_sources.source_id'], name=op.f('fk_source_versions_source_id_data_sources')),
     sa.PrimaryKeyConstraint('source_version_id', name=op.f('pk_source_versions')),
+    sa.UniqueConstraint('source_version_id', 'source_id', name='uq_source_version_source'),
     sa.UniqueConstraint('source_id', 'adapter_version', 'api_schema_hash', 'archive_release', name=op.f('uq_source_versions_source_id')),
     schema='breadth_v2'
     )
@@ -168,6 +169,8 @@ def upgrade() -> None:
     sa.CheckConstraint("timeframe IS NULL OR timeframe IN ('4h','1d','1w')", name=op.f('ck_ingestion_runs_timeframe')),
     sa.CheckConstraint('attempt > 0', name=op.f('ck_ingestion_runs_attempt')),
     sa.CheckConstraint('expected_count >= 0 AND received_count >= 0 AND valid_count >= 0 AND quarantined_count >= 0', name=op.f('ck_ingestion_runs_counts')),
+    sa.CheckConstraint('valid_count + quarantined_count <= received_count', name=op.f('ck_ingestion_runs_classified_count')),
+    sa.CheckConstraint("(status IN ('PENDING','RUNNING') AND finished_at IS NULL) OR (status IN ('SUCCEEDED','FAILED') AND finished_at IS NOT NULL)", name=op.f('ck_ingestion_runs_finished_status')),
     sa.CheckConstraint('target_end IS NULL OR target_start IS NULL OR target_end >= target_start', name=op.f('ck_ingestion_runs_target_range')),
     sa.ForeignKeyConstraint(['series_version'], ['breadth_v2.series_definitions.series_version'], name=op.f('fk_ingestion_runs_series_version_series_definitions')),
     sa.ForeignKeyConstraint(['source_id'], ['breadth_v2.data_sources.source_id'], name=op.f('fk_ingestion_runs_source_id_data_sources')),
@@ -251,6 +254,7 @@ def upgrade() -> None:
     sa.Column('asset_id', sa.UUID(), nullable=False),
     sa.Column('mapping_id', sa.UUID(), nullable=False),
     sa.Column('source_version_id', sa.UUID(), nullable=False),
+    sa.Column('source_id', sa.String(length=64), nullable=False),
     sa.Column('normalizer_version', sa.String(length=100), nullable=False),
     sa.Column('timeframe', sa.String(length=4), nullable=False),
     sa.Column('open_time', sa.DateTime(timezone=True), nullable=False),
@@ -277,9 +281,9 @@ def upgrade() -> None:
     sa.CheckConstraint('quote_volume IS NULL OR quote_volume >= 0', name=op.f('ck_canonical_candles_quote_volume')),
     sa.CheckConstraint('trade_count IS NULL OR trade_count >= 0', name=op.f('ck_canonical_candles_trade_count')),
     sa.ForeignKeyConstraint(['asset_id'], ['breadth_v2.assets.asset_id'], name=op.f('fk_canonical_candles_asset_id_assets')),
-    sa.ForeignKeyConstraint(['mapping_id', 'asset_id'], ['breadth_v2.provider_mappings.mapping_id', 'breadth_v2.provider_mappings.asset_id'], name=op.f('fk_canonical_candles_mapping_id_provider_mappings')),
+    sa.ForeignKeyConstraint(['mapping_id', 'asset_id', 'source_id'], ['breadth_v2.provider_mappings.mapping_id', 'breadth_v2.provider_mappings.asset_id', 'breadth_v2.provider_mappings.source_id'], name=op.f('fk_canonical_candles_mapping_id_provider_mappings')),
     sa.ForeignKeyConstraint(['run_id'], ['breadth_v2.ingestion_runs.run_id'], name=op.f('fk_canonical_candles_run_id_ingestion_runs')),
-    sa.ForeignKeyConstraint(['source_version_id'], ['breadth_v2.source_versions.source_version_id'], name=op.f('fk_canonical_candles_source_version_id_source_versions')),
+    sa.ForeignKeyConstraint(['source_version_id', 'source_id'], ['breadth_v2.source_versions.source_version_id', 'breadth_v2.source_versions.source_id'], name=op.f('fk_canonical_candles_source_version_id_source_versions')),
     sa.PrimaryKeyConstraint('candle_id', name=op.f('pk_canonical_candles')),
     sa.UniqueConstraint('mapping_id', 'timeframe', 'open_time', 'normalizer_version', name=op.f('uq_canonical_candles_mapping_id')),
     schema='breadth_v2'

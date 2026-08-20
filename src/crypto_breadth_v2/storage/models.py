@@ -82,6 +82,9 @@ class SourceVersion(Base):
     __tablename__ = "source_versions"
     __table_args__ = (
         UniqueConstraint("source_id", "adapter_version", "api_schema_hash", "archive_release"),
+        UniqueConstraint(
+            "source_version_id", "source_id", name="uq_source_version_source"
+        ),
     )
 
     source_version_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
@@ -228,6 +231,14 @@ class IngestionRun(Base):
         CheckConstraint("target_end IS NULL OR target_start IS NULL OR target_end >= target_start", name="target_range"),
         CheckConstraint("attempt > 0", name="attempt"),
         CheckConstraint("expected_count >= 0 AND received_count >= 0 AND valid_count >= 0 AND quarantined_count >= 0", name="counts"),
+        CheckConstraint(
+            "valid_count + quarantined_count <= received_count", name="classified_count"
+        ),
+        CheckConstraint(
+            "(status IN ('PENDING','RUNNING') AND finished_at IS NULL) OR "
+            "(status IN ('SUCCEEDED','FAILED') AND finished_at IS NOT NULL)",
+            name="finished_status",
+        ),
     )
 
     run_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
@@ -275,8 +286,19 @@ class CanonicalCandleRecord(Base):
     __table_args__ = (
         UniqueConstraint("mapping_id", "timeframe", "open_time", "normalizer_version"),
         ForeignKeyConstraint(
-            ["mapping_id", "asset_id"],
-            [f"{SCHEMA}.provider_mappings.mapping_id", f"{SCHEMA}.provider_mappings.asset_id"],
+            ["mapping_id", "asset_id", "source_id"],
+            [
+                f"{SCHEMA}.provider_mappings.mapping_id",
+                f"{SCHEMA}.provider_mappings.asset_id",
+                f"{SCHEMA}.provider_mappings.source_id",
+            ],
+        ),
+        ForeignKeyConstraint(
+            ["source_version_id", "source_id"],
+            [
+                f"{SCHEMA}.source_versions.source_version_id",
+                f"{SCHEMA}.source_versions.source_id",
+            ],
         ),
         CheckConstraint("timeframe IN ('4h','1d','1w')", name="timeframe"),
         CheckConstraint("status IN ('VALID','QUARANTINED')", name="status"),
@@ -298,7 +320,8 @@ class CanonicalCandleRecord(Base):
     candle_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
     asset_id: Mapped[UUID] = mapped_column(ForeignKey(f"{SCHEMA}.assets.asset_id"), nullable=False)
     mapping_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
-    source_version_id: Mapped[UUID] = mapped_column(ForeignKey(f"{SCHEMA}.source_versions.source_version_id"), nullable=False)
+    source_version_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    source_id: Mapped[str] = mapped_column(String(64), nullable=False)
     normalizer_version: Mapped[str] = mapped_column(String(100), nullable=False)
     timeframe: Mapped[str] = mapped_column(String(4), nullable=False)
     open_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

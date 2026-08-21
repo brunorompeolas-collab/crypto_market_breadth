@@ -13,14 +13,33 @@ class ContractError(ValueError):
     """Raised when a frozen v2 contract is malformed or inconsistent."""
 
 
-CONTRACT_PATHS = {
-    "universe": "universe/br1-breadth-universe-v1.yaml",
-    "source_policy": "sources/br1-source-policy-v1.yaml",
-    "methodology": "methodology/br1-methodology-v2.yaml",
-    "formula": "formula/br1-breadth-formula-v1.yaml",
-    "normalizer": "normalizer/br1-candle-normalizer-v2.yaml",
-    "series": "series/br1-live-v2-candidate.yaml",
+CONTRACT_BUNDLES = {
+    "v1": {
+        "manifest": "contracts-manifest.yaml",
+        "paths": {
+            "universe": "universe/br1-breadth-universe-v1.yaml",
+            "source_policy": "sources/br1-source-policy-v1.yaml",
+            "methodology": "methodology/br1-methodology-v2.yaml",
+            "formula": "formula/br1-breadth-formula-v1.yaml",
+            "normalizer": "normalizer/br1-candle-normalizer-v2.yaml",
+            "series": "series/br1-live-v2-candidate.yaml",
+        },
+    },
+    "v2-40": {
+        "manifest": "contracts-manifest-v2-40.yaml",
+        "paths": {
+            "universe": "universe/br1-breadth-universe-v2-40.yaml",
+            "source_policy": "sources/br1-source-policy-v2-gate-only.yaml",
+            "methodology": "methodology/br1-methodology-v2.yaml",
+            "formula": "formula/br1-breadth-formula-v1.yaml",
+            "normalizer": "normalizer/br1-candle-normalizer-v2.yaml",
+            "series": "series/br1-live-v2-40-candidate.yaml",
+        },
+    },
 }
+
+# Backward-compatible alias for the accepted v1 audit/reference bundle.
+CONTRACT_PATHS = CONTRACT_BUNDLES["v1"]["paths"]
 
 
 def canonical_json(document: Any) -> bytes:
@@ -52,6 +71,7 @@ def _load_json_yaml(path: Path) -> dict[str, Any]:
 
 @dataclass(frozen=True)
 class ContractBundle:
+    bundle_name: str
     root: Path
     definitions: Mapping[str, Mapping[str, Any]]
     hashes: Mapping[str, str]
@@ -63,22 +83,16 @@ class ContractBundle:
 def validate_contracts(definitions: Mapping[str, Mapping[str, Any]]) -> None:
     universe = definitions["universe"]
     members = universe.get("members", [])
-    if universe.get("expected_size") != 50 or len(members) != 50:
-        raise ContractError("BR1 universe must contain exactly 50 members")
+    expected_size = universe.get("expected_size")
+    if expected_size not in {40, 50} or len(members) != expected_size:
+        raise ContractError("BR1 universe size does not match its frozen contract")
 
     ids = [member.get("id") for member in members]
     symbols = [member.get("symbol") for member in members]
-    if None in ids or len(set(ids)) != 50:
+    if None in ids or len(set(ids)) != expected_size:
         raise ContractError("Universe member IDs must be present and unique")
-    if None in symbols or len(set(symbols)) != 50:
+    if None in symbols or len(set(symbols)) != expected_size:
         raise ContractError("Universe symbols must be present and unique")
-
-    sky = next((member for member in members if member.get("symbol") == "SKY"), None)
-    if not sky or sky.get("display_name") != "SKY (formerly MKR)":
-        raise ContractError("SKY must preserve the Founder-approved MKR display identity")
-    legacy = sky.get("legacy_identities", [])
-    if not any(item.get("symbol") == "MKR" for item in legacy):
-        raise ContractError("SKY must retain MKR predecessor metadata")
 
     source_policy = definitions["source_policy"]
     mappings = source_policy.get("mappings", {})
@@ -86,14 +100,45 @@ def validate_contracts(definitions: Mapping[str, Mapping[str, Any]]) -> None:
         raise ContractError("Source policy must map every universe symbol exactly once")
     if source_policy.get("automatic_fallback") is not False:
         raise ContractError("Automatic provider fallback must remain disabled")
-    kraken_symbols = {
-        symbol for symbol, mapping in mappings.items()
-        if mapping.get("source") == "kraken_spot"
-    }
-    if kraken_symbols != {"TON", "XMR"}:
-        raise ContractError("Only TON and XMR may use the deterministic Kraken mapping")
-    if mappings["SKY"].get("predecessor_history_stitching") is not False:
-        raise ContractError("MKR history stitching into canonical SKY is forbidden")
+    if universe.get("version") == "BR1-BREADTH-UNIVERSE-v1":
+        sky = next((member for member in members if member.get("symbol") == "SKY"), None)
+        if not sky or sky.get("display_name") != "SKY (formerly MKR)":
+            raise ContractError("SKY must preserve the Founder-approved MKR display identity")
+        legacy = sky.get("legacy_identities", [])
+        if not any(item.get("symbol") == "MKR" for item in legacy):
+            raise ContractError("SKY must retain MKR predecessor metadata")
+        kraken_symbols = {
+            symbol for symbol, mapping in mappings.items()
+            if mapping.get("source") == "kraken_spot"
+        }
+        if kraken_symbols != {"TON", "XMR"}:
+            raise ContractError("Only TON and XMR may use the v1 Kraken mapping")
+        if mappings["SKY"].get("predecessor_history_stitching") is not False:
+            raise ContractError("MKR history stitching into canonical SKY is forbidden")
+    elif universe.get("version") == "BR1-BREADTH-UNIVERSE-v2-40":
+        if expected_size != 40:
+            raise ContractError("BR1 v2-40 universe must contain exactly 40 members")
+        if "ZEC" not in symbols or "XMR" in symbols:
+            raise ContractError("BR1 v2-40 requires ZEC and excludes XMR")
+        gram = next((member for member in members if member.get("symbol") == "GRAM"), None)
+        if not gram or gram.get("id") != "the-open-network":
+            raise ContractError("GRAM must use the-open-network canonical identity")
+        if gram.get("display_name") != "GRAM (formerly TON)":
+            raise ContractError("GRAM display identity is not frozen")
+        legacy = gram.get("legacy_identities", [])
+        if not any(
+            item.get("symbol") == "TON" and item.get("relationship") == "OFFICIAL_RENAME"
+            for item in legacy
+        ):
+            raise ContractError("GRAM must retain TON official-rename metadata")
+        if set(source_policy.get("sources", {})) != {"gate_spot"}:
+            raise ContractError("BR1 v2-40 must define Gate as its only source")
+        if any(mapping.get("source") != "gate_spot" for mapping in mappings.values()):
+            raise ContractError("Every BR1 v2-40 mapping must use Gate")
+        if mappings["GRAM"].get("instrument") != "GRAM_USDT":
+            raise ContractError("GRAM must map explicitly to GRAM_USDT")
+    else:
+        raise ContractError("Unknown BR1 universe version")
 
     formula = definitions["formula"]
     weights = [
@@ -144,20 +189,29 @@ def validate_contracts(definitions: Mapping[str, Mapping[str, Any]]) -> None:
         raise ContractError("Candidate LIVE inception must remain unset until cutover")
 
 
-def load_contract_bundle(root: Path, *, verify_manifest: bool = True) -> ContractBundle:
+def load_contract_bundle(
+    root: Path, *, bundle: str = "v1", verify_manifest: bool = True
+) -> ContractBundle:
     root = Path(root)
+    try:
+        bundle_config = CONTRACT_BUNDLES[bundle]
+    except KeyError as exc:
+        raise ContractError(f"Unknown contract bundle: {bundle}") from exc
+    paths = bundle_config["paths"]
     definitions = {
         name: _load_json_yaml(root / relative_path)
-        for name, relative_path in CONTRACT_PATHS.items()
+        for name, relative_path in paths.items()
     }
     validate_contracts(definitions)
     hashes = {name: contract_hash(document) for name, document in definitions.items()}
 
     if verify_manifest:
-        manifest = _load_json_yaml(root / "contracts-manifest.yaml")
+        manifest = _load_json_yaml(root / bundle_config["manifest"])
         if manifest.get("hash_algorithm") != "SHA-256":
             raise ContractError("Manifest hash algorithm must be SHA-256")
         if manifest.get("definitions") != hashes:
             raise ContractError("Frozen contract hash manifest does not match definitions")
 
-    return ContractBundle(root=root, definitions=definitions, hashes=hashes)
+    return ContractBundle(
+        bundle_name=bundle, root=root, definitions=definitions, hashes=hashes
+    )

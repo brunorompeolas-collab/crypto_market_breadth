@@ -104,6 +104,28 @@ class GateRetryPolicy:
             raise ValueError("default_retry_seconds must be non-negative")
 
 
+@dataclass
+class GateRequestStats:
+    """Mutable request counters used only for auditable bootstrap evidence."""
+
+    http_calls: int = 0
+    retries: int = 0
+    rate_limits: int = 0
+    server_errors: int = 0
+    timeouts: int = 0
+    client_errors: int = 0
+
+    def snapshot(self) -> dict[str, int]:
+        return {
+            "http_calls": self.http_calls,
+            "retries": self.retries,
+            "rate_limits": self.rate_limits,
+            "server_errors": self.server_errors,
+            "timeouts": self.timeouts,
+            "client_errors": self.client_errors,
+        }
+
+
 class GateTransport(Protocol):
     def get(self, url: str, *, params: Mapping[str, Any], timeout: float) -> GateHttpResponse: ...
 
@@ -194,6 +216,7 @@ class GateClient:
         timeout_seconds: float = 10.0,
         sleep: Callable[[float], None] = default_sleep,
         base_url: str = GATE_BASE_URL,
+        stats: GateRequestStats | None = None,
     ) -> None:
         self._mappings = dict(mappings)
         self._transport = transport or UrllibGateTransport()
@@ -201,22 +224,27 @@ class GateClient:
         self._timeout = timeout_seconds
         self._sleep = sleep
         self._base_url = base_url.rstrip("/")
+        self.stats = stats or GateRequestStats()
 
     def _request_json(self, path: str, params: Mapping[str, Any]) -> Any:
         last_timeout: BaseException | None = None
         for attempt in range(1, self._retry_policy.max_attempts + 1):
             try:
+                self.stats.http_calls += 1
                 response = self._transport.get(
                     f"{self._base_url}{path}", params=params, timeout=self._timeout
                 )
             except (TimeoutError, socket.timeout, URLError) as exc:
+                self.stats.timeouts += 1
                 last_timeout = exc
                 if attempt == self._retry_policy.max_attempts:
                     raise GateTimeoutError("Gate request timed out after retries") from exc
+                self.stats.retries += 1
                 self._sleep(self._retry_policy.default_retry_seconds)
                 continue
 
             if response.status == 429:
+                self.stats.rate_limits += 1
                 raw_retry_after = next(
                     (
                         value
@@ -231,6 +259,7 @@ class GateClient:
                     retry_after = None
                 if attempt == self._retry_policy.max_attempts:
                     raise GateRateLimitError(retry_after)
+                self.stats.retries += 1
                 self._sleep(
                     retry_after
                     if retry_after is not None
@@ -239,13 +268,20 @@ class GateClient:
                 continue
 
             if 500 <= response.status <= 599:
+                self.stats.server_errors += 1
                 if attempt == self._retry_policy.max_attempts:
                     raise GateServerError(f"Gate returned HTTP {response.status} after retries")
+                self.stats.retries += 1
                 self._sleep(self._retry_policy.default_retry_seconds)
                 continue
             if response.status >= 400:
+                self.stats.client_errors += 1
+                try:
+                    detail = response.body.decode("utf-8")[:500]
+                except UnicodeDecodeError:
+                    detail = "<non-UTF-8 body>"
                 raise GateInstrumentUnavailableError(
-                    f"Gate returned HTTP {response.status} for {path}"
+                    f"Gate returned HTTP {response.status} for {path}: {detail}"
                 )
             try:
                 return json.loads(response.body.decode("utf-8"))
@@ -359,11 +395,29 @@ class GateClient:
             raise GateInstrumentUnavailableError(
                 f"Gate returned no candles for frozen instrument {mapping.instrument}"
             )
+        payload_for_parse = payload
+        if to_time is not None:
+            # Gate treats ``to`` as inclusive. The canonical range contract is
+            # [from, to), so remove the boundary row before completion checks;
+            # it may be the provider's still-forming candle.
+            payload_for_parse = []
+            for row in payload:
+                try:
+                    row_open = datetime.fromtimestamp(int(row[0]), tz=UTC)
+                except (IndexError, TypeError, ValueError):
+                    payload_for_parse.append(row)
+                    continue
+                if row_open < to_time:
+                    payload_for_parse.append(row)
+        if not payload_for_parse:
+            raise GateInstrumentUnavailableError(
+                f"Gate returned no candles in the requested closed range for {mapping.instrument}"
+            )
         parsed = tuple(
             self._parse_row(
                 row, mapping=mapping, timeframe=timeframe, as_of=as_of
             )
-            for row in payload
+            for row in payload_for_parse
         )
         return tuple(sorted(parsed, key=lambda item: item.candle.open_time))
 
@@ -375,22 +429,32 @@ class GateClient:
         start: datetime,
         end: datetime,
         as_of: datetime,
+        allow_empty_pages: bool = False,
     ) -> tuple[GateCandleEnvelope, ...]:
         timeframe = Timeframe(timeframe)
         if end <= start:
             raise ValueError("Gate range end must be after start")
-        page_span = duration(timeframe) * GATE_MAX_CANDLES
+        # Gate treats both ``from`` and ``to`` as inclusive. A span of 1000
+        # intervals therefore requests 1001 rows and is rejected with 400;
+        # leave one interval of headroom and keep the canonical [from,to)
+        # filtering below deterministic.
+        page_span = duration(timeframe) * (GATE_MAX_CANDLES - 1)
         cursor = start
         by_open: dict[datetime, GateCandleEnvelope] = {}
         while cursor < end:
             page_end = min(end, cursor + page_span)
-            rows = self.fetch_candles(
-                symbol,
-                timeframe=timeframe,
-                as_of=as_of,
-                from_time=cursor,
-                to_time=page_end,
-            )
+            try:
+                rows = self.fetch_candles(
+                    symbol,
+                    timeframe=timeframe,
+                    as_of=as_of,
+                    from_time=cursor,
+                    to_time=page_end,
+                )
+            except GateInstrumentUnavailableError:
+                if not allow_empty_pages:
+                    raise
+                rows = ()
             for row in rows:
                 if not start <= row.candle.open_time < end:
                     continue

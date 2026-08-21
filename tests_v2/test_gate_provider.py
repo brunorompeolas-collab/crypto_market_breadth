@@ -19,6 +19,7 @@ from crypto_breadth_v2.providers.gate import (
     GateMappingError,
     GateRateLimitError,
     GateRetryPolicy,
+    GateRequestStats,
     GateSchemaError,
     GateServerError,
     GateTimeoutError,
@@ -233,7 +234,7 @@ def test_timeout_and_5xx_retry_then_fail(mappings):
 
 def test_range_pagination_is_bounded_and_deduplicated(mappings):
     start = datetime(2024, 1, 1, tzinfo=UTC)
-    second_open = start + timedelta(hours=4 * GATE_MAX_CANDLES)
+    second_open = start + timedelta(hours=4 * (GATE_MAX_CANDLES - 1))
 
     def row(open_time, close):
         return [
@@ -248,7 +249,7 @@ def test_range_pagination_is_bounded_and_deduplicated(mappings):
         ]
 
     transport = QueueTransport(response([row(start, "11")]), response([row(second_open, "12")]))
-    end = start + timedelta(hours=4 * (GATE_MAX_CANDLES + 1))
+    end = start + timedelta(hours=4 * GATE_MAX_CANDLES)
     rows = GateClient(mappings, transport=transport).fetch_range(
         "BTC",
         timeframe=Timeframe.FOUR_HOUR,
@@ -260,6 +261,25 @@ def test_range_pagination_is_bounded_and_deduplicated(mappings):
     assert len(transport.calls) == 2
     assert transport.calls[0][1]["from"] == int(start.timestamp())
     assert transport.calls[1][1]["from"] == int(second_open.timestamp())
+
+
+def test_range_can_explicitly_skip_empty_prelisting_pages_and_records_calls(mappings):
+    start = datetime(2024, 1, 1, tzinfo=UTC)
+    second_open = start + timedelta(hours=4 * (GATE_MAX_CANDLES - 1))
+    row = [str(int(second_open.timestamp())), "10", "11", "20", "1", "10", "1", "true"]
+    stats = GateRequestStats()
+    transport = QueueTransport(response([]), response([row]))
+    client = GateClient(mappings, transport=transport, stats=stats)
+    rows = client.fetch_range(
+        "BTC",
+        timeframe=Timeframe.FOUR_HOUR,
+        start=start,
+        end=second_open + timedelta(hours=4),
+        as_of=second_open + timedelta(hours=8),
+        allow_empty_pages=True,
+    )
+    assert len(rows) == 1
+    assert stats.http_calls == 2
 
 
 def test_catalogue_fixture_covers_exact_40_and_detects_delisting(mappings):

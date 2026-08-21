@@ -3,6 +3,7 @@
 from .database import create_postgres_engine, transaction
 from .repositories import (
     AdvisoryLockRepository,
+    AssetIndicatorRepository,
     CanonicalCandleConflictError,
     CanonicalCandleRepository,
     IngestionRunRepository,
@@ -12,6 +13,7 @@ from .repositories import (
 
 __all__ = [
     "AdvisoryLockRepository",
+    "AssetIndicatorRepository",
     "CanonicalCandleConflictError",
     "CanonicalCandleRepository",
     "IngestionRunRepository",

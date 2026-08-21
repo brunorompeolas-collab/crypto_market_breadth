@@ -189,7 +189,10 @@ class SeriesDefinition(Base):
     __table_args__ = (
         CheckConstraint("series_kind IN ('LIVE','RESEARCH')", name="series_kind"),
         CheckConstraint("status IN ('CANDIDATE','ACTIVE','RETIRED')", name="status"),
-        CheckConstraint("series_kind <> 'LIVE' OR inception_at IS NOT NULL", name="live_requires_inception"),
+        CheckConstraint(
+            "series_kind <> 'LIVE' OR status <> 'ACTIVE' OR inception_at IS NOT NULL",
+            name="live_requires_inception",
+        ),
     )
 
     series_version: Mapped[str] = mapped_column(String(120), primary_key=True)

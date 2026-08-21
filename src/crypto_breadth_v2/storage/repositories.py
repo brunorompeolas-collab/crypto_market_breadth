@@ -13,6 +13,7 @@ from .database import transaction
 from .models import (
     BreadthSnapshot,
     CanonicalCandleRecord,
+    AssetIndicator,
     IngestionError,
     IngestionRun,
     ScannerStateRecord,
@@ -89,6 +90,20 @@ class IngestionRunRepository:
         return connection.execute(
             insert(IngestionError).values(**values).returning(IngestionError.error_id)
         ).scalar_one()
+
+
+class AssetIndicatorRepository:
+    _key_columns = ("series_version", "asset_id", "timeframe", "candle_time")
+
+    def put(self, connection: Connection, values: Mapping[str, Any]) -> bool:
+        """Insert an immutable indicator once; return whether it was inserted."""
+        statement = (
+            insert(AssetIndicator)
+            .values(**values)
+            .on_conflict_do_nothing(index_elements=list(self._key_columns))
+            .returning(AssetIndicator.candle_time)
+        )
+        return connection.execute(statement).scalar_one_or_none() is not None
 
 
 class SnapshotRepository:

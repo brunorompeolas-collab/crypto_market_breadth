@@ -9,6 +9,7 @@ from hashlib import sha256
 import json
 import socket
 from time import sleep as default_sleep
+import random
 from typing import Any, Callable, Mapping, Protocol, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -96,12 +97,27 @@ class GateHttpResponse:
 class GateRetryPolicy:
     max_attempts: int = 3
     default_retry_seconds: float = 1.0
+    max_retry_seconds: float = 30.0
 
     def __post_init__(self) -> None:
         if self.max_attempts < 1:
             raise ValueError("max_attempts must be positive")
         if self.default_retry_seconds < 0:
             raise ValueError("default_retry_seconds must be non-negative")
+        if self.max_retry_seconds < self.default_retry_seconds:
+            raise ValueError("max_retry_seconds must be >= default_retry_seconds")
+
+    def delay(self, attempt: int, *, random_value: float | None = None) -> float:
+        """Full-jitter bounded exponential delay for retryable failures.
+
+        ``random_value`` is injectable for deterministic tests. Retry-After is
+        handled separately because it is an explicit server directive.
+        """
+        if attempt < 1:
+            raise ValueError("attempt must be positive")
+        cap = min(self.max_retry_seconds, self.default_retry_seconds * (2 ** (attempt - 1)))
+        value = random.random() if random_value is None else random_value
+        return max(0.0, min(1.0, value)) * cap
 
 
 @dataclass
@@ -240,7 +256,7 @@ class GateClient:
                 if attempt == self._retry_policy.max_attempts:
                     raise GateTimeoutError("Gate request timed out after retries") from exc
                 self.stats.retries += 1
-                self._sleep(self._retry_policy.default_retry_seconds)
+                self._sleep(self._retry_policy.delay(attempt))
                 continue
 
             if response.status == 429:
@@ -263,7 +279,7 @@ class GateClient:
                 self._sleep(
                     retry_after
                     if retry_after is not None
-                    else self._retry_policy.default_retry_seconds
+                    else self._retry_policy.delay(attempt)
                 )
                 continue
 
@@ -272,7 +288,7 @@ class GateClient:
                 if attempt == self._retry_policy.max_attempts:
                     raise GateServerError(f"Gate returned HTTP {response.status} after retries")
                 self.stats.retries += 1
-                self._sleep(self._retry_policy.default_retry_seconds)
+                self._sleep(self._retry_policy.delay(attempt))
                 continue
             if response.status >= 400:
                 self.stats.client_errors += 1

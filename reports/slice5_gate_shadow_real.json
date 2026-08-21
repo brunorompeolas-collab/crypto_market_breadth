@@ -1,0 +1,27 @@
+{
+  "boundary": "2026-08-21T12:00:00+00:00",
+  "duration_seconds": 51.67038003399989,
+  "errors": [],
+  "fetched": 40,
+  "gap_recovered": false,
+  "inserted": 40,
+  "last_known_good_snapshot_id": null,
+  "missing_before": 0,
+  "publication_status": "REJECTED",
+  "quarantined": 0,
+  "rejection_reason": "bitcoin,ethereum,binancecoin,solana,ripple,dogecoin,the-open-network,cardano,shiba-inu,avalanche-2,tron,polkadot,bitcoin-cash,chainlink,near,litecoin,internet-computer,fetch-ai,stellar,aptos,blockstack,uniswap,ethereum-classic,render-token,injective-protocol,filecoin,cosmos,immutable-x,vechain,optimism,the-graph,bittensor,sui,aave,algorand,lido-dao,hyperliquid,zcash,hedera-hashgraph,ondo-finance",
+  "replayed": 0,
+  "request_stats": {
+    "client_errors": 0,
+    "http_calls": 40,
+    "rate_limits": 0,
+    "retries": 0,
+    "server_errors": 0,
+    "timeouts": 0
+  },
+  "run_id": "ae8cc6b1-4254-4a95-aa31-5d467f883498",
+  "snapshot_id": "5f554803-90c5-4a95-bd1d-bf212477c930",
+  "status": "SUCCEEDED",
+  "target_open": "2026-08-21T08:00:00+00:00",
+  "timeframe": "4h"
+}

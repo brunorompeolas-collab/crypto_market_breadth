@@ -1,0 +1,12 @@
+{
+  "activated_at": "2026-08-21T17:59:59.195836+00:00",
+  "scheduler_mechanism": "WSL2 system cron",
+  "code_sha": "d27895a",
+  "cycles": [],
+  "database_target": "127.0.0.1/breadth_v2_test",
+  "host": "DESKTOP-3GL7UTP",
+  "inception_at": null,
+  "scheduler_id": "breadth-v2-candidate-shadow-wsl",
+  "series_status": "CANDIDATE",
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE"
+}

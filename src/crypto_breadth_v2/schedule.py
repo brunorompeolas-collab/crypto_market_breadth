@@ -77,7 +77,9 @@ class CandidateShadowScheduler:
 
     def __init__(self, database_url: str, *, contracts_root: Path, report_path: Path,
                  scheduler_id: str, code_sha: str, sleep_seconds: float = 30.0,
-                 now: Callable[[], datetime] | None = None) -> None:
+                 now: Callable[[], datetime] | None = None,
+                 forced_timeframe: Timeframe | None = None,
+                 force_recovery: bool = False) -> None:
         self.database_url = database_url
         self.contracts_root = contracts_root
         self.report_path = report_path
@@ -85,6 +87,8 @@ class CandidateShadowScheduler:
         self.code_sha = code_sha
         self.sleep_seconds = sleep_seconds
         self.now = now or (lambda: datetime.now(UTC))
+        self.forced_timeframe = Timeframe(forced_timeframe) if forced_timeframe else None
+        self.force_recovery = force_recovery
         self.engine = create_postgres_engine(database_url)
         self.bundle: ContractBundle = load_contract_bundle(contracts_root, bundle="v2-40")
         self._completed_slots: set[str] = set()
@@ -190,10 +194,11 @@ class CandidateShadowScheduler:
     def run_due(self, now: datetime | None = None) -> list[dict[str, Any]]:
         now = (now or self.now()).astimezone(UTC)
         completed: list[dict[str, Any]] = []
-        for timeframe in (Timeframe.FOUR_HOUR, Timeframe.DAILY, Timeframe.WEEKLY):
+        timeframes = (self.forced_timeframe,) if self.forced_timeframe else (Timeframe.FOUR_HOUR, Timeframe.DAILY, Timeframe.WEEKLY)
+        for timeframe in timeframes:
             scheduled_at = scheduled_at_for(now, timeframe)
             slot_key = f"{timeframe.value}:{expected_latest_close(now, timeframe).isoformat()}"
-            if self._activation_skip_pending and scheduled_at < self._activated_at:
+            if self._activation_skip_pending and not self.forced_timeframe and scheduled_at < self._activated_at:
                 self._completed_slots.add(slot_key)
                 continue
             if scheduled_at <= now and slot_key not in self._completed_slots:
@@ -201,7 +206,7 @@ class CandidateShadowScheduler:
                 completed.append(self.run_cycle(timeframe, scheduled_at))
         hourly = now.replace(minute=0, second=0, microsecond=0)
         recovery_key = f"recovery:{hourly.isoformat()}"
-        if self._activation_skip_pending and hourly < self._activated_at:
+        if self._activation_skip_pending and not self.force_recovery and hourly < self._activated_at:
             self._completed_slots.add(recovery_key)
         elif recovery_key not in self._completed_slots:
             self._completed_slots.add(recovery_key)
@@ -230,8 +235,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--code-sha", default=os.environ.get("BREADTH_V2_CODE_SHA", "unknown"))
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--once", action="store_true", help="evaluate due slots once and exit")
+    parser.add_argument("--timeframe", choices=[item.value for item in Timeframe], help="cron slot to evaluate")
+    parser.add_argument("--recovery", action="store_true", help="evaluate the hourly missing-candle recovery slot")
     args = parser.parse_args(argv)
-    scheduler = CandidateShadowScheduler(args.database_url, contracts_root=Path(args.contracts_root), report_path=Path(args.report_path), scheduler_id=args.scheduler_id, code_sha=args.code_sha, sleep_seconds=args.poll_seconds)
+    scheduler = CandidateShadowScheduler(args.database_url, contracts_root=Path(args.contracts_root), report_path=Path(args.report_path), scheduler_id=args.scheduler_id, code_sha=args.code_sha, sleep_seconds=args.poll_seconds, forced_timeframe=Timeframe(args.timeframe) if args.timeframe else None, force_recovery=args.recovery)
     if args.once:
         scheduler.run_due()
     else:

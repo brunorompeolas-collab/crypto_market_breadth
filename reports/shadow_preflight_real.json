@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-08-21T17:47:04.713149Z",
+  "host": "DESKTOP-3GL7UTP",
+  "runtime_timezone": "UTC",
+  "gate_endpoint": "https://api.gateio.ws/api/v4/spot/currency_pairs",
+  "gate_http_status": 200,
+  "postgresql_target": "127.0.0.1/breadth_v2_test",
+  "postgresql_reachable": true,
+  "writer_credentials_valid": true,
+  "candidate_series": {
+    "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+    "status": "CANDIDATE",
+    "inception_at": null
+  },
+  "bootstrap": {
+    "success": true,
+    "http_calls": 160,
+    "retries": 0,
+    "failures": 0,
+    "four_hour": "40/40",
+    "daily": "40/40",
+    "weekly": "35/40",
+    "report": "reports/slice6_1_bootstrap_real.json"
+  },
+  "no_live_activation": true,
+  "no_provider_fallback": true
+}

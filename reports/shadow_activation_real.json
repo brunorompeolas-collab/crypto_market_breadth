@@ -1,0 +1,17 @@
+{
+  "scheduler_activation_timestamp": "2026-08-21T17:59:59.195836Z",
+  "first_successful_scheduled_run_timestamp": null,
+  "expected_first_scheduled_cycle": "2026-08-21T20:10:00Z",
+  "expected_earliest_completion": "2026-09-04T17:59:59.195836Z",
+  "environment": "WSL2 system cron daemon",
+  "host": "DESKTOP-3GL7UTP",
+  "database_target": "127.0.0.1/breadth_v2_test",
+  "runtime_timezone": "UTC",
+  "scheduler_unit": "crontab (nova)",
+  "scheduler_id": "breadth-v2-candidate-shadow-wsl",
+  "code_sha": "d27895a",
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+  "series_status": "CANDIDATE",
+  "inception_at": null,
+  "note": "Operational window is not backdated to the Slice 6 readiness marker or transient systemd probe. First successful scheduled cycle is pending at the next approved UTC slot."
+}

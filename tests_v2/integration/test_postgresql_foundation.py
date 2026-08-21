@@ -42,6 +42,8 @@ from .conftest import (
 
 EXPECTED_TABLES = {
     "assets",
+    "canonical_candle_repairs",
+    "recompute_outputs",
     "asset_indicators",
     "breadth_snapshots",
     "canonical_candles",

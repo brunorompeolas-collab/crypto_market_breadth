@@ -1,0 +1,86 @@
+{
+  "as_of": "2026-08-21T13:22:25.377598+00:00",
+  "reports": [
+    {
+      "boundary": "2026-08-21T12:00:00+00:00",
+      "duration_seconds": 166.92754594899998,
+      "errors": [],
+      "fetched": 40,
+      "gap_recovered": false,
+      "inserted": 0,
+      "last_known_good_snapshot_id": null,
+      "missing_before": 0,
+      "publication_status": "PUBLISHED",
+      "quarantined": 0,
+      "rejection_reason": null,
+      "replayed": 40,
+      "request_stats": {
+        "client_errors": 0,
+        "http_calls": 40,
+        "rate_limits": 0,
+        "retries": 0,
+        "server_errors": 0,
+        "timeouts": 0
+      },
+      "run_id": "17717af2-e8c5-40b9-a03f-7ccb4c4e8d1d",
+      "snapshot_id": "301eadcc-ec3d-40d0-9319-4015f7d4da03",
+      "status": "SUCCEEDED",
+      "target_open": "2026-08-21T08:00:00+00:00",
+      "timeframe": "4h"
+    },
+    {
+      "boundary": "2026-08-21T00:00:00+00:00",
+      "duration_seconds": 229.30853433799984,
+      "errors": [],
+      "fetched": 40,
+      "gap_recovered": false,
+      "inserted": 0,
+      "last_known_good_snapshot_id": null,
+      "missing_before": 0,
+      "publication_status": "PUBLISHED",
+      "quarantined": 0,
+      "rejection_reason": null,
+      "replayed": 40,
+      "request_stats": {
+        "client_errors": 0,
+        "http_calls": 40,
+        "rate_limits": 0,
+        "retries": 0,
+        "server_errors": 0,
+        "timeouts": 0
+      },
+      "run_id": "acbb9d7a-b0dc-4791-858b-9cb83c6098d7",
+      "snapshot_id": "7c35d012-8953-425c-9d11-02b609e0c5f2",
+      "status": "SUCCEEDED",
+      "target_open": "2026-08-20T00:00:00+00:00",
+      "timeframe": "1d"
+    },
+    {
+      "boundary": "2026-08-17T00:00:00+00:00",
+      "duration_seconds": 67.81760723900015,
+      "errors": [],
+      "fetched": 0,
+      "gap_recovered": false,
+      "inserted": 0,
+      "last_known_good_snapshot_id": null,
+      "missing_before": 0,
+      "publication_status": "PUBLISHED",
+      "quarantined": 0,
+      "rejection_reason": null,
+      "replayed": 0,
+      "request_stats": {
+        "client_errors": 0,
+        "http_calls": 0,
+        "rate_limits": 0,
+        "retries": 0,
+        "server_errors": 0,
+        "timeouts": 0
+      },
+      "run_id": "70ca2404-5ec6-48b2-b1d2-b3e8990d2fd4",
+      "snapshot_id": "44ec63fd-458e-44fd-adbc-ee12e77d6476",
+      "status": "SUCCEEDED",
+      "target_open": "2026-08-10T00:00:00+00:00",
+      "timeframe": "1w"
+    }
+  ]
+}

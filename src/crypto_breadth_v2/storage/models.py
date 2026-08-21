@@ -365,6 +365,46 @@ class IngestionError(Base):
     resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
 
 
+class CanonicalCandleRepair(Base):
+    """Explicit, auditable replacement of a quarantined canonical candle."""
+
+    __tablename__ = "canonical_candle_repairs"
+    __table_args__ = (
+        UniqueConstraint("run_id", "candle_id"),
+    )
+
+    repair_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    run_id: Mapped[UUID] = mapped_column(ForeignKey(f"{SCHEMA}.ingestion_runs.run_id"), nullable=False)
+    candle_id: Mapped[UUID] = mapped_column(ForeignKey(f"{SCHEMA}.canonical_candles.candle_id"), nullable=False)
+    previous_payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    replacement_payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    original_values: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    replacement_values: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    repaired_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class RecomputeOutput(Base):
+    """Versioned analytical output produced by an explicit RECOMPUTE run."""
+
+    __tablename__ = "recompute_outputs"
+    __table_args__ = (
+        UniqueConstraint("run_id", "output_type", "asset_id", "timeframe", "candle_time"),
+        CheckConstraint("output_type IN ('INDICATOR','SNAPSHOT')", name="output_type"),
+    )
+
+    output_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    run_id: Mapped[UUID] = mapped_column(ForeignKey(f"{SCHEMA}.ingestion_runs.run_id"), nullable=False)
+    output_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    series_version: Mapped[str] = mapped_column(ForeignKey(f"{SCHEMA}.series_definitions.series_version"), nullable=False)
+    asset_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey(f"{SCHEMA}.assets.asset_id"))
+    timeframe: Mapped[str] = mapped_column(String(4), nullable=False)
+    candle_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    base_snapshot_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey(f"{SCHEMA}.breadth_snapshots.snapshot_id"))
+    payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
 class AssetIndicator(Base):
     __tablename__ = "asset_indicators"
     __table_args__ = (

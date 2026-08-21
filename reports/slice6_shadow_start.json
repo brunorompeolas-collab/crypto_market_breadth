@@ -1,0 +1,10 @@
+{
+  "shadow_mode": "manual_operational_candidate",
+  "shadow_start": "2026-08-21T13:22:25.377598Z",
+  "earliest_14_day_completion": "2026-09-04T13:22:25.377598Z",
+  "window_status": "IN_PROGRESS",
+  "production_scheduler_activated": false,
+  "live_activation": false,
+  "evidence_report": "reports/slice6_shadow_cycle_real.json",
+  "note": "Timestamp anchors the first completed real shadow cycle; the required 14-day observation window is not yet complete."
+}

@@ -1,0 +1,18 @@
+{
+  "focused_tests": "5 passed",
+  "tested": [
+    "4h UTC trigger hours 00:10, 04:10, 08:10, 12:10, 16:10, 20:10",
+    "daily UTC trigger 00:15",
+    "weekly Monday UTC trigger 00:25",
+    "hourly recovery trigger",
+    "Europe/Madrid CET/CEST conversion against UTC Python calculations",
+    "systemd-analyze explicit UTC calendar expressions"
+  ],
+  "systemd_dst_resolution": {
+    "summer": "02:10 CEST = 00:10 UTC",
+    "winter": "01:10 CET = 00:10 UTC"
+  },
+  "existing_report_cycle_count": 10,
+  "duplicate_slot_keys": 0,
+  "candidate_history_rewritten": false
+}

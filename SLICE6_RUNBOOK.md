@@ -56,3 +56,9 @@ records are kept in `reports/shadow_activation_real.json` and
 The prior Vixie/Debian cron configuration is retained only as historical
 evidence in `breadth-v2-shadow.crontab` and
 `reports/scheduler_hotfix_previous_crontab.txt`; it is no longer installed.
+
+Recovery grace is enforced in scheduler runtime: a boundary becomes eligible
+only after its normal delay plus a deterministic one-minute tolerance. Thus
+4h/daily/weekly grace ends at +11/+16/+26 minutes respectively, while older
+gaps remain immediately recoverable. The hourly recovery timer itself is
+unchanged.

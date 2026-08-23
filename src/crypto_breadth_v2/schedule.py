@@ -43,6 +43,7 @@ class ShadowSchedule:
 
 
 SCHEDULE = ShadowSchedule()
+RECOVERY_EXECUTION_TOLERANCE = timedelta(minutes=1)
 
 
 def _floor_hour(value: datetime, hour_step: int) -> datetime:
@@ -62,6 +63,33 @@ def scheduled_at_for(now: datetime, timeframe: Timeframe) -> datetime:
         return now.replace(hour=0, minute=0, second=0, microsecond=0) + SCHEDULE.daily_delay
     monday = now - timedelta(days=now.weekday())
     return monday.replace(hour=0, minute=0, second=0, microsecond=0) + SCHEDULE.weekly_delay
+
+
+def normal_delay_for(timeframe: Timeframe) -> timedelta:
+    """Return the approved post-close delay for a normal ingestion job."""
+    timeframe = Timeframe(timeframe)
+    if timeframe is Timeframe.FOUR_HOUR:
+        return SCHEDULE.four_hour_delay
+    if timeframe is Timeframe.DAILY:
+        return SCHEDULE.daily_delay
+    return SCHEDULE.weekly_delay
+
+
+def recovery_eligible_at(now: datetime, boundary: datetime, timeframe: Timeframe) -> bool:
+    """Whether recovery may claim ``boundary`` after normal-ingestion grace.
+
+    The one-minute tolerance is deterministic and applies after the approved
+    normal delay. Consequently an hourly recovery tick exactly at a newly
+    closed boundary cannot pre-empt its normal job, while genuinely older gaps
+    remain immediately eligible.
+    """
+    if now.tzinfo is None or now.utcoffset() != timedelta(0):
+        raise ValueError("scheduler clock must be timezone-aware UTC")
+    if boundary.tzinfo is None or boundary.utcoffset() != timedelta(0):
+        raise ValueError("boundary must be timezone-aware UTC")
+    timeframe = Timeframe(timeframe)
+    eligible_at = boundary.astimezone(UTC) + normal_delay_for(timeframe) + RECOVERY_EXECUTION_TOLERANCE
+    return now.astimezone(UTC) >= eligible_at
 
 
 def _json_value(value: Any) -> Any:
@@ -126,6 +154,8 @@ class CandidateShadowScheduler:
         temporary.replace(self.report_path)
 
     def _missing_expected_candle(self, timeframe: Timeframe, boundary: datetime) -> bool:
+        if not recovery_eligible_at(self.now().astimezone(UTC), boundary, timeframe):
+            return False
         if timeframe is Timeframe.WEEKLY:
             return False
         target_open = boundary - duration(timeframe)

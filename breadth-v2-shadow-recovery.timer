@@ -1,0 +1,11 @@
+[Unit]
+Description=BR1 candidate shadow hourly recovery schedule
+
+[Timer]
+OnCalendar=*-*-* *:00:00 UTC
+Persistent=true
+AccuracySec=1s
+Unit=breadth-v2-shadow-recovery.service
+
+[Install]
+WantedBy=timers.target

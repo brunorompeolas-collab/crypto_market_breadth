@@ -1,0 +1,12 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+CRON_TZ=UTC
+
+10 0,4,8,12,16,20 * * * ... crypto_breadth_v2.schedule --once --timeframe 4h
+15 0 * * * ... crypto_breadth_v2.schedule --once --timeframe 1d
+25 0 * * 1 ... crypto_breadth_v2.schedule --once --timeframe 1w
+0 * * * * ... crypto_breadth_v2.schedule --once --recovery
+
+The complete prior command lines are preserved in git commit 4c3923c and
+the checked-in breadth-v2-shadow.crontab. This copy records the active trigger
+shape while the hotfix replaces cron as the scheduling layer.

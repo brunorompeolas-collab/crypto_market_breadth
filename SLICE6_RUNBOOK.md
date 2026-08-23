@@ -41,9 +41,10 @@ Normal incremental ingestion cannot perform step 3 and cannot overwrite a
 canonical key.
 ## Gate E.1 operational activation
 
-The candidate scheduler is activated in the existing WSL2 cron daemon using
-the checked-in `breadth-v2-shadow.crontab`, with `CRON_TZ=UTC`, the PostgreSQL
-target, and the immutable code SHA stamped into every evidence row. It invokes
+The candidate scheduler is activated in the WSL2 systemd user manager using
+the checked-in `breadth-v2-shadow-*.timer` units. Each `OnCalendar` expression
+contains an explicit `UTC` suffix, the PostgreSQL target, and the immutable
+code SHA is stamped into every evidence row. It invokes
 `python -m crypto_breadth_v2.schedule`, which owns the approved 4h (+10m),
 daily (+15m), weekly (+25m), and hourly missing-candle recovery decisions.
 The unit is candidate-only: it loads `BR1-LIVE-v2-40-CANDIDATE`, never sets an
@@ -51,3 +52,7 @@ inception timestamp, and has no LIVE/Gemini/fallback path. Cumulative evidence
 is written atomically to `reports/shadow_status.json`; activation and preflight
 records are kept in `reports/shadow_activation_real.json` and
 `reports/shadow_preflight_real.json`.
+
+The prior Vixie/Debian cron configuration is retained only as historical
+evidence in `breadth-v2-shadow.crontab` and
+`reports/scheduler_hotfix_previous_crontab.txt`; it is no longer installed.

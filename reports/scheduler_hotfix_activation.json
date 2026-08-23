@@ -1,0 +1,16 @@
+{
+  "activation_timestamp": "2026-08-23T11:06:02.669529Z",
+  "previous_scheduler": "WSL Vixie/Debian cron with CRON_TZ=UTC",
+  "corrected_scheduler": "WSL2 systemd user timers with explicit UTC OnCalendar expressions",
+  "systemd_user_linger": true,
+  "scheduler_id": "breadth-v2-candidate-shadow-wsl",
+  "cron_entries_removed_after_exact_verification": true,
+  "next_expected_normal_4h_slot": "2026-08-23T12:10:00Z",
+  "first_successful_normal_4h_cycle": null,
+  "authoritative_shadow_window_start": null,
+  "expected_earliest_completion": null,
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+  "series_status": "CANDIDATE",
+  "inception_at": null,
+  "note": "The 14-day window remains pending until the first successful normal 4h cycle under the corrected timers. Existing candidate history and evidence were not rewritten."
+}

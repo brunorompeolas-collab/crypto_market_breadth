@@ -1,0 +1,31 @@
+{
+  "hotfix": "UTC scheduler",
+  "observed_defect": {
+    "scheduled_at": "2026-08-23T08:10:00Z",
+    "start": "2026-08-23T10:10:06Z",
+    "recovery": false,
+    "offset": "+02:00"
+  },
+  "previous_scheduler": "WSL Vixie/Debian cron with CRON_TZ=UTC",
+  "root_cause": "crontab(5) documents that this cron daemon does not support per-user timezones; CRON_TZ/TZ affect child commands but not trigger evaluation. The daemon was using Europe/Madrid CEST for the calendar fields.",
+  "cron_verification": {
+    "implementation": "Vixie/Debian cron",
+    "supports_CRON_TZ": false,
+    "documentation_evidence": "crontab(5) LIMITATIONS: cron runs with a defined timezone and does not support per-user timezones"
+  },
+  "corrected_mechanism": "systemd user timers with OnCalendar expressions carrying an explicit UTC suffix",
+  "timers": {
+    "4h": "*-*-* 00,04,08,12,16,20:10:00 UTC",
+    "1d": "*-*-* 00:15:00 UTC",
+    "1w": "Mon *-*-* 00:25:00 UTC",
+    "recovery": "*-*-* *:00:00 UTC"
+  },
+  "dst_simulation": {
+    "summer": "systemd-analyze calendar normalizes to UTC and displays CEST locally; trigger remains UTC",
+    "winter": "systemd-analyze calendar normalizes to UTC and displays CET locally; trigger remains UTC"
+  },
+  "candidate_series": "BR1-LIVE-v2-40-CANDIDATE",
+  "status": "CANDIDATE",
+  "inception_at": null,
+  "history_modified": false
+}

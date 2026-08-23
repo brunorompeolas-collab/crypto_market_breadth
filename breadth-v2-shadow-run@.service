@@ -1,0 +1,14 @@
+[Unit]
+Description=BR1 candidate shadow scheduled %i cycle
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/c/Users/user/.codex/visualizations/2026/08/20/01a020ec-47f9-7e52-b31e-b98570bbf572/breadth-v2-core
+Environment=TZ=UTC
+Environment=PYTHONPATH=src
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=BREADTH_V2_CODE_SHA=hotfix-utc-systemd
+ExecStart=/home/nova/.venvs/breadth-v2/bin/python -m crypto_breadth_v2.schedule --database-url postgresql+psycopg://breadth_test:breadth_test@127.0.0.1/breadth_v2_test --contracts-root config/v2 --report-path reports/shadow_status.json --scheduler-id breadth-v2-candidate-shadow-wsl --code-sha hotfix-utc-systemd --once --timeframe %i
+TimeoutStartSec=45min
+StandardOutput=append:/tmp/breadth-v2-shadow-systemd.log
+StandardError=append:/tmp/breadth-v2-shadow-systemd.log

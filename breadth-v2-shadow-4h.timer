@@ -1,0 +1,11 @@
+[Unit]
+Description=BR1 candidate shadow 4h UTC schedule
+
+[Timer]
+OnCalendar=*-*-* 00,04,08,12,16,20:10:00 UTC
+Persistent=true
+AccuracySec=1s
+Unit=breadth-v2-shadow-run@4h.service
+
+[Install]
+WantedBy=timers.target

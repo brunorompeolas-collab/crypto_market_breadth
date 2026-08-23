@@ -1,0 +1,49 @@
+{
+  "activated_at": "2026-08-23T19:48:18.670615+00:00",
+  "code_sha": "hotfix3-shadow-db",
+  "cycles": [
+    {
+      "breadth_score": "100.000000",
+      "canonical_inserts": 0,
+      "canonical_replays": 40,
+      "code_sha": "hotfix3-shadow-db",
+      "cohort": {
+        "denominator": 40,
+        "size": 40
+      },
+      "components": {
+        "pct_above_ema20": "100.000000",
+        "pct_above_ema200": "100.000000",
+        "pct_above_ema50": "100.000000"
+      },
+      "conflicts": 0,
+      "data_quality": "100.0",
+      "denominator_drift": false,
+      "duration_seconds": 155.86666738400527,
+      "end": "2026-08-23T19:50:59.587120+00:00",
+      "errors": [],
+      "expected_boundary": "2026-08-23T16:00:00+00:00",
+      "gaps": 0,
+      "gate_calls": 40,
+      "last_known_good_age_seconds": null,
+      "partial_publication": false,
+      "publication_status": "PUBLISHED",
+      "recovery": false,
+      "retries": 0,
+      "run_id": "dcd1fdba-fe6f-4529-98db-a34dc21e2d5c",
+      "scanner_rows": 40,
+      "scheduled_at": "2026-08-23T16:10:00+00:00",
+      "slot_key": "4h:2026-08-23T16:00:00+00:00",
+      "start": "2026-08-23T19:48:18.671774+00:00",
+      "status": "SUCCEEDED",
+      "timeframe": "4h",
+      "timestamp_aligned": true
+    }
+  ],
+  "database_target": "127.0.0.1/breadth_v2_shadow",
+  "host": "DESKTOP-3GL7UTP",
+  "inception_at": null,
+  "scheduler_id": "breadth-v2-candidate-shadow-dedicated",
+  "series_status": "CANDIDATE",
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE"
+}

@@ -1,0 +1,19 @@
+{
+  "activation_timestamp": "2026-08-23T12:25:15.328283Z",
+  "commit": "f6559f4",
+  "mechanism": "scheduler runtime recovery eligibility",
+  "recovery_timer_unchanged": "hourly at :00 UTC",
+  "tolerance": "1 minute",
+  "grace": {
+    "4h": "+10m normal delay, eligible at boundary +11m",
+    "1d": "+15m normal delay, eligible at boundary +16m",
+    "1w": "+25m normal delay, eligible at boundary +26m"
+  },
+  "next_expected_normal_4h_slot": "2026-08-23T16:10:00Z",
+  "first_successful_normal_4h_cycle_under_corrected_recovery": null,
+  "authoritative_shadow_window_start": null,
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+  "status": "CANDIDATE",
+  "inception_at": null,
+  "history_modified": false
+}

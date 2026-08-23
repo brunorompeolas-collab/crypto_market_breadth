@@ -1,0 +1,63 @@
+{
+  "hotfix": "SHADOW OPERATIONAL HOTFIX 3",
+  "root_cause": {
+    "proven": true,
+    "evidence": {
+      "database": "breadth_v2_test",
+      "series_definitions": 0,
+      "assets": 0,
+      "canonical_candles": 0,
+      "fixture_behavior": "tests_v2/integration/conftest.py clean_database truncates breadth_v2 tables with RESTART IDENTITY CASCADE"
+    },
+    "conclusion": "The test database was reset by integration-test cleanup and was never an operational persistence target. No evidence of contract or migration corruption."
+  },
+  "database": {
+    "target": "127.0.0.1/breadth_v2_shadow",
+    "persistent": true,
+    "migrations": "head (0001-0004)",
+    "automated_tests_use": "breadth_v2_test only"
+  },
+  "bootstrap": {
+    "report": "reports/hotfix3_shadow_bootstrap.json",
+    "success": true,
+    "failures": 0,
+    "gate_http_calls": 160,
+    "retries": 0,
+    "source_policy": "Gate-only; no fallback",
+    "canonical_source_count": 1,
+    "candidate": "BR1-LIVE-v2-40-CANDIDATE",
+    "status": "CANDIDATE",
+    "inception_at": null,
+    "cohorts": {"4h": "40/40", "1d": "40/40", "1w": "35/40"}
+  },
+  "controlled_cycle": {
+    "report": "reports/hotfix3_shadow_controlled.json",
+    "status": "SUCCEEDED",
+    "publication_status": "PUBLISHED",
+    "timeframe": "4h",
+    "denominator": "40/40",
+    "expected_boundary": "2026-08-23T16:00:00Z",
+    "timestamp_aligned": true,
+    "denominator_drift": false,
+    "partial_publication": false,
+    "gaps": 0,
+    "conflicts": 0,
+    "canonical_inserts": 0,
+    "canonical_replays": 40,
+    "breadth_score": "100.000000",
+    "data_quality": "100.0"
+  },
+  "scheduler": {
+    "activation_timestamp": "2026-08-23T19:52:18Z",
+    "next_normal_4h_slot": "2026-08-23T20:10:00Z",
+    "timers": ["4h", "daily", "weekly", "recovery"],
+    "timezone": "UTC",
+    "database_reference": "breadth_v2_shadow",
+    "code_sha": "051cf1d"
+  },
+  "authoritative_shadow_window": {
+    "starts_at": null,
+    "rule": "Starts only after the first successful normally scheduled 4h cycle against the dedicated database; the controlled cycle does not backdate or start the window."
+  },
+  "live_activation": false
+}

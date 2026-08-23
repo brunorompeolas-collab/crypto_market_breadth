@@ -1,5 +1,6 @@
 {
   "activation_timestamp": "2026-08-23T11:06:02.669529Z",
+  "commit": "c742a1c",
   "previous_scheduler": "WSL Vixie/Debian cron with CRON_TZ=UTC",
   "corrected_scheduler": "WSL2 systemd user timers with explicit UTC OnCalendar expressions",
   "systemd_user_linger": true,

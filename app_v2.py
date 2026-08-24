@@ -150,13 +150,14 @@ def render_app(query_service: FirestoreReadOnlyQueryService, *, now: datetime | 
 
 def main() -> None:
     project_id = os.environ.get("FIREBASE_PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT")
-    if not project_id and not os.environ.get("FIRESTORE_EMULATOR_HOST"):
+    reader_credentials = os.environ.get("FIREBASE_READER_SERVICE_ACCOUNT_JSON")
+    if (not project_id or not reader_credentials) and not os.environ.get("FIRESTORE_EMULATOR_HOST"):
         st.set_page_config(page_title="Crypto Market Breadth v2", page_icon="⚡")
-        st.error("UNAVAILABLE — FIREBASE_PROJECT_ID is not configured.")
+        st.error("UNAVAILABLE — Firebase project or read-only Firestore credentials are not configured.")
         return
     try:
         bundle = load_contract_bundle(ROOT / "config" / "v2", bundle="v2-40")
-        store = FirestoreSnapshotStore.from_environment()
+        store = FirestoreSnapshotStore.from_environment(credentials_env="FIREBASE_READER_SERVICE_ACCOUNT_JSON")
         render_app(FirestoreReadOnlyQueryService(store, bundle))
     except Exception as exc:
         st.set_page_config(page_title="Crypto Market Breadth v2", page_icon="⚡")

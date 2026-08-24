@@ -40,6 +40,10 @@ configuration. Before the first GitHub run, add only these repository secrets:
 
 `FIREBASE_PROJECT_ID`
 
-`FIREBASE_SERVICE_ACCOUNT_JSON`
+`FIREBASE_WRITER_SERVICE_ACCOUNT_JSON`
+
+The Streamlit host must receive the same project ID plus a separate
+`FIREBASE_READER_SERVICE_ACCOUNT_JSON` value. The writer account is never used
+by Streamlit, and the reader account is never used by GitHub Actions.
 
 No Gate private credential is required for the public spot endpoints.

@@ -142,14 +142,14 @@ class FirestoreSnapshotStore:
         self.client = client
 
     @classmethod
-    def from_environment(cls) -> "FirestoreSnapshotStore":
+    def from_environment(cls, *, credentials_env: str = "FIREBASE_SERVICE_ACCOUNT_JSON") -> "FirestoreSnapshotStore":
         try:
             from google.cloud import firestore
         except ImportError as exc:  # pragma: no cover - exercised in deployment only
             raise RuntimeError("google-cloud-firestore is required for production reconciliation") from exc
 
         project_id = os.environ.get("FIREBASE_PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT")
-        credentials_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+        credentials_json = os.environ.get(credentials_env)
         kwargs: dict[str, Any] = {}
         if project_id:
             kwargs["project"] = project_id

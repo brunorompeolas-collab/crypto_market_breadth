@@ -338,7 +338,7 @@ def run_reconcile(
     bundle = load_contract_bundle(contracts_root, bundle="v2-40")
     cohorts = load_frozen_cohorts(cohorts_path, series_version=bundle.definition("series")["series_version"])
     mappings = load_gate_mappings(bundle)
-    store = FirestoreSnapshotStore.from_environment()
+    store = FirestoreSnapshotStore.from_environment(credentials_env="FIREBASE_WRITER_SERVICE_ACCOUNT_JSON")
     client = GateClient(mappings)
     return Reconciler(store, client, bundle, cohort_exclusions=cohorts, now=now, job_sha=job_sha or os.environ.get("GITHUB_SHA", "local"),).run(start=start, max_boundaries=max_boundaries)
 

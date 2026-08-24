@@ -1,6 +1,6 @@
 """Read-only Streamlit v2 candidate dashboard.
 
-This module intentionally imports only the PostgreSQL query layer.  It has no
+This module intentionally imports only the Firestore query layer.  It has no
 Gate/provider, ingestion, maintenance, Gemini, or activation controls.
 """
 
@@ -19,8 +19,8 @@ if str(SRC) not in sys.path:
 import streamlit as st
 
 from crypto_breadth_v2.contracts import load_contract_bundle
-from crypto_breadth_v2.query import DashboardView, ReadOnlyQueryService
-from crypto_breadth_v2.storage.database import create_postgres_engine
+from crypto_breadth_v2.firestore import FirestoreSnapshotStore
+from crypto_breadth_v2.firestore_query import FirestoreReadOnlyQueryService
 
 
 UTC = timezone.utc
@@ -51,7 +51,7 @@ def _state_message(view: DashboardView) -> str:
     return messages[view.ui_state]
 
 
-def render_app(query_service: ReadOnlyQueryService, *, now: datetime | None = None) -> None:
+def render_app(query_service: FirestoreReadOnlyQueryService, *, now: datetime | None = None) -> None:
     """Render the UI from an injected read-only service.
 
     Injection keeps AppTest deterministic while production construction below
@@ -68,7 +68,7 @@ def render_app(query_service: ReadOnlyQueryService, *, now: datetime | None = No
         unsafe_allow_html=True,
     )
     st.title("⚡ Crypto Market Breadth Terminal v2")
-    st.caption("Read-only candidate shadow · PostgreSQL authority · Gate provenance")
+    st.caption("Read-only Breadth v2 · Firestore snapshots · Gate provenance")
 
     timeframe = st.radio("Timeframe", ["4h", "1d", "1w"], index=1, horizontal=True, key="v2_timeframe")
     benchmark = st.radio("Benchmark", ["BTC", "ETH"], horizontal=True, key="v2_benchmark")
@@ -149,18 +149,18 @@ def render_app(query_service: ReadOnlyQueryService, *, now: datetime | None = No
 
 
 def main() -> None:
-    database_url = os.environ.get("BREADTH_V2_DATABASE_URL")
-    if not database_url:
+    project_id = os.environ.get("FIREBASE_PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT")
+    if not project_id and not os.environ.get("FIRESTORE_EMULATOR_HOST"):
         st.set_page_config(page_title="Crypto Market Breadth v2", page_icon="⚡")
-        st.error("UNAVAILABLE — BREADTH_V2_DATABASE_URL is not configured.")
+        st.error("UNAVAILABLE — FIREBASE_PROJECT_ID is not configured.")
         return
     try:
         bundle = load_contract_bundle(ROOT / "config" / "v2", bundle="v2-40")
-        engine = create_postgres_engine(database_url, pool_size=1, max_overflow=0)
-        render_app(ReadOnlyQueryService(engine, bundle))
+        store = FirestoreSnapshotStore.from_environment()
+        render_app(FirestoreReadOnlyQueryService(store, bundle))
     except Exception as exc:
         st.set_page_config(page_title="Crypto Market Breadth v2", page_icon="⚡")
-        st.error(f"UNAVAILABLE — read-only database query failed: {type(exc).__name__}: {exc}")
+        st.error(f"UNAVAILABLE — read-only Firestore query failed: {type(exc).__name__}: {exc}")
 
 
 if __name__ == "__main__":

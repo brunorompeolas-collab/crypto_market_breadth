@@ -1,0 +1,18 @@
+{
+  "phase": "A",
+  "historical_runtime": "WSL user systemd candidate shadow",
+  "disabled_at": "2026-08-24T08:25:28Z",
+  "timers": [
+    "breadth-v2-shadow-4h.timer",
+    "breadth-v2-shadow-daily.timer",
+    "breadth-v2-shadow-weekly.timer",
+    "breadth-v2-shadow-recovery.timer"
+  ],
+  "state_after_change": "stopped and disabled",
+  "evidence_preserved": [
+    "service and timer unit files",
+    "PostgreSQL breadth_v2_shadow and breadth_v2_test databases",
+    "accepted commits and operational reports"
+  ],
+  "production_target": "Gate -> GitHub Actions reconciliation -> Firestore -> read-only Streamlit"
+}

@@ -1,0 +1,23 @@
+{
+  "version": "BR1-LIVE-v2-40-COHORTS",
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+  "frozen_at": "2026-08-23T17:29:16.467757Z",
+  "eligibility_rule": "EMA200 requires 200 consecutive identity-clean observations ending at the candidate boundary",
+  "included_by_timeframe": {
+    "4h": "ALL_UNIVERSE_MEMBERS",
+    "1d": "ALL_UNIVERSE_MEMBERS",
+    "1w": "ALL_EXCEPT_EXCLUDED"
+  },
+  "weekly_excluded_asset_ids": [
+    "the-open-network",
+    "bittensor",
+    "sui",
+    "hyperliquid",
+    "ondo-finance"
+  ],
+  "expected_denominators": {
+    "4h": 40,
+    "1d": 40,
+    "1w": 35
+  }
+}

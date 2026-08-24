@@ -1,0 +1,17 @@
+{
+  "reference": "pandas Series.ewm(span=p, adjust=False)",
+  "inputs": {
+    "assets": ["BTC", "ETH", "SOL", "XRP", "AAVE"],
+    "timeframes": ["4h", "1d", "1w"],
+    "periods": [20, 50, 200],
+    "observations_per_vector": 260,
+    "ordered_input": true,
+    "vector_definition": "deterministic positive Decimal vectors; identical ordered PricePoint inputs are supplied to both implementations"
+  },
+  "br1_seed_semantics": "SMA of the first p closes at observation p, then alpha=2/(p+1) recursive updates with Decimal precision",
+  "pandas_default_seed_semantics": "first non-null observation is used as the initial ewm state",
+  "sma_seeded_reference_max_absolute_deviation_float": 2.2737367544323206e-13,
+  "default_pandas_max_absolute_deviation": 5.043144368420087,
+  "default_deviation_location": {"asset": "ETH", "timeframe": "1d", "period": 200, "observation_index": 199},
+  "conclusion": "BR1 methodology is retained. The independent pandas recurrence agrees after explicitly injecting the approved SMA seed; pandas default output is not substituted because its initialization semantics differ."
+}

@@ -105,7 +105,7 @@ def test_provider_failure_writes_no_partial_snapshot():
         FailingGate(),
         BUNDLE,
         cohort_exclusions=EXCLUSIONS,
-        now=datetime(2026, 8, 24, 12, 37, tzinfo=UTC),
+        now=datetime(2026, 8, 24, 20, 37, tzinfo=UTC),
         job_sha="test",
     ).run(max_boundaries=1, timeframes=[Timeframe.FOUR_HOUR])
     assert report.results[0].status == "FAILED"
@@ -152,10 +152,10 @@ def test_gate_fixture_to_firestore_snapshot_and_indicator_compute():
         gate,
         BUNDLE,
         cohort_exclusions=EXCLUSIONS,
-        now=datetime(2026, 8, 24, 12, 37, tzinfo=UTC),
+        now=datetime(2026, 8, 24, 20, 37, tzinfo=UTC),
         job_sha="fixture-sha",
-    ).run(start=boundary, max_boundaries=1, timeframes=[Timeframe.FOUR_HOUR])
-    assert report.results[0].status == "PUBLISHED"
+    ).run(start=boundary, max_boundaries=2, timeframes=[Timeframe.FOUR_HOUR])
+    assert [result.status for result in report.results] == ["PUBLISHED", "PUBLISHED"]
     document = store.get("BR1-LIVE-v2-40-CANDIDATE", "4h", boundary)
     assert document["cohort_denominator"] == 40
     assert document["data_quality_score"] == "100.0"

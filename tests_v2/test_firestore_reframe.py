@@ -44,6 +44,7 @@ def test_snapshot_key_and_decimal_payload_are_exact_and_idempotent():
         source_policy_version="BR1-SOURCE-POLICY-v2-GATE-ONLY",
         formula_version="BR1-BREADTH-FORMULA-v1",
         normalizer_version="BR1-CANDLE-NORMALIZER-v2",
+        cohort_version="BR1-LIVE-v2-40-COHORTS",
         timeframe="4h",
         status="PUBLISHED",
         breadth_score=Decimal("62.500000"),

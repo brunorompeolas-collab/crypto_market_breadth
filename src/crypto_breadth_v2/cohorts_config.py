@@ -9,13 +9,16 @@ from typing import Mapping
 from .contracts import ContractError
 
 
+COHORT_CONTRACT_VERSION = "BR1-LIVE-v2-40-COHORTS"
+
+
 def load_frozen_cohorts(path: Path, *, series_version: str) -> Mapping[str, frozenset[str]]:
     """Load the immutable cohort decision without deriving membership at runtime."""
     try:
         document = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise ContractError(f"Cannot load frozen cohort contract {path}: {exc}") from exc
-    if document.get("series_version") != series_version:
+    if document.get("version") != COHORT_CONTRACT_VERSION or document.get("series_version") != series_version:
         raise ContractError("Frozen cohort series does not match the candidate series")
     excluded = set(document.get("weekly_excluded_asset_ids", []))
     expected = {"4h": 40, "1d": 40, "1w": 35}

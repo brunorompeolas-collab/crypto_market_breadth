@@ -72,6 +72,7 @@ class FirestoreReadOnlyQueryService:
                 "source_policy_version": str(row.get("source_policy_version")),
                 "formula_version": str(row.get("formula_version")),
                 "normalizer_version": str(row.get("normalizer_version")),
+                "cohort_version": str(row.get("cohort_version", "")),
                 "source_id": str((row.get("source") or {}).get("source_id", "")),
                 "job_sha": str(row.get("job_sha", "")),
             },

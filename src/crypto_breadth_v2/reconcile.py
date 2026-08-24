@@ -14,7 +14,7 @@ from typing import Any, Mapping, Sequence
 
 from .breadth import MemberSignals, calculate_breadth
 from .cohort import FrozenCohort
-from .cohorts_config import included_asset_ids, load_frozen_cohorts
+from .cohorts_config import COHORT_CONTRACT_VERSION, included_asset_ids, load_frozen_cohorts
 from .contracts import ContractBundle, load_contract_bundle
 from .domain import PricePoint, ScannerState, scanner_state
 from .ema import compute_standard_emas
@@ -268,6 +268,7 @@ class Reconciler:
             source_policy_version=self.source_policy_version,
             formula_version=self.formula_version,
             normalizer_version=self.normalizer_version,
+            cohort_version=COHORT_CONTRACT_VERSION,
             timeframe=timeframe.value,
             status=status,
             breadth_score=breadth.score if status == "PUBLISHED" else None,

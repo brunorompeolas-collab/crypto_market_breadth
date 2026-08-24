@@ -125,9 +125,14 @@ class Reconciler:
 
     def due_boundaries(self, timeframe: Timeframe | str, *, start: datetime | None = None) -> tuple[datetime, ...]:
         timeframe = Timeframe(timeframe)
+        history = self.store.history(self.series_version, timeframe.value)
         latest = self.store.latest(self.series_version, timeframe.value, status="PUBLISHED")
         if start is None:
-            first = _boundary_from_document(latest) + duration(timeframe) if latest else expected_latest_close(self.now, timeframe)
+            # Start at the first stored publication so an accidental deleted
+            # middle boundary is repaired, while a brand-new series starts at
+            # the current completed boundary rather than requesting an
+            # unbounded historical backfill.
+            first = _boundary_from_document(history[0]) if history else expected_latest_close(self.now, timeframe)
         else:
             require_utc(start)
             first = start.astimezone(UTC)
@@ -137,7 +142,8 @@ class Reconciler:
         result: list[datetime] = []
         cursor = first
         while cursor <= expected:
-            result.append(cursor)
+            if start is not None or self.store.get(self.series_version, timeframe.value, cursor) is None:
+                result.append(cursor)
             cursor += duration(timeframe)
         return tuple(result)
 

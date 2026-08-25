@@ -1,0 +1,49 @@
+{
+  "version": "BR1-METHODOLOGY-v2",
+  "status": "FROZEN",
+  "ema": {
+    "periods": [20, 50, 200],
+    "min_periods": {"20": 20, "50": 50, "200": 200},
+    "seed": "SIMPLE_MEAN_OF_FIRST_N_VALID_CHRONOLOGICAL_CLOSES",
+    "alpha": "2/(N+1)",
+    "decimal_precision_significant_digits": 50,
+    "recursive_evaluation": "EMA_PREVIOUS + (2 * (CLOSE - EMA_PREVIOUS) / (N + 1))",
+    "extra_convergence_warmup": 0,
+    "round_intermediate_values": false
+  },
+  "missing_candle": {
+    "calculate_across_gap": false,
+    "reset_and_rewarm_after_gap": false,
+    "recoverable": "BLOCK_THEN_RECOMPUTE_FULL_CHRONOLOGICAL_SEQUENCE_AFTER_REPAIR",
+    "permanent": "REMAIN_UNAVAILABLE_UNTIL_EXPLICIT_NEW_METHODOLOGY_OR_SERIES_DECISION"
+  },
+  "universe": {
+    "membership": "FORWARD_ONLY_FIXED",
+    "minimum_structural_coverage": "0.80",
+    "runtime_cohort_validity_required": "1.00",
+    "dynamic_denominator_reduction": false,
+    "weekly_eligibility_observations": 200
+  },
+  "publication": {
+    "all_cohort_members_valid_and_aligned": true,
+    "benchmarks_required": ["BTC", "ETH"],
+    "missing_component_composite": "NULL_UNAVAILABLE"
+  },
+  "data_quality": {
+    "structural": "COHORT_SIZE/UNIVERSE_SIZE",
+    "component": "MIN(VALID_EMA20,VALID_EMA50,VALID_EMA200)/COHORT_SIZE",
+    "freshness": "1_IF_EXPECTED_CLOSE_ELSE_0",
+    "alignment": "1_IF_ALL_MEMBER_AND_BENCHMARK_TIMESTAMPS_MATCH_ELSE_0",
+    "formula": "ROUND_HALF_UP(100*STRUCTURAL*COMPONENT*FRESHNESS*ALIGNMENT,1)",
+    "labels": ["HIGH", "ACCEPTABLE", "DEGRADED", "UNAVAILABLE"]
+  },
+  "scanner": {
+    "states": ["ABOVE", "BELOW", "UNAVAILABLE"],
+    "above": "CLOSE_GREATER_THAN_EMA",
+    "below": "CLOSE_LESS_THAN_OR_EQUAL_TO_EMA",
+    "missing": "UNAVAILABLE"
+  },
+  "missing_value": "NULL_NOT_ZERO_NOT_FALSE",
+  "live": {"pre_inception_snapshots_allowed": false},
+  "research": {"separate_series_required": true, "label": "RETROSPECTIVE_SURVIVORSHIP_BIASED"}
+}

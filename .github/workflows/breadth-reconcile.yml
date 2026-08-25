@@ -1,0 +1,60 @@
+name: Breadth v2 reconciliation
+
+on:
+  schedule:
+    # GitHub scheduled workflows are best-effort; reconciliation catches up
+    # every completed UTC boundary, so an occasional delayed/dropped run is
+    # non-fatal for this macro instrument.
+    - cron: "37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    env:
+      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      FIREBASE_WRITER_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_WRITER_SERVICE_ACCOUNT_JSON }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout accepted v2 source
+        uses: actions/checkout@v4
+
+      - name: Set up pinned Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.7"
+          cache: pip
+          cache-dependency-path: requirements-reconcile.txt
+
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip==24.3.1 && python -m pip install -r requirements-reconcile.txt
+
+      - name: Run deterministic quantitative and storage gates
+        run: >-
+          python -m pytest -p no:cacheprovider -q
+          tests_v2/test_contracts.py
+          tests_v2/test_contracts_v2_40.py
+          tests_v2/test_timeframes_and_candles.py
+          tests_v2/test_ema.py
+          tests_v2/test_ema_reference.py
+          tests_v2/test_breadth_quality_scanner.py
+          tests_v2/test_firestore_reframe.py
+          tests_v2/test_query_and_app_v2.py
+
+      - name: Require Firebase deployment secrets
+        run: |
+          test -n "$FIREBASE_PROJECT_ID" || { echo "::error::Missing FIREBASE_PROJECT_ID secret"; exit 1; }
+          test -n "$FIREBASE_WRITER_SERVICE_ACCOUNT_JSON" || { echo "::error::Missing FIREBASE_WRITER_SERVICE_ACCOUNT_JSON secret"; exit 1; }
+
+      - name: Reconcile completed UTC boundaries
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: >-
+          PYTHONPATH=src python -m crypto_breadth_v2.reconcile
+          --contracts-root config/v2
+          --cohorts config/v2/cohorts/br1-live-v2-40-frozen.yaml
+          --max-boundaries 24

@@ -1,0 +1,13 @@
+{
+  "version": "BR1-BREADTH-FORMULA-v1",
+  "status": "FROZEN",
+  "components": {
+    "EMA20": {"weight": "0.20", "predicate": "CLOSE_GREATER_THAN_EMA"},
+    "EMA50": {"weight": "0.30", "predicate": "CLOSE_GREATER_THAN_EMA"},
+    "EMA200": {"weight": "0.50", "predicate": "CLOSE_GREATER_THAN_EMA"}
+  },
+  "equality_state": "BELOW",
+  "required_component_coverage": "1.00",
+  "missing_component_result": "UNAVAILABLE",
+  "round_intermediate_values": false
+}

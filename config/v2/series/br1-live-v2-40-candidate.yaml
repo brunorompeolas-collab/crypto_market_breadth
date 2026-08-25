@@ -1,0 +1,15 @@
+{
+  "series_version": "BR1-LIVE-v2-40-CANDIDATE",
+  "status": "CANDIDATE_NOT_ACTIVATED",
+  "series_kind": "LIVE",
+  "universe_version": "BR1-BREADTH-UNIVERSE-v2-40",
+  "source_policy_version": "BR1-SOURCE-POLICY-v2-GATE-ONLY",
+  "methodology_version": "BR1-METHODOLOGY-v2",
+  "formula_version": "BR1-BREADTH-FORMULA-v1",
+  "normalizer_version": "BR1-CANDLE-NORMALIZER-v2",
+  "inception": null,
+  "inception_policy": "FOUNDER_SELECTS_EXACT_4H_BOUNDARY_AT_PRODUCTION_CUTOVER",
+  "pre_inception_live_snapshots_allowed": false,
+  "history_policy": "NO_V1_50_HISTORY_SPLICE",
+  "weekly_cohort_policy": "FREEZE_FROM_IDENTITY_CLEAN_CANONICAL_HISTORY_AT_ACTIVATION"
+}

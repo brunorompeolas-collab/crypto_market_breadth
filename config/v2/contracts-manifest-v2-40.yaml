@@ -1,0 +1,12 @@
+{
+  "hash_algorithm": "SHA-256",
+  "serialization": "CANONICAL_JSON_SORTED_KEYS_UTF8",
+  "definitions": {
+    "formula": "d0f22b3614294b6c71bed3bd29e94e2170a524dc98783298e1ea85cc6f696509",
+    "methodology": "45a85fa7ca2ca5b9f90a157f577756be6fdc8b592453a5bef436f3d39ff7cacc",
+    "normalizer": "e48e16431d6c7785e7ddcd30718ab2fc7d9388b3c1c2ef3259d8a308ea08b6db",
+    "series": "fc42449faf7d485f8ad0809436fe0f851a70a13c51b503fb4e247b8d57e45107",
+    "source_policy": "7a0a6ae38ce3de5f48acd6a972fcfa4711859833336d1de49f3f32ccf12f64c0",
+    "universe": "174aead07540cf81eaa78dd599d98b6cc3ead670eca0335583bac087d837ba24"
+  }
+}

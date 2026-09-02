@@ -8,7 +8,7 @@ from crypto_breadth_v2.firestore_query import FirestoreReadOnlyQueryService
 from crypto_breadth_v2.query import DashboardView, ScannerView, SnapshotView
 from crypto_breadth_v2.contracts import load_contract_bundle
 
-from app_v2 import _metric_number, _scanner_table, build_history_figure
+from app_v2 import _metric_card_html, _metric_number, _scanner_table, build_history_figure
 
 
 UTC = timezone.utc
@@ -52,6 +52,22 @@ def test_metric_values_are_complete_and_scanner_tri_state_is_readable():
     assert table[0]["> EMA200"] == "⚪ UNAVAILABLE"
 
 
+def test_four_metric_cards_are_self_contained_html_blocks():
+    cards = (
+        _metric_card_html("Breadth Score", "62.5 / 100", "Salud Global", value_color="#00F59B"),
+        _metric_card_html("> EMA20 (Corto)", "70.0%", "Momento Inmediato"),
+        _metric_card_html("> EMA50 (Medio)", "60.0%", "Estructura Tendencial"),
+        _metric_card_html("> EMA200 (Largo)", "50.0%", "Régimen Macro"),
+    )
+    assert len(cards) == 4
+    for card in cards:
+        assert card.startswith('<div class="v2-metric-card">')
+        assert card.endswith("</div>")
+        assert "v2-metric-value" in card
+    assert "62.5 / 100" in cards[0] and "70.0%" in cards[1]
+    assert "00F59B" in cards[0]
+
+
 def test_firestore_reader_selects_snapshot_for_each_timeframe_without_writes():
     store = InMemorySnapshotStore()
     for timeframe, hour in (("4h", 4), ("1d", 8), ("1w", 12)):
@@ -70,3 +86,14 @@ def test_ui_has_no_provider_or_writer_path_and_legacy_files_are_unchanged():
     assert "FirestoreSnapshotStore" in source and "FirestoreReadOnlyQueryService" in source
     assert subprocess.check_output(["git", "hash-object", "app.py"]).strip() == subprocess.check_output(["git", "rev-parse", "origin/main:app.py"]).strip()
     assert subprocess.check_output(["git", "hash-object", "requirements.txt"]).strip() == subprocess.check_output(["git", "rev-parse", "origin/main:requirements.txt"]).strip()
+
+
+def test_controls_are_compact_and_source_is_passive():
+    source = Path("app_v2.py").read_text(encoding="utf-8")
+    assert "control_columns = st.columns" in source
+    assert 'st.radio("Temporalidad"' in source
+    assert 'st.radio("Benchmark"' in source
+    assert 'st.radio("Histórico"' in source
+    assert 'st.caption("Fuente: Gate")' in source
+    assert 'st.subheader("📋 Escáner de Activos")' in source
+    assert "Calidad:" in source

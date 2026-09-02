@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
+from html import escape
 import os
 from pathlib import Path
 import sys
@@ -87,6 +88,18 @@ def _status_caption(view: DashboardView) -> None:
         st.caption(text)
 
 
+def _metric_card_html(label: str, value: str, subtitle: str, *, value_color: str | None = None) -> str:
+    """Return one complete card; no Streamlit widget is nested in raw HTML."""
+    color = f";color:{escape(value_color)}" if value_color else ""
+    return (
+        '<div class="v2-metric-card">'
+        f'<div class="v2-metric-title">{escape(label)}</div>'
+        f'<div class="v2-metric-value" style="white-space:nowrap;overflow:visible{color}">{escape(value)}</div>'
+        f'<div class="v2-metric-sub">{escape(subtitle)}</div>'
+        "</div>"
+    )
+
+
 def _metric_cards(snapshot: SnapshotView | None) -> None:
     score = snapshot.breadth_score if snapshot else None
     regime, color = _regime(score)
@@ -99,24 +112,19 @@ def _metric_cards(snapshot: SnapshotView | None) -> None:
     st.markdown(
         "<style>"
         ".v2-metric-card{background:rgba(22,27,34,.70);border:1px solid rgba(255,255,255,.08);"
-        "border-radius:12px;padding:10px 12px;text-align:center;min-height:112px}"
-        ".v2-metric-card [data-testid=stMetricValue]{white-space:nowrap;overflow:visible;"
-        "font-size:clamp(1.15rem,2.1vw,1.8rem)}"
-        ".v2-metric-card small{color:#64748b}"
+        "border-radius:12px;padding:14px 12px;text-align:center;min-height:108px}"
+        ".v2-metric-title{font-size:.78rem;text-transform:uppercase;color:#94a3b8;margin-bottom:6px}"
+        ".v2-metric-value{font-size:clamp(1.15rem,2.1vw,1.8rem);font-weight:700;color:#f8fafc;line-height:1.3}"
+        ".v2-metric-sub{font-size:.75rem;color:#64748b;margin-top:5px}"
         "</style>",
         unsafe_allow_html=True,
     )
     columns = st.columns(4)
     for column, (label, value, subtitle) in zip(columns, metrics):
         with column:
-            st.markdown('<div class="v2-metric-card">', unsafe_allow_html=True)
-            # st.metric preserves Streamlit accessibility and test semantics;
-            # CSS keeps the complete value visible at narrow widths.
-            st.metric(label, value)
-            st.caption(subtitle)
-            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(_metric_card_html(label, value, subtitle, value_color=color if label == "Breadth Score" else None), unsafe_allow_html=True)
     if score is not None:
-        st.markdown(f"<div style='text-align:center;color:{color};font-size:.82rem'>{regime}</div>", unsafe_allow_html=True)
+        st.caption(f"Régimen: {regime}")
 
 
 def build_regime_gauge(snapshot: SnapshotView | None) -> go.Figure | None:
@@ -223,14 +231,24 @@ def render_app(query_service: FirestoreReadOnlyQueryService, *, now: datetime | 
     st.markdown("<h2 style='text-align:center;margin-bottom:2px'>⚡ CRYPTO BREADTH TERMINAL</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;color:#64748b;font-size:.85rem;margin-bottom:14px'>Monitor de Amplitud de Mercado &amp; Diagnóstico Cuantitativo</p>", unsafe_allow_html=True)
 
-    timeframe = st.radio("Temporalidad", ["1d", "4h", "1w"], index=0, horizontal=True, key="v2_timeframe")
-    benchmark = st.radio("Benchmark", ["BTC", "ETH"], index=0, horizontal=True, key="v2_benchmark")
-    history_filter = st.radio("Histórico", ["1d", "1w", "1m", "6m", "1y", "Total"], index=5, horizontal=True, key="v2_history")
-    st.caption("Fuente: Gate · solo lectura · serie candidata BR1-LIVE-v2-40-CANDIDATE")
+    control_columns = st.columns([1.25, 1.1, 2.5, 2.0])
+    with control_columns[0]:
+        timeframe = st.radio("Temporalidad", ["1d", "4h", "1w"], index=0, horizontal=True, key="v2_timeframe")
+    with control_columns[1]:
+        benchmark = st.radio("Benchmark", ["BTC", "ETH"], index=0, horizontal=True, key="v2_benchmark")
+    with control_columns[2]:
+        history_filter = st.radio("Histórico", ["1d", "1w", "1m", "6m", "1y", "Total"], index=5, horizontal=True, key="v2_history")
+    with control_columns[3]:
+        st.caption("Fuente: Gate")
+        st.caption("Solo lectura · serie candidata")
 
     view = query_service.dashboard(timeframe, now=now)
     _status_caption(view)
     snapshot = view.latest if view.ui_state == "CURRENT" else view.last_known_good or view.latest
+    if snapshot:
+        st.caption(f"Calidad: {snapshot.data_quality_label} · {snapshot.data_quality_score}")
+    else:
+        st.caption("Calidad: UNAVAILABLE")
     _metric_cards(snapshot)
 
     st.markdown("### 🌡️ Termómetro de Régimen")
@@ -252,10 +270,7 @@ def render_app(query_service: FirestoreReadOnlyQueryService, *, now: datetime | 
         st.write(_history_gap_text(timeframe, history_filter))
         st.write("Filtros: 1d = 24h; 1w = 7 días; 1m = 30 días; 6m = 180 días; 1y = 365 días; Total = todo lo retenido. Cada filtro usa únicamente cierres publicados de la temporalidad seleccionada.")
 
-    # Keep the stable English accessibility/test landmark while the visible
-    # product copy and table columns remain Spanish.
-    st.subheader("Asset scanner")
-    st.caption("📋 Escáner de Activos")
+    st.subheader("📋 Escáner de Activos")
     scanner = _scanner_table(view.scanner)
     if scanner:
         st.dataframe(scanner, use_container_width=True, hide_index=True)

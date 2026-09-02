@@ -59,6 +59,7 @@ render_app(Fake(), now=datetime(2026, 8, 21, 8, tzinfo=timezone.utc))
     with patch("urllib.request.urlopen", side_effect=AssertionError("UI attempted network access")):
         app = AppTest.from_string(source).run(timeout=10)
     assert not app.exception
-    assert any("Breadth Score" in metric.label for metric in app.metric)
+    assert any("Breadth Score" in block.value for block in app.markdown)
     assert len(app.dataframe) == 1
-    assert "Asset scanner" in [heading.value for heading in app.subheader]
+    assert [heading.value for heading in app.subheader] == ["📋 Escáner de Activos"]
+    assert any("Calidad: HIGH" in caption.value for caption in app.caption)

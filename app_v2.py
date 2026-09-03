@@ -8,7 +8,7 @@ module.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
 from html import escape
 import os
@@ -28,6 +28,7 @@ if str(SRC) not in sys.path:
 from crypto_breadth_v2.contracts import load_contract_bundle
 from crypto_breadth_v2.firestore import FirestoreSnapshotStore
 from crypto_breadth_v2.firestore_query import FirestoreReadOnlyQueryService
+from crypto_breadth_v2.timeframes import require_utc
 from crypto_breadth_v2.view_models import DashboardView, ScannerView, SnapshotView
 
 
@@ -176,6 +177,24 @@ def _filtered_history(history: Sequence[SnapshotView], history_filter: str) -> l
     return [row for row in rows if row.candle_time.timestamp() >= cutoff]
 
 
+def history_window_days_for_filter(history_filter: str) -> int | None:
+    """Return the fixed duration for a bounded UI history filter.
+
+    The query layer applies this duration to the latest usable published
+    snapshot boundary.  It is deliberately not based on wall-clock time.
+    """
+    if history_filter == "Total":
+        return None
+    return {"1d": 1, "1w": 7, "1m": 30, "6m": 180, "1y": 365}[history_filter]
+
+
+def history_since_for_filter(anchor: datetime, history_filter: str) -> datetime | None:
+    """Compatibility helper: calculate a bound from an explicit UTC anchor."""
+    require_utc(anchor)
+    days = history_window_days_for_filter(history_filter)
+    return None if days is None else anchor - timedelta(days=days)
+
+
 def build_history_figure(history: Sequence[SnapshotView], benchmark: str, history_filter: str = "Total") -> go.Figure | None:
     """Return the historical model with breadth on the left and price right."""
     rows = _filtered_history(history, history_filter)
@@ -254,7 +273,12 @@ def render_app(query_service: FirestoreReadOnlyQueryService, *, now: datetime | 
         st.caption("Fuente: Gate")
         st.caption("Solo lectura · serie candidata")
 
-    view = query_service.dashboard(timeframe, now=now)
+    query_now = now or datetime.now(UTC)
+    dashboard_kwargs = {"now": query_now}
+    history_window_days = history_window_days_for_filter(history_filter)
+    if history_window_days is not None:
+        dashboard_kwargs["history_window_days"] = history_window_days
+    view = query_service.dashboard(timeframe, **dashboard_kwargs)
     _status_caption(view)
     snapshot = view.latest if view.ui_state == "CURRENT" else view.last_known_good or view.latest
     if snapshot:

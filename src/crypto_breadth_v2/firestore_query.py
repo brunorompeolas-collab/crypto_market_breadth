@@ -86,12 +86,27 @@ class FirestoreReadOnlyQueryService:
         row = self.store.latest(self.series_version, Timeframe(timeframe).value, status="PUBLISHED")
         return self._view(row) if row else None
 
-    def historical_series(self, timeframe: Timeframe | str, *, since: datetime | None = None) -> tuple[SnapshotView, ...]:
+    def historical_series(
+        self,
+        timeframe: Timeframe | str,
+        *,
+        since: datetime | None = None,
+        until: datetime | None = None,
+        limit: int | None = None,
+    ) -> tuple[SnapshotView, ...]:
         if since is not None:
             require_utc(since)
-        rows = self.store.history(self.series_version, Timeframe(timeframe).value)
+        if until is not None:
+            require_utc(until)
+        rows = self.store.history(
+            self.series_version,
+            Timeframe(timeframe).value,
+            since=since,
+            until=until,
+            limit=limit,
+        )
         views = tuple(self._view(row) for row in rows)
-        return tuple(view for view in views if since is None or view.candle_time >= since)
+        return views
 
     def scanner(self, timeframe: Timeframe | str) -> tuple[ScannerView, ...]:
         row = self.store.latest(self.series_version, Timeframe(timeframe).value)
@@ -130,13 +145,33 @@ class FirestoreReadOnlyQueryService:
             }
         return None
 
-    def dashboard(self, timeframe: Timeframe | str, *, now: datetime | None = None) -> DashboardView:
+    def dashboard(
+        self,
+        timeframe: Timeframe | str,
+        *,
+        now: datetime | None = None,
+        history_since: datetime | None = None,
+        history_until: datetime | None = None,
+        history_limit: int | None = None,
+        history_window_days: int | None = None,
+    ) -> DashboardView:
         timeframe = Timeframe(timeframe)
         now = now or datetime.now(UTC)
         require_utc(now)
         expected = expected_latest_close(now, timeframe)
         latest = self.latest_snapshot(timeframe)
         lkg = self.last_known_good(timeframe)
+        if history_window_days is not None and history_window_days < 0:
+            raise ValueError("history_window_days must be non-negative")
+        # Historical windows are anchored to the latest usable published
+        # boundary, never to wall-clock ``now``.  Freshness below continues to
+        # compare against ``now`` so a stale dashboard cannot appear current.
+        history_anchor = latest if latest is not None and latest.status == "PUBLISHED" else lkg
+        if history_window_days is not None and history_anchor is not None:
+            if history_since is None:
+                history_since = history_anchor.candle_time - timedelta(days=history_window_days)
+            if history_until is None:
+                history_until = history_anchor.candle_time
         basis = lkg or latest
         age = now - basis.candle_time if basis else None
         if latest is None:
@@ -157,6 +192,6 @@ class FirestoreReadOnlyQueryService:
             last_known_good=lkg,
             age=age,
             latest_failure=self.latest_failure(timeframe),
-            history=self.historical_series(timeframe),
+            history=self.historical_series(timeframe, since=history_since, until=history_until, limit=history_limit),
             scanner=self.scanner(timeframe),
         )

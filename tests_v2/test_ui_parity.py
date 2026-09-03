@@ -8,7 +8,7 @@ from crypto_breadth_v2.firestore_query import FirestoreReadOnlyQueryService
 from crypto_breadth_v2.query import DashboardView, ScannerView, SnapshotView
 from crypto_breadth_v2.contracts import load_contract_bundle
 
-from app_v2 import _metric_card_html, _metric_number, _scanner_table, build_history_figure
+from app_v2 import _metric_card_html, _metric_number, _scanner_table, build_history_figure, build_regime_gauge, canonical_display_decimal
 
 
 UTC = timezone.utc
@@ -50,6 +50,20 @@ def test_metric_values_are_complete_and_scanner_tri_state_is_readable():
     assert table[0]["> EMA20"] == "🟢 ABOVE"
     assert table[0]["> EMA50"] == "🔴 BELOW"
     assert table[0]["> EMA200"] == "⚪ UNAVAILABLE"
+
+
+def test_canonical_display_rounding_is_shared_by_card_and_gauge_without_mutating_storage():
+    raw = Decimal("62.25")
+    boundary_snapshot = _snapshot("1d", 8)
+    boundary_snapshot = boundary_snapshot.__class__(**{**boundary_snapshot.__dict__, "breadth_score": raw})
+    card = _metric_number(raw, " / 100")
+    gauge = build_regime_gauge(boundary_snapshot).data[0].value
+    assert card == "62.3 / 100"
+    assert gauge == 62.3
+    assert raw == Decimal("62.25")
+    assert canonical_display_decimal(Decimal("62.24")) == Decimal("62.2")
+    assert canonical_display_decimal(Decimal("62.26")) == Decimal("62.3")
+    assert _metric_number(Decimal("70.25"), "%") == "70.3%"
 
 
 def test_four_metric_cards_are_self_contained_html_blocks():

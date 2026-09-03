@@ -9,7 +9,7 @@ module.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from html import escape
 import os
 from pathlib import Path
@@ -39,13 +39,24 @@ REGIME_COLORS = {
     "expansion": "#00F59B",
     "euphoria": "#00B87A",
 }
+DISPLAY_QUANTUM = Decimal("0.1")
+
+
+def canonical_display_decimal(value: Decimal | None) -> Decimal | None:
+    """Round product-facing breadth/percentage values without changing storage."""
+    if value is None:
+        return None
+    if not isinstance(value, Decimal):
+        raise TypeError("canonical display values must be Decimal")
+    return value.quantize(DISPLAY_QUANTUM, rounding=ROUND_HALF_UP)
 
 
 def _metric_number(value: Decimal | None, suffix: str = "") -> str:
     """Render a complete value without truncation or binary-float conversion."""
-    if value is None:
+    rounded = canonical_display_decimal(value)
+    if rounded is None:
         return "—"
-    return f"{value:.1f}{suffix}"
+    return f"{rounded:.1f}{suffix}"
 
 
 def _regime(value: Decimal | None) -> tuple[str, str]:
@@ -129,12 +140,13 @@ def _metric_cards(snapshot: SnapshotView | None) -> None:
 
 def build_regime_gauge(snapshot: SnapshotView | None) -> go.Figure | None:
     """Build the legacy 0–100 regime gauge without writing or fetching data."""
-    if snapshot is None or snapshot.breadth_score is None:
+    rounded_score = canonical_display_decimal(snapshot.breadth_score) if snapshot is not None else None
+    if rounded_score is None:
         return None
     figure = go.Figure(
         go.Indicator(
             mode="gauge+number",
-            value=float(snapshot.breadth_score),
+            value=float(rounded_score),
             number={"font": {"size": 42, "color": "#f8fafc"}, "suffix": "/100"},
             gauge={
                 "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "rgba(255,255,255,.2)"},

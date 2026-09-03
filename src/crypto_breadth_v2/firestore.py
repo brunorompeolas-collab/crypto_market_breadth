@@ -242,24 +242,25 @@ class FirestoreSnapshotStore:
     ) -> tuple[Mapping[str, Any], ...]:
         since_key, until_key, limit = _history_bounds(since=since, until=until, limit=limit)
         query = self.client.collection("breadth_series").document(series_version).collection(collection_name(timeframe))
-        # Boundary and status predicates are evaluated by Firestore before
-        # streaming, keeping historical reads bounded as the series grows.
-        query = query.where("status", "==", "PUBLISHED")
+        # Keep the server query on the boundary field only.  Combining a
+        # status equality with range/order predicates would require a
+        # deployment-specific composite index.  Status is checked
+        # defensively after the bounded stream instead.
         if since_key is not None:
             query = query.where("boundary", ">=", since_key)
         if until_key is not None:
             query = query.where("boundary", "<=", until_key)
         query = query.order_by("boundary")
-        if limit is not None:
-            query = query.limit(limit)
         rows = []
         for snapshot in query.stream():
             row = snapshot.to_dict() or {}
-            # Defensive status check protects compatibility with simple test
-            # doubles and older collections while the server query remains the
-            # primary filter.
             if row.get("status") == "PUBLISHED":
                 rows.append(row)
+        # The public limit is defined in terms of published rows, so it must
+        # be applied after defensive status filtering rather than truncating
+        # the server stream before failed/degraded rows are removed.
+        if limit is not None:
+            rows = rows[:limit]
         return tuple(rows)
 
 

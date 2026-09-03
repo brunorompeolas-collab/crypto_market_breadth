@@ -2,8 +2,10 @@ from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 
-from app_v2 import history_since_for_filter
+from app_v2 import history_since_for_filter, history_window_days_for_filter
+from crypto_breadth_v2.contracts import load_contract_bundle
 from crypto_breadth_v2.firestore import FirestoreSnapshotStore, InMemorySnapshotStore
+from crypto_breadth_v2.firestore_query import FirestoreReadOnlyQueryService
 
 
 UTC = timezone.utc
@@ -71,19 +73,62 @@ class _RecordingClient:
 def test_firestore_history_pushes_bounds_and_limit_to_server_query():
     start = datetime(2026, 8, 2, tzinfo=UTC)
     end = datetime(2026, 8, 3, tzinfo=UTC)
-    client = _RecordingClient([_row(start), _row(end)])
-    rows = FirestoreSnapshotStore(client).history(SERIES, "1d", since=start, until=end, limit=10)
-    assert len(rows) == 2
+    client = _RecordingClient([_row(start, "FAILED"), _row(end), _row(datetime(2026, 8, 4, tzinfo=UTC))])
+    rows = FirestoreSnapshotStore(client).history(SERIES, "1d", since=start, until=end, limit=1)
+    assert [row["boundary"] for row in rows] == [end]
     assert ("where", "boundary", ">=", "2026-08-02T00:00:00Z") in client.query.operations
     assert ("where", "boundary", "<=", "2026-08-03T00:00:00Z") in client.query.operations
-    assert ("limit", 10) in client.query.operations
+    assert not any(op[0] == "limit" for op in client.query.operations)
+    assert not any(op[0] == "where" and op[1] == "status" for op in client.query.operations)
     assert any(op[0] == "order_by" and op[1] == "boundary" for op in client.query.operations)
 
 
 def test_ui_window_translates_to_bounded_query_and_total_is_explicitly_unbounded():
-    now = datetime(2026, 8, 21, 12, tzinfo=UTC)
-    assert history_since_for_filter(now, "1m") == now - timedelta(days=30)
-    assert history_since_for_filter(now, "Total") is None
+    anchor = datetime(2026, 8, 21, 12, tzinfo=UTC)
+    assert history_window_days_for_filter("1m") == 30
+    assert history_since_for_filter(anchor, "1m") == anchor - timedelta(days=30)
+    assert history_window_days_for_filter("Total") is None
+    assert history_since_for_filter(anchor, "Total") is None
+
+
+def _dashboard_row(boundary: datetime, status: str = "PUBLISHED"):
+    return {
+        **_row(boundary, status),
+        "universe_version": "BR1-BREADTH-UNIVERSE-v2-40",
+        "source_policy_version": "BR1-SOURCE-POLICY-v2-GATE-ONLY",
+        "formula_version": "BR1-BREADTH-FORMULA-v1",
+        "normalizer_version": "BR1-CANDLE-NORMALIZER-v2",
+        "cohort_version": "BR1-COHORT-v2-40-1D",
+        "breadth_score": "62.5",
+        "pct_above_ema20": "70",
+        "pct_above_ema50": "60",
+        "pct_above_ema200": "50",
+        "data_quality_score": "100",
+        "data_quality_label": "HIGH",
+        "structural_coverage": "1",
+        "component_coverage": "1",
+        "btc_close": "100",
+        "eth_close": "10",
+        "universe_size": 40,
+        "cohort_denominator": 40,
+        "scanner": [],
+    }
+
+
+def test_dashboard_history_is_anchored_to_latest_published_boundary_not_page_clock():
+    bundle = load_contract_bundle(Path("config/v2"), bundle="v2-40")
+    store = InMemorySnapshotStore()
+    sep2 = datetime(2026, 9, 2, tzinfo=UTC)
+    sep3 = datetime(2026, 9, 3, tzinfo=UTC)
+    store.put(_dashboard_row(sep2))
+    store.put(_dashboard_row(sep3))
+    reader = FirestoreReadOnlyQueryService(store, bundle)
+    view = reader.dashboard("1d", now=datetime(2026, 9, 3, 21, 30, tzinfo=UTC), history_window_days=1)
+    assert [row.candle_time for row in view.history] == [sep2, sep3]
+    # Freshness is still evaluated against the real page clock's expected
+    # completed daily boundary, independently of the historical anchor.
+    assert view.expected_boundary == sep3
+    assert view.ui_state == "CURRENT"
 
 
 def test_readiness_path_does_not_add_research_writes_or_change_live_identity():

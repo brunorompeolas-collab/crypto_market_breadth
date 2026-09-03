@@ -13,17 +13,17 @@ Retrospective output must use separate, immutable, fixed-cohort contracts. A
 research series is never a pre-inception LIVE series and must carry the label
 `RETROSPECTIVE_SURVIVORSHIP_BIASED`.
 
-Recommended names are:
+The revised dry-run candidates frozen for the next Founder decision are:
 
-* `BR1-RESEARCH-v2-RETROSPECTIVE-4H-6M-v1`
 * `BR1-RESEARCH-v2-RETROSPECTIVE-4H-1Y-v1`
-* `BR1-RESEARCH-v2-RETROSPECTIVE-4H-2Y-v1`
 * `BR1-RESEARCH-v2-RETROSPECTIVE-1D-1Y-v1`
 * `BR1-RESEARCH-v2-RETROSPECTIVE-1D-2Y-v1`
-* `BR1-RESEARCH-v2-RETROSPECTIVE-1D-3Y-v1`
-* `BR1-RESEARCH-v2-RETROSPECTIVE-1W-1Y-v1`
-* `BR1-RESEARCH-v2-RETROSPECTIVE-1W-2Y-v1`
-* `BR1-RESEARCH-v2-RETROSPECTIVE-1W-3Y-v1`
+
+The 1d/1y candidate uses the fixed 40-asset cohort. The 1d/2y candidate uses
+the fixed 39-asset cohort with HYPE excluded after full-range validation. The
+4h/1y candidate uses the fixed 40-asset cohort. Weekly research is deferred;
+the observed weekly availability is not a sufficient basis for a frozen
+weekly series in this gate.
 
 Each contract records the exact output interval, raw warmup interval, fixed
 asset IDs, Gate mappings, source policy, methodology/formula/normalizer
@@ -60,11 +60,9 @@ boundaries, valid OHLC, provider-complete flags, and identity-clean history.
 An asset failing that full check is excluded from that immutable series; the
 denominator is never changed mid-series.
 
-The 1w / 1y row is the first useful weekly candidate at exactly 80% structural
-coverage, but it is a thin research instrument. The recommended primary
-research set is 1d / 1y (40 assets) and 4h / 1y (40 assets). Weekly should begin
-with 1w / 1y only if full-range validation confirms all 32 assets; otherwise
-publish no weekly research series rather than silently shrinking below 80%.
+The 1w / 1y row is the first useful weekly screen at exactly 80% structural
+coverage, but it is deferred from the frozen dry-run plan rather than silently
+shrunk or exposed as a research series.
 
 ## Storage recommendation
 
@@ -82,15 +80,55 @@ lineage, not mutate compact snapshots.
 
 ## Bounded reads
 
-`SnapshotStore.history()` now accepts inclusive UTC `since`/`until` bounds and
-an optional chronological `limit`. The in-memory implementation applies the
-same semantics. The Firestore adapter adds `status`, boundary predicates,
-ordering, and limit to the server query before streaming documents. The query
-service forwards these arguments without client-side full-collection filtering.
+`SnapshotStore.history()` accepts inclusive UTC `since`/`until` bounds and an
+optional chronological `limit`. The in-memory implementation applies the
+same semantics. The Firestore adapter streams only the boundary-bounded,
+chronologically ordered range, then defensively filters `status == PUBLISHED`
+and applies the public limit after that filter. It deliberately does not add a
+`status` predicate or a server `.limit()` call, avoiding a status+boundary
+composite-index requirement while preserving published-row limit semantics.
+The query service forwards these arguments without client-side
+full-collection filtering.
 
-For UI filters, 1d/1w/1m/6m/1y are translated into a lower bound before the
-dashboard query. `Total` is intentionally unbounded until a research-series
-inception boundary is frozen; it does not fabricate a start date.
+The exact bounded Firestore shape is:
+
+```text
+collection("breadth_series").document(series).collection(timeframe)
+  .where("boundary", ">=", since_iso)       # when supplied
+  .where("boundary", "<=", until_iso)       # when supplied
+  .order_by("boundary")
+  .stream()
+```
+
+Rows are status-filtered and limited after streaming. A single-field boundary
+range/order is used, so this implementation introduces no composite index.
+
+For UI filters, 1d/1w/1m/6m/1y are converted to a duration and the dashboard
+query anchors that duration to the latest usable published snapshot boundary
+(latest PUBLISHED snapshot, otherwise last-known-good). Both lower and upper
+bounds are sent to Firestore. `Total` remains intentionally unbounded until a
+research-series inception boundary is frozen; it does not fabricate a start
+date. Freshness/CURRENT status continues to use the real page clock and the
+expected completed boundary.
+
+## Revised dry-run and robustness plan
+
+The execution order is frozen as three independent dry-run candidates:
+
+* **A — `BR1-RESEARCH-v2-RETROSPECTIVE-1D-1Y-v1`**: fixed 40-asset cohort.
+* **B — `BR1-RESEARCH-v2-RETROSPECTIVE-1D-2Y-v1`**: fixed 39-asset cohort;
+  HYPE is excluded and the denominator is immutable.
+* **C — `BR1-RESEARCH-v2-RETROSPECTIVE-4H-1Y-v1`**: fixed 40-asset cohort.
+
+Weekly remains deferred pending a separate full-range identity/continuity
+decision. No candidate is written by this readiness gate.
+
+After separate approval, a robustness comparison will use the overlapping
+one-year interval between A (40 assets) and B (39 assets), without computing it
+now. The report will compare Breadth Score level/volatility/correlation,
+EMA20/50/200 participation, regime classification, missingness/quality, and
+denominator sensitivity, and will state whether HYPE's exclusion materially
+changes interpretation.
 
 ## Exact next backfill execution plan
 

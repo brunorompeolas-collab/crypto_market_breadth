@@ -153,6 +153,7 @@ class FirestoreReadOnlyQueryService:
         history_since: datetime | None = None,
         history_until: datetime | None = None,
         history_limit: int | None = None,
+        history_window_days: int | None = None,
     ) -> DashboardView:
         timeframe = Timeframe(timeframe)
         now = now or datetime.now(UTC)
@@ -160,6 +161,17 @@ class FirestoreReadOnlyQueryService:
         expected = expected_latest_close(now, timeframe)
         latest = self.latest_snapshot(timeframe)
         lkg = self.last_known_good(timeframe)
+        if history_window_days is not None and history_window_days < 0:
+            raise ValueError("history_window_days must be non-negative")
+        # Historical windows are anchored to the latest usable published
+        # boundary, never to wall-clock ``now``.  Freshness below continues to
+        # compare against ``now`` so a stale dashboard cannot appear current.
+        history_anchor = latest if latest is not None and latest.status == "PUBLISHED" else lkg
+        if history_window_days is not None and history_anchor is not None:
+            if history_since is None:
+                history_since = history_anchor.candle_time - timedelta(days=history_window_days)
+            if history_until is None:
+                history_until = history_anchor.candle_time
         basis = lkg or latest
         age = now - basis.candle_time if basis else None
         if latest is None:

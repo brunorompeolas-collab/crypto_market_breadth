@@ -28,7 +28,15 @@ class SnapshotStore(Protocol):
     def get(self, series_version: str, timeframe: str, boundary: datetime) -> Mapping[str, Any] | None: ...
     def put(self, document: Mapping[str, Any]) -> str: ...
     def latest(self, series_version: str, timeframe: str, *, status: str | None = None) -> Mapping[str, Any] | None: ...
-    def history(self, series_version: str, timeframe: str) -> tuple[Mapping[str, Any], ...]: ...
+    def history(
+        self,
+        series_version: str,
+        timeframe: str,
+        *,
+        since: datetime | None = None,
+        until: datetime | None = None,
+        limit: int | None = None,
+    ) -> tuple[Mapping[str, Any], ...]: ...
 
 
 def require_utc(value: datetime) -> datetime:
@@ -79,6 +87,19 @@ def _normalise_document(document: Mapping[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _history_bounds(*, since: datetime | None, until: datetime | None, limit: int | None) -> tuple[str | None, str | None, int | None]:
+    if since is not None:
+        since = require_utc(since)
+    if until is not None:
+        until = require_utc(until)
+    if since is not None and until is not None and since > until:
+        raise ValueError("history since must not be after until")
+    if limit is not None and limit < 0:
+        raise ValueError("history limit must be non-negative")
+    encode = lambda value: value.isoformat().replace("+00:00", "Z") if value is not None else None
+    return encode(since), encode(until), limit
+
+
 @dataclass
 class InMemorySnapshotStore:
     """Isolated Firestore-compatible store used by tests and local dry runs."""
@@ -123,12 +144,27 @@ class InMemorySnapshotStore:
             return None
         return deepcopy(max(rows, key=lambda row: row["boundary"]))
 
-    def history(self, series_version: str, timeframe: str) -> tuple[Mapping[str, Any], ...]:
+    def history(
+        self,
+        series_version: str,
+        timeframe: str,
+        *,
+        since: datetime | None = None,
+        until: datetime | None = None,
+        limit: int | None = None,
+    ) -> tuple[Mapping[str, Any], ...]:
+        since_key, until_key, limit = _history_bounds(since=since, until=until, limit=limit)
         rows = [
             deepcopy(row) for row in self._documents.values()
             if row.get("series_version") == series_version and row.get("timeframe") == timeframe and row.get("status") == "PUBLISHED"
         ]
-        return tuple(sorted(rows, key=lambda row: row["boundary"]))
+        rows = [
+            row for row in rows
+            if (since_key is None or row["boundary"] >= since_key)
+            and (until_key is None or row["boundary"] <= until_key)
+        ]
+        rows = sorted(rows, key=lambda row: row["boundary"])
+        return tuple(rows if limit is None else rows[:limit])
 
 
 class FirestoreSnapshotStore:
@@ -195,9 +231,36 @@ class FirestoreSnapshotStore:
                 return row
         return None
 
-    def history(self, series_version: str, timeframe: str) -> tuple[Mapping[str, Any], ...]:
-        query = self.client.collection("breadth_series").document(series_version).collection(collection_name(timeframe)).order_by("boundary")
-        return tuple((snapshot.to_dict() or {}) for snapshot in query.stream() if (snapshot.to_dict() or {}).get("status") == "PUBLISHED")
+    def history(
+        self,
+        series_version: str,
+        timeframe: str,
+        *,
+        since: datetime | None = None,
+        until: datetime | None = None,
+        limit: int | None = None,
+    ) -> tuple[Mapping[str, Any], ...]:
+        since_key, until_key, limit = _history_bounds(since=since, until=until, limit=limit)
+        query = self.client.collection("breadth_series").document(series_version).collection(collection_name(timeframe))
+        # Boundary and status predicates are evaluated by Firestore before
+        # streaming, keeping historical reads bounded as the series grows.
+        query = query.where("status", "==", "PUBLISHED")
+        if since_key is not None:
+            query = query.where("boundary", ">=", since_key)
+        if until_key is not None:
+            query = query.where("boundary", "<=", until_key)
+        query = query.order_by("boundary")
+        if limit is not None:
+            query = query.limit(limit)
+        rows = []
+        for snapshot in query.stream():
+            row = snapshot.to_dict() or {}
+            # Defensive status check protects compatibility with simple test
+            # doubles and older collections while the server query remains the
+            # primary filter.
+            if row.get("status") == "PUBLISHED":
+                rows.append(row)
+        return tuple(rows)
 
 
 def snapshot_document(

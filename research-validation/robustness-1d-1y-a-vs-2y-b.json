@@ -1,0 +1,18 @@
+{
+  "comparison": "BR1-RESEARCH-v2-RETROSPECTIVE-1D-1Y-v1 vs BR1-RESEARCH-v2-RETROSPECTIVE-1D-2Y-v1",
+  "common_observation_count": 366,
+  "common_start": "2025-09-05T00:00:00Z",
+  "common_end": "2026-09-05T00:00:00Z",
+  "mean_absolute_breadth_score_difference": "2.159520807061790668348045397",
+  "maximum_absolute_breadth_score_difference": "13.07051282051282051282051282",
+  "breadth_score_correlation": "0.99547983278534477043823281736581526146619951486058",
+  "pct_above_ema20_mean_absolute_difference": "0.9617136051562281070477791792",
+  "pct_above_ema20_maximum_absolute_difference": "2.5",
+  "pct_above_ema50_mean_absolute_difference": "1.133879781420765027322404369",
+  "pct_above_ema50_maximum_absolute_difference": "2.5",
+  "pct_above_ema200_mean_absolute_difference": "3.578184110970996216897856230",
+  "pct_above_ema200_maximum_absolute_difference": "26.02564102564102564102564103",
+  "regime_disagreement_count": 33,
+  "regime_disagreement_percentage": "9.016393442622950819672131148",
+  "interpretation": "Sensitivity analysis only; no formula or weight optimization was performed."
+}

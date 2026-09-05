@@ -1,0 +1,3361 @@
+{
+  "as_of": "2026-09-05T10:30:00Z",
+  "periods": {
+    "A": {
+      "latest_boundary": "2026-09-05T00:00:00Z",
+      "output_start": "2025-09-05T00:00:00Z",
+      "output_end": "2026-09-05T00:00:00Z",
+      "ema_warmup_start": "2025-02-17T00:00:00Z",
+      "raw_close_start": "2025-02-18T00:00:00Z",
+      "expected_raw_count": 565,
+      "expected_output_count": 366
+    },
+    "B": {
+      "latest_boundary": "2026-09-05T00:00:00Z",
+      "output_start": "2024-09-05T00:00:00Z",
+      "output_end": "2026-09-05T00:00:00Z",
+      "ema_warmup_start": "2024-02-18T00:00:00Z",
+      "raw_close_start": "2024-02-19T00:00:00Z",
+      "expected_raw_count": 930,
+      "expected_output_count": 731
+    }
+  },
+  "cohorts": {
+    "A40": [
+      "bitcoin",
+      "ethereum",
+      "binancecoin",
+      "solana",
+      "ripple",
+      "dogecoin",
+      "the-open-network",
+      "cardano",
+      "shiba-inu",
+      "avalanche-2",
+      "tron",
+      "polkadot",
+      "bitcoin-cash",
+      "chainlink",
+      "near",
+      "litecoin",
+      "internet-computer",
+      "fetch-ai",
+      "stellar",
+      "aptos",
+      "blockstack",
+      "uniswap",
+      "ethereum-classic",
+      "render-token",
+      "injective-protocol",
+      "filecoin",
+      "cosmos",
+      "immutable-x",
+      "vechain",
+      "optimism",
+      "the-graph",
+      "bittensor",
+      "sui",
+      "aave",
+      "algorand",
+      "lido-dao",
+      "hyperliquid",
+      "zcash",
+      "hedera-hashgraph",
+      "ondo-finance"
+    ],
+    "A39": [
+      "bitcoin",
+      "ethereum",
+      "binancecoin",
+      "solana",
+      "ripple",
+      "dogecoin",
+      "the-open-network",
+      "cardano",
+      "shiba-inu",
+      "avalanche-2",
+      "tron",
+      "polkadot",
+      "bitcoin-cash",
+      "chainlink",
+      "near",
+      "litecoin",
+      "internet-computer",
+      "fetch-ai",
+      "stellar",
+      "aptos",
+      "blockstack",
+      "uniswap",
+      "ethereum-classic",
+      "render-token",
+      "injective-protocol",
+      "filecoin",
+      "cosmos",
+      "immutable-x",
+      "vechain",
+      "optimism",
+      "the-graph",
+      "bittensor",
+      "sui",
+      "aave",
+      "algorand",
+      "lido-dao",
+      "zcash",
+      "hedera-hashgraph",
+      "ondo-finance"
+    ],
+    "B39": [
+      "bitcoin",
+      "ethereum",
+      "binancecoin",
+      "solana",
+      "ripple",
+      "dogecoin",
+      "the-open-network",
+      "cardano",
+      "shiba-inu",
+      "avalanche-2",
+      "tron",
+      "polkadot",
+      "bitcoin-cash",
+      "chainlink",
+      "near",
+      "litecoin",
+      "internet-computer",
+      "fetch-ai",
+      "stellar",
+      "aptos",
+      "blockstack",
+      "uniswap",
+      "ethereum-classic",
+      "render-token",
+      "injective-protocol",
+      "filecoin",
+      "cosmos",
+      "immutable-x",
+      "vechain",
+      "optimism",
+      "the-graph",
+      "bittensor",
+      "sui",
+      "aave",
+      "algorand",
+      "lido-dao",
+      "zcash",
+      "hedera-hashgraph",
+      "ondo-finance"
+    ],
+    "B_excluded": [
+      "hyperliquid"
+    ]
+  },
+  "raw_validation": {
+    "A": [
+      {
+        "asset_id": "bitcoin",
+        "symbol": "BTC",
+        "gate_pair": "BTC_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "52519b5b60830c5c3b8492e2c2c0f1aa678fa8fda84e99d0e08ab853a3cca0b4"
+      },
+      {
+        "asset_id": "ethereum",
+        "symbol": "ETH",
+        "gate_pair": "ETH_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "a352393f6da1bcecefc383f3d0ab29c4c011b4e38378a7d7f7109f83e368c5a9"
+      },
+      {
+        "asset_id": "binancecoin",
+        "symbol": "BNB",
+        "gate_pair": "BNB_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "7de0866532a0755f7e24aa61271ae6559c3d988624b871345d5884ae04d17993"
+      },
+      {
+        "asset_id": "solana",
+        "symbol": "SOL",
+        "gate_pair": "SOL_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "149803b685f28813fe21e4d4154d587d6c6bbbd18d589dc61dfe78b15d4788c7"
+      },
+      {
+        "asset_id": "ripple",
+        "symbol": "XRP",
+        "gate_pair": "XRP_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "d168c06bba4173e5c3d646b55bc8b5c22cbed6a97effb792f82ac5b7bc796f8b"
+      },
+      {
+        "asset_id": "dogecoin",
+        "symbol": "DOGE",
+        "gate_pair": "DOGE_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "53c5bfb796e1a3edbb6d62849409555b3a27fcb1fa57bd7359547acb429d81ae"
+      },
+      {
+        "asset_id": "the-open-network",
+        "symbol": "GRAM",
+        "gate_pair": "GRAM_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "1b8edec9d1489b7eaa9f10e6ee18419eda07a785cfaf8500b45908313dcc98e0"
+      },
+      {
+        "asset_id": "cardano",
+        "symbol": "ADA",
+        "gate_pair": "ADA_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "e3ff6ce02f6536341bf788d47f32928f416b55383e1b0336d70144743e5b5750"
+      },
+      {
+        "asset_id": "shiba-inu",
+        "symbol": "SHIB",
+        "gate_pair": "SHIB_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "09deeb59eabae450228e256dcbf8f8d2650d6f9ab85b199c1efa008167bbbbeb"
+      },
+      {
+        "asset_id": "avalanche-2",
+        "symbol": "AVAX",
+        "gate_pair": "AVAX_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "3eb801ae4a22c877e281a018ada43a05b4aecbf31b6cb6d6eb85f1a63a76d14f"
+      },
+      {
+        "asset_id": "tron",
+        "symbol": "TRX",
+        "gate_pair": "TRX_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "626f6ae3c5caa041fd84aeea625368978c20ef7961661ee6ee5c91625cf79cf9"
+      },
+      {
+        "asset_id": "polkadot",
+        "symbol": "DOT",
+        "gate_pair": "DOT_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "61ed823bdbef19a8dc8e4dbe1e8f5b6aa366d23901bac86e75bfeda4f3bfb348"
+      },
+      {
+        "asset_id": "bitcoin-cash",
+        "symbol": "BCH",
+        "gate_pair": "BCH_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "3222139a80651df04491f8b14203fb78bd59b8868c8cfc72b7051f187f1c6b6a"
+      },
+      {
+        "asset_id": "chainlink",
+        "symbol": "LINK",
+        "gate_pair": "LINK_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "abf996dca9f776811851a02e82b2e5d8a544bb53e4db99430a82d0a1d8fcdd47"
+      },
+      {
+        "asset_id": "near",
+        "symbol": "NEAR",
+        "gate_pair": "NEAR_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "4710036589d92c18df37a377f26be2429fee53521187795ccf48e3c1f730e643"
+      },
+      {
+        "asset_id": "litecoin",
+        "symbol": "LTC",
+        "gate_pair": "LTC_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "6c5724effe18bb9047bd6b012b78f6c464e6c658d424b047d68f77e545930a7c"
+      },
+      {
+        "asset_id": "internet-computer",
+        "symbol": "ICP",
+        "gate_pair": "ICP_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "4df63396eee322d9bc94d7366e6268ce3878f71bb1fdb6ed3369d0894fea7f07"
+      },
+      {
+        "asset_id": "fetch-ai",
+        "symbol": "FET",
+        "gate_pair": "FET_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "6bf34050e180579127030365b9a944722cf4af6394ec897d10676fa97a164071"
+      },
+      {
+        "asset_id": "stellar",
+        "symbol": "XLM",
+        "gate_pair": "XLM_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5b7a4478401f18fb7932bb9f477de391666a0d890b6948fb52bac62e22911bdc"
+      },
+      {
+        "asset_id": "aptos",
+        "symbol": "APT",
+        "gate_pair": "APT_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "a39e4e4555a4a221ead2b0e0ef9af7093b7637c6470d4b882ffcb77b676929ac"
+      },
+      {
+        "asset_id": "blockstack",
+        "symbol": "STX",
+        "gate_pair": "STX_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "b8f785e7cc2d7a159f8e7707890f20335337fe79bb2917f3913c3991f4a94175"
+      },
+      {
+        "asset_id": "uniswap",
+        "symbol": "UNI",
+        "gate_pair": "UNI_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "e929a96e0ec808fcae0b4bae8b6fde908e3bd86efc4f2a51e07fd5c0f028b666"
+      },
+      {
+        "asset_id": "ethereum-classic",
+        "symbol": "ETC",
+        "gate_pair": "ETC_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "eb6844e6f5b0bbc14062d907642225c6d0a2e71de3e7bc5845ef58aa07a15401"
+      },
+      {
+        "asset_id": "render-token",
+        "symbol": "RENDER",
+        "gate_pair": "RENDER_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "2eafdf3d4ac46fdc4d5b972ae80ac2d5949982505d3ec739d2762c177e317123"
+      },
+      {
+        "asset_id": "injective-protocol",
+        "symbol": "INJ",
+        "gate_pair": "INJ_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "25780738de00f5fcddd473b7cb670684b024b982256514fe3ae989ee96976ef9"
+      },
+      {
+        "asset_id": "filecoin",
+        "symbol": "FIL",
+        "gate_pair": "FIL_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "508c2ba3cda373c81296cc2b0b9f227916dc718dcd7f0e7fe6080f4b64758491"
+      },
+      {
+        "asset_id": "cosmos",
+        "symbol": "ATOM",
+        "gate_pair": "ATOM_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "d26d07a5cfe748bf09605d15123170e30b2c45fe276e3534a77e8c93e48faee3"
+      },
+      {
+        "asset_id": "immutable-x",
+        "symbol": "IMX",
+        "gate_pair": "IMX_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "29789ef53642a3c7c3e35d058987d5f95236c1fe4108c0aaa281e108f63294a8"
+      },
+      {
+        "asset_id": "vechain",
+        "symbol": "VET",
+        "gate_pair": "VET_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "d88a5c7c96f4255d03b3071455f1439e98c1c5f04d0b7f97e5d8e9d1a71f62b3"
+      },
+      {
+        "asset_id": "optimism",
+        "symbol": "OP",
+        "gate_pair": "OP_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "e0ba13df8b54b76e92b047d3571e348c56b1958d77660fce56fdf67e5e11c602"
+      },
+      {
+        "asset_id": "the-graph",
+        "symbol": "GRT",
+        "gate_pair": "GRT_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "870141b4afcb8e8dc75bd5fab9002a02c2c7be3436524b7e466200d4541cd1db"
+      },
+      {
+        "asset_id": "bittensor",
+        "symbol": "TAO",
+        "gate_pair": "TAO_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "c3ea3ae346e441ecded6c838275ca092c1ea25c36cabc1b368e4467a5dea699c"
+      },
+      {
+        "asset_id": "sui",
+        "symbol": "SUI",
+        "gate_pair": "SUI_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "06bba680c23be630c71f666062b766f00e31d09fa1f5d3957bbd1c224c63b3bb"
+      },
+      {
+        "asset_id": "aave",
+        "symbol": "AAVE",
+        "gate_pair": "AAVE_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "ef099986e7487ca6b0754806740d1f46d2b2696513d9d5a336d0690bf86305ff"
+      },
+      {
+        "asset_id": "algorand",
+        "symbol": "ALGO",
+        "gate_pair": "ALGO_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "f30c37dbf2710002990b1e8d976fc410f472c58b198638b523a585cd9db34286"
+      },
+      {
+        "asset_id": "lido-dao",
+        "symbol": "LDO",
+        "gate_pair": "LDO_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "06bf55fa291d053da4da3b2138c089bfeb51e6675a8f4a3d815175b036756c73"
+      },
+      {
+        "asset_id": "hyperliquid",
+        "symbol": "HYPE",
+        "gate_pair": "HYPE_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "92a68130c5e6e328df10be98fd488f7f8e9fb18c7b80fd1d970cbdfd1606efad"
+      },
+      {
+        "asset_id": "zcash",
+        "symbol": "ZEC",
+        "gate_pair": "ZEC_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "60d17e208a5cc0f2f15bd92bb688dfb77064180ce04577bcd5fda16ef29d6fb2"
+      },
+      {
+        "asset_id": "hedera-hashgraph",
+        "symbol": "HBAR",
+        "gate_pair": "HBAR_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "dbce1204c91138da37be3162e2e476f69e2648fe09a21c03d2d613a3ff4118be"
+      },
+      {
+        "asset_id": "ondo-finance",
+        "symbol": "ONDO",
+        "gate_pair": "ONDO_USDT",
+        "requested_raw_start": "2025-02-17T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 565,
+        "observed_observation_count": 565,
+        "first_observed_boundary": "2025-02-18T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "78291dbdc5f6c2ecd84b7f19fe344a2d06513276a089f2a59cd0399a4a05e8c3"
+      }
+    ],
+    "B": [
+      {
+        "asset_id": "bitcoin",
+        "symbol": "BTC",
+        "gate_pair": "BTC_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "9dd68c6f173ec0c9a1300abd18c458ecb72715e8cda7149694ef9049d272c5ca"
+      },
+      {
+        "asset_id": "ethereum",
+        "symbol": "ETH",
+        "gate_pair": "ETH_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "2e866abcebe49890de12ba7fbdebd80906cf7816a4c17a99f914c4f71aae9ceb"
+      },
+      {
+        "asset_id": "binancecoin",
+        "symbol": "BNB",
+        "gate_pair": "BNB_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "4c884ae8bea2bde10e178352762d47b8b3fc6c9e95c60c2d70037797738a0da1"
+      },
+      {
+        "asset_id": "solana",
+        "symbol": "SOL",
+        "gate_pair": "SOL_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "71d108c20474581c1993d4c017e3ff9a5ad571af7d484e35d44405d6b68c4314"
+      },
+      {
+        "asset_id": "ripple",
+        "symbol": "XRP",
+        "gate_pair": "XRP_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "436d6c505d2e822efc1c1b0414b4e30b24d5bd76cae75b7055a1f7bf7a84317d"
+      },
+      {
+        "asset_id": "dogecoin",
+        "symbol": "DOGE",
+        "gate_pair": "DOGE_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "98bd2890099c8df9792fd363f8b06a760411773f7027f58af505103e056ba033"
+      },
+      {
+        "asset_id": "the-open-network",
+        "symbol": "GRAM",
+        "gate_pair": "GRAM_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5d7f0455d0078692d52559a3531c4e8046e9c6b7f8ab0b150ba06d5d829cdfd8"
+      },
+      {
+        "asset_id": "cardano",
+        "symbol": "ADA",
+        "gate_pair": "ADA_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "8210ab80a0fb2a2491b08db4c26cc3e4aa62ed3a1853c114a4488fed6e97a7c9"
+      },
+      {
+        "asset_id": "shiba-inu",
+        "symbol": "SHIB",
+        "gate_pair": "SHIB_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "9fb4e8af8ba08df36a8622194823cce02e5b46eff23f95caf64f0772b988d838"
+      },
+      {
+        "asset_id": "avalanche-2",
+        "symbol": "AVAX",
+        "gate_pair": "AVAX_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "e6696b75d784206960856e7b242ac2ca0d5e3f20287b36d580c191449bd88bf5"
+      },
+      {
+        "asset_id": "tron",
+        "symbol": "TRX",
+        "gate_pair": "TRX_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "22e254aced2606505830800c344a17dd7d133b035bcc33148aeaa9c91a253c42"
+      },
+      {
+        "asset_id": "polkadot",
+        "symbol": "DOT",
+        "gate_pair": "DOT_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "d3864d6ff1cc17ea97e245a73747d4d7ef08e90b40e731bc3d3d4906370da85e"
+      },
+      {
+        "asset_id": "bitcoin-cash",
+        "symbol": "BCH",
+        "gate_pair": "BCH_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "a03ed1a15e50deb589ac45ce7cfba483048ef171eb95cff6bc3797994cdb2acc"
+      },
+      {
+        "asset_id": "chainlink",
+        "symbol": "LINK",
+        "gate_pair": "LINK_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "9d86c334a14ffa5a9618980394a64e7a411a8b45a406be83026ec1c75003a60a"
+      },
+      {
+        "asset_id": "near",
+        "symbol": "NEAR",
+        "gate_pair": "NEAR_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "ad3848a1282cbcd5f9e32ba030093e3f6bed7a2b1f5292856676c21a41e0a036"
+      },
+      {
+        "asset_id": "litecoin",
+        "symbol": "LTC",
+        "gate_pair": "LTC_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "e7973073dfd8491d10dd68a42a37327a24ceadd7cc5d402795cec2155fe09114"
+      },
+      {
+        "asset_id": "internet-computer",
+        "symbol": "ICP",
+        "gate_pair": "ICP_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "9ef06e759d2404bb0acd974232bda7c031135102c0fad45388f334866031864f"
+      },
+      {
+        "asset_id": "fetch-ai",
+        "symbol": "FET",
+        "gate_pair": "FET_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "83df77c29acf7d092bd1630df2020cb00dbd0fad234277010ae54189bd314a54"
+      },
+      {
+        "asset_id": "stellar",
+        "symbol": "XLM",
+        "gate_pair": "XLM_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "51bb21b39049b270cee8d8ba78dd1d6729e479a19145444de8b85ace26d4d8f2"
+      },
+      {
+        "asset_id": "aptos",
+        "symbol": "APT",
+        "gate_pair": "APT_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "b38f0c339067921f289ccb0318772da8d4b4b98d121d17eb40aa48d6134d4467"
+      },
+      {
+        "asset_id": "blockstack",
+        "symbol": "STX",
+        "gate_pair": "STX_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "68076e870a10abf2dd189fe2a521bfb7eaadf2610f53f44031141e7894fb3670"
+      },
+      {
+        "asset_id": "uniswap",
+        "symbol": "UNI",
+        "gate_pair": "UNI_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5a28ef2a4b510f150a448e8d773748beae9fe62d14781392efdc143f4ae1b87b"
+      },
+      {
+        "asset_id": "ethereum-classic",
+        "symbol": "ETC",
+        "gate_pair": "ETC_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "1d1335b26e306a89ff9dbc824dca6ed390aed72ee966241a28fffcc90b23c9fa"
+      },
+      {
+        "asset_id": "render-token",
+        "symbol": "RENDER",
+        "gate_pair": "RENDER_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "567c76c0cb55492071a706416aa379283b69d21a65ecdb4b444e3e64ee2377a1"
+      },
+      {
+        "asset_id": "injective-protocol",
+        "symbol": "INJ",
+        "gate_pair": "INJ_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "f061067aa6e0b66b14804bba0cede7114a6ed3a94815dfc75ca3f739a29f67e3"
+      },
+      {
+        "asset_id": "filecoin",
+        "symbol": "FIL",
+        "gate_pair": "FIL_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "26b2b9e83161e16f91c5501420410ce9f7764ced3b633956a2e9cc88ade6e0bb"
+      },
+      {
+        "asset_id": "cosmos",
+        "symbol": "ATOM",
+        "gate_pair": "ATOM_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "88761d1683066c9d9d8297c650b1b83ef8348cbca8888380221c29d0d900b2fa"
+      },
+      {
+        "asset_id": "immutable-x",
+        "symbol": "IMX",
+        "gate_pair": "IMX_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "4d384e31464117e8adf3c0b8d69e926a61eae7e0ab400f3e36f25e9f8c3f6965"
+      },
+      {
+        "asset_id": "vechain",
+        "symbol": "VET",
+        "gate_pair": "VET_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "c9e3436723401f0ee93618af2b7624121e9575317b2948b270701f1aa77d335e"
+      },
+      {
+        "asset_id": "optimism",
+        "symbol": "OP",
+        "gate_pair": "OP_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "0f4b83ffd636ecd9b5586d527432de1d8e2efc9e217536cd1d528f7acaac3eec"
+      },
+      {
+        "asset_id": "the-graph",
+        "symbol": "GRT",
+        "gate_pair": "GRT_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "11419a789be8c1ed04ed1276a00984ec3eb7360bfc3e1d54f781d62dceffacdc"
+      },
+      {
+        "asset_id": "bittensor",
+        "symbol": "TAO",
+        "gate_pair": "TAO_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "48cac43dab38921806e4eae5e5c253851d685b410cac13de8fd2d8975e6ac56c"
+      },
+      {
+        "asset_id": "sui",
+        "symbol": "SUI",
+        "gate_pair": "SUI_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "2023a321511453e5bf9d7a6ea649449411f984ab2dffcb6f6ac3cb55936535a9"
+      },
+      {
+        "asset_id": "aave",
+        "symbol": "AAVE",
+        "gate_pair": "AAVE_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "b77075028f0535702a98b4f7e6dbaeb6d582383b38b05f1cbe87029bd342872a"
+      },
+      {
+        "asset_id": "algorand",
+        "symbol": "ALGO",
+        "gate_pair": "ALGO_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "4b9f670c32bc36486816848a454ea9bd383493965f72e71d305b8aacd3afaf2f"
+      },
+      {
+        "asset_id": "lido-dao",
+        "symbol": "LDO",
+        "gate_pair": "LDO_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5e2f19310013c4304d9e5ef2b267e7bd1f7cf860ca5a55c794341281550565a2"
+      },
+      {
+        "asset_id": "zcash",
+        "symbol": "ZEC",
+        "gate_pair": "ZEC_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5a125a0cd502c0e9eed78841b644c6ed555788932730bee3c1ca9909e76592ce"
+      },
+      {
+        "asset_id": "hedera-hashgraph",
+        "symbol": "HBAR",
+        "gate_pair": "HBAR_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "c11ae8592efda17c2c655ea5cb04bf269d8282b06266145963274ef4cedca613"
+      },
+      {
+        "asset_id": "ondo-finance",
+        "symbol": "ONDO",
+        "gate_pair": "ONDO_USDT",
+        "requested_raw_start": "2024-02-18T00:00:00Z",
+        "requested_raw_end": "2026-09-05T00:00:00Z",
+        "expected_observation_count": 930,
+        "observed_observation_count": 930,
+        "first_observed_boundary": "2024-02-19T00:00:00Z",
+        "last_observed_boundary": "2026-09-05T00:00:00Z",
+        "missing_boundary_count": 0,
+        "duplicate_count": 0,
+        "malformed_candle_count": 0,
+        "identity_status": "PASS",
+        "pagination_pages": 1,
+        "synthetic_candle_count": 0,
+        "result": "PASS",
+        "failure_reason": null,
+        "raw_series_sha256": "5b3d4f9bedaeab2173e58a4a35d1d23bd20d89beeac75badef5adfd8aacb8c97"
+      }
+    ]
+  },
+  "original_confounded_a40_vs_b39": {
+    "common_observation_count": 366,
+    "common_start": "2025-09-05T00:00:00Z",
+    "common_end": "2026-09-05T00:00:00Z",
+    "mean_absolute_breadth_score_difference": "2.159520807061790668348045397",
+    "maximum_absolute_breadth_score_difference": "13.07051282051282051282051282",
+    "breadth_score_correlation": "0.99547983278534477043823281736581526146619951486058",
+    "pct_above_ema20_mean_absolute_difference": "0.9617136051562281070477791792",
+    "pct_above_ema20_maximum_absolute_difference": "2.5",
+    "pct_above_ema50_mean_absolute_difference": "1.133879781420765027322404369",
+    "pct_above_ema50_maximum_absolute_difference": "2.5",
+    "pct_above_ema200_mean_absolute_difference": "3.578184110970996216897856230",
+    "pct_above_ema200_maximum_absolute_difference": "26.02564102564102564102564103",
+    "regime_disagreement_count": 33,
+    "regime_disagreement_percentage": "9.016393442622950819672131148"
+  },
+  "cohort_effect_a40_vs_a39": {
+    "common_observation_count": 366,
+    "common_start": "2025-09-05T00:00:00Z",
+    "common_end": "2026-09-05T00:00:00Z",
+    "mean_absolute_breadth_score_difference": "1.153495866610620708981364718",
+    "maximum_absolute_breadth_score_difference": "2.500",
+    "breadth_score_correlation": "0.99900916390834748079090057820249493577847634403409",
+    "pct_above_ema20_mean_absolute_difference": "0.9617136051562281070477791792",
+    "pct_above_ema20_maximum_absolute_difference": "2.5",
+    "pct_above_ema50_mean_absolute_difference": "1.133879781420765027322404369",
+    "pct_above_ema50_maximum_absolute_difference": "2.5",
+    "pct_above_ema200_mean_absolute_difference": "1.499579655317360235393022281",
+    "pct_above_ema200_maximum_absolute_difference": "2.5",
+    "regime_disagreement_count": 15,
+    "regime_disagreement_percentage": "4.098360655737704918032786885"
+  },
+  "genesis_effect_a39_short_vs_b39_long": {
+    "common_observation_count": 366,
+    "common_start": "2025-09-05T00:00:00Z",
+    "common_end": "2026-09-05T00:00:00Z",
+    "mean_absolute_breadth_score_difference": "1.057867451310074260893933029",
+    "maximum_absolute_breadth_score_difference": "12.82051282051282051282051282",
+    "breadth_score_correlation": "0.99586484846449893159950252448962667198424638780079",
+    "pct_above_ema20_mean_absolute_difference": "0E-49",
+    "pct_above_ema20_maximum_absolute_difference": "0E-48",
+    "pct_above_ema50_mean_absolute_difference": "0E-49",
+    "pct_above_ema50_maximum_absolute_difference": "0E-48",
+    "pct_above_ema200_mean_absolute_difference": "2.115734902620148521787866056",
+    "pct_above_ema200_maximum_absolute_difference": "25.64102564102564102564102564",
+    "regime_disagreement_count": 18,
+    "regime_disagreement_percentage": "4.918032786885245901639344262"
+  },
+  "decay_by_elapsed_time": [
+    {
+      "window": "first_30_days",
+      "observations": 30,
+      "common_observation_count": 30,
+      "common_start": "2025-09-05T00:00:00Z",
+      "common_end": "2025-10-04T00:00:00Z",
+      "mean_absolute_breadth_score_difference": "6.62393162393162393162393162",
+      "maximum_absolute_breadth_score_difference": "12.82051282051282051282051282",
+      "breadth_score_correlation": "0.99706010388193235659643052849579340707785245509563",
+      "pct_above_ema20_mean_absolute_difference": "0E-49",
+      "pct_above_ema20_maximum_absolute_difference": "0E-48",
+      "pct_above_ema50_mean_absolute_difference": "0E-48",
+      "pct_above_ema50_maximum_absolute_difference": "0E-48",
+      "pct_above_ema200_mean_absolute_difference": "13.24786324786324786324786326",
+      "pct_above_ema200_maximum_absolute_difference": "25.64102564102564102564102564",
+      "regime_disagreement_count": 10,
+      "regime_disagreement_percentage": "33.33333333333333333333333333"
+    },
+    {
+      "window": "days_31_90",
+      "observations": 60,
+      "common_observation_count": 60,
+      "common_start": "2025-10-05T00:00:00Z",
+      "common_end": "2025-12-03T00:00:00Z",
+      "mean_absolute_breadth_score_difference": "1.965811965811965811965811967",
+      "maximum_absolute_breadth_score_difference": "7.692307692307692307692307692",
+      "breadth_score_correlation": "0.99716299609932888826259847253339696939642843758436",
+      "pct_above_ema20_mean_absolute_difference": "0E-49",
+      "pct_above_ema20_maximum_absolute_difference": "0E-48",
+      "pct_above_ema50_mean_absolute_difference": "0E-49",
+      "pct_above_ema50_maximum_absolute_difference": "0E-48",
+      "pct_above_ema200_mean_absolute_difference": "3.931623931623931623931623933",
+      "pct_above_ema200_maximum_absolute_difference": "15.38461538461538461538461538",
+      "regime_disagreement_count": 5,
+      "regime_disagreement_percentage": "8.333333333333333333333333333"
+    },
+    {
+      "window": "days_91_180",
+      "observations": 90,
+      "common_observation_count": 90,
+      "common_start": "2025-12-04T00:00:00Z",
+      "common_end": "2026-03-03T00:00:00Z",
+      "mean_absolute_breadth_score_difference": "0.3418803418803418803418803416",
+      "maximum_absolute_breadth_score_difference": "2.564102564102564102564102564",
+      "breadth_score_correlation": "0.99897588893961124946918440618855576415133054761835",
+      "pct_above_ema20_mean_absolute_difference": "0E-49",
+      "pct_above_ema20_maximum_absolute_difference": "0E-48",
+      "pct_above_ema50_mean_absolute_difference": "0E-49",
+      "pct_above_ema50_maximum_absolute_difference": "0E-49",
+      "pct_above_ema200_mean_absolute_difference": "0.6837606837606837606837606831",
+      "pct_above_ema200_maximum_absolute_difference": "5.128205128205128205128205128",
+      "regime_disagreement_count": 0,
+      "regime_disagreement_percentage": "0"
+    },
+    {
+      "window": "days_181_365_including_terminal_boundary",
+      "observations": 186,
+      "common_observation_count": 186,
+      "common_start": "2026-03-04T00:00:00Z",
+      "common_end": "2026-09-05T00:00:00Z",
+      "mean_absolute_breadth_score_difference": "0.2136752136752136752136752134",
+      "maximum_absolute_breadth_score_difference": "2.564102564102564102564102564",
+      "breadth_score_correlation": "0.99954783613526227879782168896171471672989481188971",
+      "pct_above_ema20_mean_absolute_difference": "0E-49",
+      "pct_above_ema20_maximum_absolute_difference": "0E-48",
+      "pct_above_ema50_mean_absolute_difference": "0E-49",
+      "pct_above_ema50_maximum_absolute_difference": "0E-49",
+      "pct_above_ema200_mean_absolute_difference": "0.4273504273504273504273504268",
+      "pct_above_ema200_maximum_absolute_difference": "5.128205128205128205128205128",
+      "regime_disagreement_count": 3,
+      "regime_disagreement_percentage": "1.612903225806451612903225806"
+    }
+  ],
+  "per_asset_genesis_sensitivity": [
+    {
+      "asset_id": "bitcoin",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 4
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.826514807856577540819075365E-7",
+          "maximum_absolute_difference": "0.000006366708758814356785514298117",
+          "mean_relative_difference": "1.618947336884036431252435122E-12",
+          "maximum_relative_difference": "5.672690074728321601915362539E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.01360835241301579890460169442",
+          "maximum_absolute_difference": "0.1953199671654087789590942591",
+          "mean_relative_difference": "1.208881980621575979759486275E-7",
+          "maximum_relative_difference": "0.000001724310381068427630204079398"
+        },
+        "200": {
+          "mean_absolute_difference": "775.6081030217181990085304374",
+          "maximum_absolute_difference": "2899.204176800536352626680508",
+          "mean_relative_difference": "0.007715291344322975474269838880",
+          "maximum_relative_difference": "0.02776363776152401836142931125"
+        }
+      },
+      "weighted_state_contribution_sum": "5.128205128205128205128205128",
+      "total_state_changes": 4
+    },
+    {
+      "asset_id": "ethereum",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 17
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.959783577273167940103347420E-8",
+          "maximum_absolute_difference": "6.831245612209329091803702248E-7",
+          "mean_relative_difference": "4.484166315630708479523943158E-12",
+          "maximum_relative_difference": "1.563134179771312773336652486E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0001726998994663271180853755332",
+          "maximum_absolute_difference": "0.002478752582933512557993392476",
+          "mean_relative_difference": "4.207099537177069073232593699E-8",
+          "maximum_relative_difference": "6.136062357298679969397518660E-7"
+        },
+        "200": {
+          "mean_absolute_difference": "120.5450603071742072997139797",
+          "maximum_absolute_difference": "450.5944960781900270197593771",
+          "mean_relative_difference": "0.03703251407882161294773410787",
+          "maximum_relative_difference": "0.1424534262378121108118510723"
+        }
+      },
+      "weighted_state_contribution_sum": "21.79487179487179487179487178",
+      "total_state_changes": 17
+    },
+    {
+      "asset_id": "binancecoin",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 9
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.246287527175619469536612093E-9",
+          "maximum_absolute_difference": "1.131563080901216069093698773E-7",
+          "mean_relative_difference": "3.665227042369577201831861169E-12",
+          "maximum_relative_difference": "1.334053169646821840468862862E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0003974482952682671473942255022",
+          "maximum_absolute_difference": "0.005704554499007263979767490160",
+          "mean_relative_difference": "4.458396276916251569142309721E-7",
+          "maximum_relative_difference": "0.000007042543659671992017575093291"
+        },
+        "200": {
+          "mean_absolute_difference": "8.985838510015656014089238342",
+          "maximum_absolute_difference": "33.58884524129708441443411867",
+          "mean_relative_difference": "0.01117773594179524219701276067",
+          "maximum_relative_difference": "0.04737019126032627277465750741"
+        }
+      },
+      "weighted_state_contribution_sum": "11.53846153846153846153846154",
+      "total_state_changes": 9
+    },
+    {
+      "asset_id": "solana",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 8
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.828273362732088826991244702E-10",
+          "maximum_absolute_difference": "3.077283857866614199641629138E-8",
+          "mean_relative_difference": "4.239344900923433052372488762E-12",
+          "maximum_relative_difference": "1.552154019500459409632898196E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0005986173582788654404421683164",
+          "maximum_absolute_difference": "0.008591923490447013450786941982",
+          "mean_relative_difference": "0.000003033090429574599958326879057",
+          "maximum_relative_difference": "0.00004592270498962895913362018693"
+        },
+        "200": {
+          "mean_absolute_difference": "3.606589723172880831914075303",
+          "maximum_absolute_difference": "13.48134444275644157205897360",
+          "mean_relative_difference": "0.02225812235210486139524094630",
+          "maximum_relative_difference": "0.07884784195119058804654509752"
+        }
+      },
+      "weighted_state_contribution_sum": "10.25641025641025641025641026",
+      "total_state_changes": 8
+    },
+    {
+      "asset_id": "ripple",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 3
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.003550338777165523502210956E-13",
+          "maximum_absolute_difference": "2.789808975230898041217081233E-11",
+          "mean_relative_difference": "2.740370452347919797782195653E-13",
+          "maximum_relative_difference": "9.572197716005158240535949848E-12"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000005220407867872625668399229079",
+          "maximum_absolute_difference": "0.00007492823983362394369638270676",
+          "mean_relative_difference": "0.000001835040055684705087880582437",
+          "maximum_relative_difference": "0.00002568916920777475733860996134"
+        },
+        "200": {
+          "mean_absolute_difference": "0.008840410841069413731879635803",
+          "maximum_absolute_difference": "0.03304524016085930931238612011",
+          "mean_relative_difference": "0.003762134236137124934878825221",
+          "maximum_relative_difference": "0.01312715851303814653859311238"
+        }
+      },
+      "weighted_state_contribution_sum": "3.846153846153846153846153846",
+      "total_state_changes": 3
+    },
+    {
+      "asset_id": "dogecoin",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 1
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.297724067763224518764804025E-13",
+          "maximum_absolute_difference": "1.149492389334609831324087147E-11",
+          "mean_relative_difference": "1.427351407719458440221777137E-12",
+          "maximum_relative_difference": "5.246298035955472817544311483E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "9.409285333546003723630482243E-7",
+          "maximum_absolute_difference": "0.00001350509780038009205738735710",
+          "mean_relative_difference": "0.000004220333492108785223084904806",
+          "maximum_relative_difference": "0.00006221468460800342308814224273"
+        },
+        "200": {
+          "mean_absolute_difference": "0.003988853418497579717678458620",
+          "maximum_absolute_difference": "0.01491023681482793564855788597",
+          "mean_relative_difference": "0.02131898481167113650570232106",
+          "maximum_relative_difference": "0.07038708855552423317481355651"
+        }
+      },
+      "weighted_state_contribution_sum": "1.282051282051282051282051282",
+      "total_state_changes": 1
+    },
+    {
+      "asset_id": "the-open-network",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 3
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.178548728475781887364998438E-11",
+          "maximum_absolute_difference": "4.108084139258440228891154842E-10",
+          "mean_relative_difference": "3.771771300391751988745140842E-12",
+          "maximum_relative_difference": "1.279086496871375518409299507E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00003557007504044668637569800109",
+          "maximum_absolute_difference": "0.0005105354181102884131868943179",
+          "mean_relative_difference": "0.00001204778464971687082918011858",
+          "maximum_relative_difference": "0.0001579425698799197536427363112"
+        },
+        "200": {
+          "mean_absolute_difference": "0.07389831624473796383667535153",
+          "maximum_absolute_difference": "0.2762301041989913441604424173",
+          "mean_relative_difference": "0.02757931304977524332247571678",
+          "maximum_relative_difference": "0.07934864671894979102778573390"
+        }
+      },
+      "weighted_state_contribution_sum": "3.846153846153846153846153846",
+      "total_state_changes": 3
+    },
+    {
+      "asset_id": "cardano",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 1
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.136430430672114279319460210E-11",
+          "maximum_absolute_difference": "3.961271786914227405577153236E-10",
+          "mean_relative_difference": "1.342188949096955728225447107E-11",
+          "maximum_relative_difference": "4.708946679970748772057863630E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "9.672109903912983508777642290E-7",
+          "maximum_absolute_difference": "0.00001388232852527843881265158010",
+          "mean_relative_difference": "0.000001224054542182970283929579681",
+          "maximum_relative_difference": "0.00001705303661936763880627569669"
+        },
+        "200": {
+          "mean_absolute_difference": "0.005251913618810344883979607557",
+          "maximum_absolute_difference": "0.01963152504535426500639690220",
+          "mean_relative_difference": "0.008575104109983252995261623148",
+          "maximum_relative_difference": "0.02630441531024655604048629898"
+        }
+      },
+      "weighted_state_contribution_sum": "1.282051282051282051282051282",
+      "total_state_changes": 1
+    },
+    {
+      "asset_id": "shiba-inu",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 6
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "2.501852923320887550293051675E-17",
+          "maximum_absolute_difference": "8.720744475575666252044210276E-16",
+          "mean_relative_difference": "1.980830453400969138926085393E-12",
+          "maximum_relative_difference": "6.959657095267653970891377234E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "7.133018186757849770348747566E-11",
+          "maximum_absolute_difference": "1.023798352470098830802449145E-9",
+          "mean_relative_difference": "0.000005805284099714004154646871669",
+          "maximum_relative_difference": "0.00008022125846909249715699299776"
+        },
+        "200": {
+          "mean_absolute_difference": "2.482205546076150899228219863E-7",
+          "maximum_absolute_difference": "9.278423805559342152307949371E-7",
+          "mean_relative_difference": "0.02192982334310609924756277342",
+          "maximum_relative_difference": "0.06621359892718286826986333210"
+        }
+      },
+      "weighted_state_contribution_sum": "7.692307692307692307692307692",
+      "total_state_changes": 6
+    },
+    {
+      "asset_id": "avalanche-2",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 0
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.203466772611292153841184308E-11",
+          "maximum_absolute_difference": "4.194941321673647454189412103E-10",
+          "mean_relative_difference": "4.664083886141433628563246609E-13",
+          "maximum_relative_difference": "1.740543341467523387352662382E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0001406787565106559600153900596",
+          "maximum_absolute_difference": "0.002019154800565786770560499285",
+          "mean_relative_difference": "0.000005714077740823986262715801724",
+          "maximum_relative_difference": "0.00008614863542312491087609816178"
+        },
+        "200": {
+          "mean_absolute_difference": "0.6061079907776016837824929415",
+          "maximum_absolute_difference": "2.265616890293626355553091899",
+          "mean_relative_difference": "0.03010771859424330978934320167",
+          "maximum_relative_difference": "0.09578067626594348964932959931"
+        }
+      },
+      "weighted_state_contribution_sum": "0",
+      "total_state_changes": 0
+    },
+    {
+      "asset_id": "tron",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.640801987165267109291335017E-13",
+          "maximum_absolute_difference": "5.719366926690360344262724407E-12",
+          "mean_relative_difference": "4.826362544122325765463211686E-13",
+          "maximum_relative_difference": "1.667181820365911920199407585E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "5.159199193647386377999615566E-8",
+          "maximum_absolute_difference": "7.404971494853372237052733625E-7",
+          "mean_relative_difference": "1.556481305065600642557591274E-7",
+          "maximum_relative_difference": "0.000002219940043105178272364565704"
+        },
+        "200": {
+          "mean_absolute_difference": "0.002508640233356138563923791548",
+          "maximum_absolute_difference": "0.009377236022033065897648948100",
+          "mean_relative_difference": "0.008417533229225887292831630303",
+          "maximum_relative_difference": "0.03280144061235222117915098865"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    },
+    {
+      "asset_id": "polkadot",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 11
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.558355820648995161122095678E-12",
+          "maximum_absolute_difference": "2.983198314626221538779213143E-10",
+          "mean_relative_difference": "2.158979299341588615641809131E-12",
+          "maximum_relative_difference": "7.722256369941179933039434572E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001373991540564859258358063969",
+          "maximum_absolute_difference": "0.0001972082838860018044424830584",
+          "mean_relative_difference": "0.000003602241275559757768784302601",
+          "maximum_relative_difference": "0.00005064193962717244426592413878"
+        },
+        "200": {
+          "mean_absolute_difference": "0.05630043650313809232213593691",
+          "maximum_absolute_difference": "0.2104496588285653236436160860",
+          "mean_relative_difference": "0.01707808397916717010533759352",
+          "maximum_relative_difference": "0.04890510617353044748218660717"
+        }
+      },
+      "weighted_state_contribution_sum": "14.10256410256410256410256410",
+      "total_state_changes": 11
+    },
+    {
+      "asset_id": "bitcoin-cash",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 15
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "6.592255898070477187205743426E-9",
+          "maximum_absolute_difference": "2.297872055898852331826469579E-7",
+          "mean_relative_difference": "1.140619680146839765591307825E-11",
+          "maximum_relative_difference": "4.047859065397081602168675522E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0007772507545029264178846430082",
+          "maximum_absolute_difference": "0.01115583924058276352576897866",
+          "mean_relative_difference": "0.000001384002807853603159284685025",
+          "maximum_relative_difference": "0.00002017207375750512960030955411"
+        },
+        "200": {
+          "mean_absolute_difference": "11.48054637428991072563449546",
+          "maximum_absolute_difference": "42.91400240742656099677852575",
+          "mean_relative_difference": "0.02289707693274051326003146751",
+          "maximum_relative_difference": "0.09075826564235505708475855951"
+        }
+      },
+      "weighted_state_contribution_sum": "19.23076923076923076923076922",
+      "total_state_changes": 15
+    },
+    {
+      "asset_id": "chainlink",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 9
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "6.697796002539110922242665292E-11",
+          "maximum_absolute_difference": "2.334660320885061809724387522E-9",
+          "mean_relative_difference": "2.897739091882848609636759230E-12",
+          "maximum_relative_difference": "1.000125755920875076667589813E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00004346934756463955425000625869",
+          "maximum_absolute_difference": "0.0006239132616014860299254409593",
+          "mean_relative_difference": "0.000002059447010455893662065272869",
+          "maximum_relative_difference": "0.00002925950234096704787374500211"
+        },
+        "200": {
+          "mean_absolute_difference": "0.4277612768253734946827609877",
+          "maximum_absolute_difference": "1.598961222315810118419447338",
+          "mean_relative_difference": "0.02596949631154808826671933513",
+          "maximum_relative_difference": "0.09039912051329947538475934503"
+        }
+      },
+      "weighted_state_contribution_sum": "11.53846153846153846153846154",
+      "total_state_changes": 9
+    },
+    {
+      "asset_id": "near",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 18
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "7.415601419202444553662833246E-12",
+          "maximum_absolute_difference": "2.584866780407709563569169786E-10",
+          "mean_relative_difference": "2.871949318491555303582802027E-12",
+          "maximum_relative_difference": "1.033404610019359508604486376E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001618248620027077210526668578",
+          "maximum_absolute_difference": "0.0002322663741621238044349301659",
+          "mean_relative_difference": "0.000006278214651127670491123276407",
+          "maximum_relative_difference": "0.00009111363967224452652997458383"
+        },
+        "200": {
+          "mean_absolute_difference": "0.08523619816676322749838684598",
+          "maximum_absolute_difference": "0.3186108303625581324524398294",
+          "mean_relative_difference": "0.03480547314562645900846273257",
+          "maximum_relative_difference": "0.1097605534079414294574593511"
+        }
+      },
+      "weighted_state_contribution_sum": "23.07692307692307692307692306",
+      "total_state_changes": 18
+    },
+    {
+      "asset_id": "litecoin",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 4
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.979013866687555284902598010E-9",
+          "maximum_absolute_difference": "6.898276906739479273380198718E-8",
+          "mean_relative_difference": "1.746170940886832398333259387E-11",
+          "maximum_relative_difference": "6.076191903420610251353879088E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0009229273158433769387009699117",
+          "maximum_absolute_difference": "0.01324672727127278853465699647",
+          "mean_relative_difference": "0.000008417533993298602217677370702",
+          "maximum_relative_difference": "0.0001187432673825187229248407492"
+        },
+        "200": {
+          "mean_absolute_difference": "0.8197377707332216958106900011",
+          "maximum_absolute_difference": "3.064159798655905449224150241",
+          "mean_relative_difference": "0.008795992884965600475531882128",
+          "maximum_relative_difference": "0.03031889584775915150969633764"
+        }
+      },
+      "weighted_state_contribution_sum": "5.128205128205128205128205128",
+      "total_state_changes": 4
+    },
+    {
+      "asset_id": "internet-computer",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 2
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.682475196792429209819711571E-12",
+          "maximum_absolute_difference": "1.283605640024789768764841717E-10",
+          "mean_relative_difference": "7.553798406640882875382724199E-13",
+          "maximum_relative_difference": "2.550327379322120694232401588E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00002059170965990011592008106590",
+          "maximum_absolute_difference": "0.0002955517268059930292748804335",
+          "mean_relative_difference": "0.000004287383496282577197547219175",
+          "maximum_relative_difference": "0.00005685767993307243417833892816"
+        },
+        "200": {
+          "mean_absolute_difference": "0.1401318802412178997273205898",
+          "maximum_absolute_difference": "0.5238095513899953240054836311",
+          "mean_relative_difference": "0.02968246813305337824844352046",
+          "maximum_relative_difference": "0.08852015217836555156555954732"
+        }
+      },
+      "weighted_state_contribution_sum": "2.564102564102564102564102564",
+      "total_state_changes": 2
+    },
+    {
+      "asset_id": "fetch-ai",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 5
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.310148892507477887041330801E-13",
+          "maximum_absolute_difference": "1.153823328245463863086639462E-11",
+          "mean_relative_difference": "5.260343762389188761152123230E-13",
+          "maximum_relative_difference": "1.796967872312180549945518936E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000004021185159774049660126181902",
+          "maximum_absolute_difference": "0.00005771585931459846791399719552",
+          "mean_relative_difference": "0.000006951244197735062028346650967",
+          "maximum_relative_difference": "0.00008584022023004333452259319649"
+        },
+        "200": {
+          "mean_absolute_difference": "0.02994449584762249373905108956",
+          "maximum_absolute_difference": "0.1119317953169740079427910868",
+          "mean_relative_difference": "0.05872076284473060219270625396",
+          "maximum_relative_difference": "0.1438916771201538212920206325"
+        }
+      },
+      "weighted_state_contribution_sum": "6.410256410256410256410256410",
+      "total_state_changes": 5
+    },
+    {
+      "asset_id": "stellar",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 2
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "4.969755163841597579911445713E-13",
+          "maximum_absolute_difference": "1.732314657110499941741091815E-11",
+          "mean_relative_difference": "1.310704952594939571378614466E-12",
+          "maximum_relative_difference": "4.532034852278536175096244113E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "4.612383637808828214659400989E-7",
+          "maximum_absolute_difference": "0.000006620130000670957174112187665",
+          "mean_relative_difference": "0.000001246941239427666469946886899",
+          "maximum_relative_difference": "0.00001716549363712933667205855234"
+        },
+        "200": {
+          "mean_absolute_difference": "0.005192851471389010432467322874",
+          "maximum_absolute_difference": "0.01941075217845456594493280589",
+          "mean_relative_difference": "0.01732597298902871976396611162",
+          "maximum_relative_difference": "0.05853038064667018753631383548"
+        }
+      },
+      "weighted_state_contribution_sum": "2.564102564102564102564102564",
+      "total_state_changes": 2
+    },
+    {
+      "asset_id": "aptos",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 2
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.178673469481599955673133631E-11",
+          "maximum_absolute_difference": "1.107994752219300692779912153E-9",
+          "mean_relative_difference": "7.209511267993371767743747366E-12",
+          "maximum_relative_difference": "2.509201650608551989777241789E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00002133270403399331518438749649",
+          "maximum_absolute_difference": "0.0003061871801235605099805045345",
+          "mean_relative_difference": "0.000004990013856506554378485248893",
+          "maximum_relative_difference": "0.00006726382403331513925308202954"
+        },
+        "200": {
+          "mean_absolute_difference": "0.1017368927377935705253267288",
+          "maximum_absolute_difference": "0.3802900243189698332789911358",
+          "mean_relative_difference": "0.02822930532460846640904799533",
+          "maximum_relative_difference": "0.07013735933444327262880290836"
+        }
+      },
+      "weighted_state_contribution_sum": "2.564102564102564102564102564",
+      "total_state_changes": 2
+    },
+    {
+      "asset_id": "blockstack",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 0
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.435443239454841222283879478E-12",
+          "maximum_absolute_difference": "5.003545006099732878312440094E-11",
+          "mean_relative_difference": "2.228526953769870947805431697E-12",
+          "maximum_relative_difference": "7.650736101069536091906721601E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000006783875711849517470985060721",
+          "maximum_absolute_difference": "0.00009736861164951398456257486885",
+          "mean_relative_difference": "0.00001092968101622458110828617492",
+          "maximum_relative_difference": "0.0001408519715244853676566461102"
+        },
+        "200": {
+          "mean_absolute_difference": "0.03468674552886327382920380579",
+          "maximum_absolute_difference": "0.1296582089912510751358970607",
+          "mean_relative_difference": "0.05944013321565346153484735525",
+          "maximum_relative_difference": "0.1508342503821076175495678170"
+        }
+      },
+      "weighted_state_contribution_sum": "0",
+      "total_state_changes": 0
+    },
+    {
+      "asset_id": "uniswap",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 14
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "4.953322359634618650556576191E-11",
+          "maximum_absolute_difference": "1.726586651072638714230166282E-9",
+          "mean_relative_difference": "5.179617876478120833035912462E-12",
+          "maximum_relative_difference": "1.730705011524656710343239728E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00002673785133068216808027333986",
+          "maximum_absolute_difference": "0.0003837669752722885630999689646",
+          "mean_relative_difference": "0.000002992957024790170530504183511",
+          "maximum_relative_difference": "0.00003909870522775961350950557628"
+        },
+        "200": {
+          "mean_absolute_difference": "0.3032400547916425944615228197",
+          "maximum_absolute_difference": "1.133503930657795156186706656",
+          "mean_relative_difference": "0.04173570510540267193228335869",
+          "maximum_relative_difference": "0.1302681341796049195661973522"
+        }
+      },
+      "weighted_state_contribution_sum": "17.94871794871794871794871794",
+      "total_state_changes": 14
+    },
+    {
+      "asset_id": "ethereum-classic",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 12
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "9.915166496053895977663694497E-11",
+          "maximum_absolute_difference": "3.456143750053072738938992473E-9",
+          "mean_relative_difference": "4.760067740093331253247446396E-12",
+          "maximum_relative_difference": "1.618366192784390915310931891E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001592081909783562713350422411",
+          "maximum_absolute_difference": "0.0002285106799895495542755199339",
+          "mean_relative_difference": "8.012483566269201541222367473E-7",
+          "maximum_relative_difference": "0.00001081718848270327327522815037"
+        },
+        "200": {
+          "mean_absolute_difference": "0.4164792792761031029898034038",
+          "maximum_absolute_difference": "1.556789390574926103591779104",
+          "mean_relative_difference": "0.02463937780275814016797731932",
+          "maximum_relative_difference": "0.07709015556568156795412956804"
+        }
+      },
+      "weighted_state_contribution_sum": "15.38461538461538461538461538",
+      "total_state_changes": 12
+    },
+    {
+      "asset_id": "render-token",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.600017738822546171460787087E-11",
+          "maximum_absolute_difference": "5.577204689610018771986545910E-10",
+          "mean_relative_difference": "4.422718839561599037409687041E-12",
+          "maximum_relative_difference": "1.561064643469466989658576232E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00003640394736057177663706124773",
+          "maximum_absolute_difference": "0.0005225039437072001999251027596",
+          "mean_relative_difference": "0.00001055041088566652017360943496",
+          "maximum_relative_difference": "0.0001417902058701356278264934512"
+        },
+        "200": {
+          "mean_absolute_difference": "0.09941483046041661067753508577",
+          "maximum_absolute_difference": "0.3716102121469021341681998970",
+          "mean_relative_difference": "0.03147602223225807598737908844",
+          "maximum_relative_difference": "0.08840421059708619539976698585"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    },
+    {
+      "asset_id": "injective-protocol",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 31
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.281869685233482496475969808E-10",
+          "maximum_absolute_difference": "4.468231474242425253687667889E-9",
+          "mean_relative_difference": "9.623679222771552646806273342E-12",
+          "maximum_relative_difference": "3.338626578495463184847081773E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001440238026886574279184080831",
+          "maximum_absolute_difference": "0.0002067166072601122788068980833",
+          "mean_relative_difference": "0.000001169266042294461866762871666",
+          "maximum_relative_difference": "0.00001539896284839833998107355562"
+        },
+        "200": {
+          "mean_absolute_difference": "0.5375803221825051464146850828",
+          "maximum_absolute_difference": "2.009462136052045663607410618",
+          "mean_relative_difference": "0.05393731276031808239729442951",
+          "maximum_relative_difference": "0.1456208788579591157888411822"
+        }
+      },
+      "weighted_state_contribution_sum": "39.74358974358974358974358970",
+      "total_state_changes": 31
+    },
+    {
+      "asset_id": "filecoin",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 1
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.036699689811156508287340254E-11",
+          "maximum_absolute_difference": "3.613638918770317417914921508E-10",
+          "mean_relative_difference": "4.368700640444116715459580593E-12",
+          "maximum_relative_difference": "1.532544813120161749133329818E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001508708304914897313582020489",
+          "maximum_absolute_difference": "0.0002165441102894335836484739415",
+          "mean_relative_difference": "0.000006547873073095731191946624710",
+          "maximum_relative_difference": "0.00008893051480887136353675583321"
+        },
+        "200": {
+          "mean_absolute_difference": "0.05714440082142507355343395413",
+          "maximum_absolute_difference": "0.2136043768712412115656569427",
+          "mean_relative_difference": "0.02637550210333037725828453995",
+          "maximum_relative_difference": "0.07400336506873274737432869839"
+        }
+      },
+      "weighted_state_contribution_sum": "1.282051282051282051282051282",
+      "total_state_changes": 1
+    },
+    {
+      "asset_id": "cosmos",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 10
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.025890196001052556856841187E-11",
+          "maximum_absolute_difference": "3.575960111775097925419322866E-10",
+          "mean_relative_difference": "2.289766246520176072980512319E-12",
+          "maximum_relative_difference": "7.918120405574934383936187401E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00003071304274319547794758907544",
+          "maximum_absolute_difference": "0.0004408226887490860139835027591",
+          "mean_relative_difference": "0.000007266939258938739487578365699",
+          "maximum_relative_difference": "0.00009761896654828964480197947671"
+        },
+        "200": {
+          "mean_absolute_difference": "0.07466725374004188279208192721",
+          "maximum_absolute_difference": "0.2791043738067976987611785669",
+          "mean_relative_difference": "0.02014994737521267786600794101",
+          "maximum_relative_difference": "0.05881776488398526600662242192"
+        }
+      },
+      "weighted_state_contribution_sum": "12.82051282051282051282051282",
+      "total_state_changes": 10
+    },
+    {
+      "asset_id": "immutable-x",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 5
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "2.413742460881779507462292567E-12",
+          "maximum_absolute_difference": "8.413616577930775321970666064E-11",
+          "mean_relative_difference": "4.237607758657766611726606511E-12",
+          "maximum_relative_difference": "1.572889214654821825230248026E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000005080703683768083887074627169",
+          "maximum_absolute_difference": "0.00007292307301959651773370045133",
+          "mean_relative_difference": "0.000008973930793198775143202052178",
+          "maximum_relative_difference": "0.0001351874637896847955889851799"
+        },
+        "200": {
+          "mean_absolute_difference": "0.03089599322313267744905614257",
+          "maximum_absolute_difference": "0.1154884693054826458258686310",
+          "mean_relative_difference": "0.06223819112181080112723655648",
+          "maximum_relative_difference": "0.1731512010025408387418397682"
+        }
+      },
+      "weighted_state_contribution_sum": "6.410256410256410256410256410",
+      "total_state_changes": 5
+    },
+    {
+      "asset_id": "vechain",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 4
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.155848737682341774963897248E-13",
+          "maximum_absolute_difference": "4.028958457064163255894932130E-12",
+          "mean_relative_difference": "4.802699859308557140334419697E-12",
+          "maximum_relative_difference": "1.656615418351597723164022030E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "1.106208030785506049742288409E-7",
+          "maximum_absolute_difference": "0.000001587734574278662904364486149",
+          "mean_relative_difference": "0.000004851083234885305337247795257",
+          "maximum_relative_difference": "0.00006510507428487207812119429892"
+        },
+        "200": {
+          "mean_absolute_difference": "0.0003874464863875277428853236350",
+          "maximum_absolute_difference": "0.001448265518688062062172162428",
+          "mean_relative_difference": "0.01999311635529327220146338813",
+          "maximum_relative_difference": "0.05461285585362009489420794589"
+        }
+      },
+      "weighted_state_contribution_sum": "5.128205128205128205128205128",
+      "total_state_changes": 4
+    },
+    {
+      "asset_id": "optimism",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 16
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "5.649498129142851978527046872E-12",
+          "maximum_absolute_difference": "1.969253633586937218513023500E-10",
+          "mean_relative_difference": "7.777731284617615829306200727E-12",
+          "maximum_relative_difference": "2.750160841019706607029187865E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000001698779899212415218036299229",
+          "maximum_absolute_difference": "0.00002438249863503444224451396333",
+          "mean_relative_difference": "0.000002540093621800859742857691239",
+          "maximum_relative_difference": "0.00003430806215743322003350998728"
+        },
+        "200": {
+          "mean_absolute_difference": "0.03276563728695697536483509590",
+          "maximum_absolute_difference": "0.1224771532269784369277876675",
+          "mean_relative_difference": "0.05836827409926073736102041448",
+          "maximum_relative_difference": "0.1414562452490012726397382101"
+        }
+      },
+      "weighted_state_contribution_sum": "20.51282051282051282051282050",
+      "total_state_changes": 16
+    },
+    {
+      "asset_id": "the-graph",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 7
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.390747339930823229943436612E-13",
+          "maximum_absolute_difference": "2.924774787061601601269188260E-11",
+          "mean_relative_difference": "9.227940271211313732719606497E-12",
+          "maximum_relative_difference": "3.223992811451010314578785573E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "4.586874594372547322053479014E-7",
+          "maximum_absolute_difference": "0.000006583517004658082784265086277",
+          "mean_relative_difference": "0.000005296022391003267475031373197",
+          "maximum_relative_difference": "0.00007066483844558665131674735885"
+        },
+        "200": {
+          "mean_absolute_difference": "0.003567701683096901630858704079",
+          "maximum_absolute_difference": "0.01333598189719171513693670004",
+          "mean_relative_difference": "0.04694764840759035986227581757",
+          "maximum_relative_difference": "0.1207985985677847623806307976"
+        }
+      },
+      "weighted_state_contribution_sum": "8.974358974358974358974358974",
+      "total_state_changes": 7
+    },
+    {
+      "asset_id": "bittensor",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 18
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.717483841224633096943077380E-9",
+          "maximum_absolute_difference": "3.038665796084015340399583419E-7",
+          "mean_relative_difference": "2.590391048240291752508423742E-11",
+          "maximum_relative_difference": "9.039530638061945075256243501E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.001348061911062457156376165775",
+          "maximum_absolute_difference": "0.01934866177876309630303792814",
+          "mean_relative_difference": "0.000003877768012302245988768847320",
+          "maximum_relative_difference": "0.00005463410694005889374348580214"
+        },
+        "200": {
+          "mean_absolute_difference": "6.841715302496735772118018661",
+          "maximum_absolute_difference": "25.57416497352304812949080913",
+          "mean_relative_difference": "0.02027746255441115178381627536",
+          "maximum_relative_difference": "0.06883274802596784254043698343"
+        }
+      },
+      "weighted_state_contribution_sum": "23.07692307692307692307692306",
+      "total_state_changes": 18
+    },
+    {
+      "asset_id": "sui",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 5
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.677056992464392829195993586E-11",
+          "maximum_absolute_difference": "5.845741516590170012105097601E-10",
+          "mean_relative_difference": "4.845198438817358934090705019E-12",
+          "maximum_relative_difference": "1.696968753463844877981928540E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000007238004101768286280974809235",
+          "maximum_absolute_difference": "0.0001038866925689187354730566099",
+          "mean_relative_difference": "0.000002200894511276820388179738084",
+          "maximum_relative_difference": "0.00002960821759296831108792786024"
+        },
+        "200": {
+          "mean_absolute_difference": "0.04038150302780247309950084710",
+          "maximum_absolute_difference": "0.1509450736622979557905749392",
+          "mean_relative_difference": "0.01585168243781539036677046543",
+          "maximum_relative_difference": "0.04592972941165991198366763940"
+        }
+      },
+      "weighted_state_contribution_sum": "6.410256410256410256410256410",
+      "total_state_changes": 5
+    },
+    {
+      "asset_id": "aave",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 4
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "9.436397411673789472187304221E-10",
+          "maximum_absolute_difference": "3.289258526354864164996444177E-8",
+          "mean_relative_difference": "3.087177577468957564753664139E-12",
+          "maximum_relative_difference": "1.045754895151140898413618311E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000003022074781607721712631764407",
+          "maximum_absolute_difference": "0.00004337568055266271440630270774",
+          "mean_relative_difference": "1.057354569999394981572653386E-8",
+          "maximum_relative_difference": "1.430124381038200774342809241E-7"
+        },
+        "200": {
+          "mean_absolute_difference": "5.818132758169761185631657820",
+          "maximum_absolute_difference": "21.74803838168960993695336574",
+          "mean_relative_difference": "0.02599379318822981648023326627",
+          "maximum_relative_difference": "0.08355993315568945373839082206"
+        }
+      },
+      "weighted_state_contribution_sum": "5.128205128205128205128205128",
+      "total_state_changes": 4
+    },
+    {
+      "asset_id": "algorand",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.736855380631003846736092554E-12",
+          "maximum_absolute_difference": "6.054181612485214156123508585E-11",
+          "mean_relative_difference": "7.312214300391346468124023932E-12",
+          "maximum_relative_difference": "2.484254260226181677333729381E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "7.057801737175478370482619719E-7",
+          "maximum_absolute_difference": "0.00001013002574982240829854020116",
+          "mean_relative_difference": "0.000003100154714606862490058674131",
+          "maximum_relative_difference": "0.00004135007465180502185417998295"
+        },
+        "200": {
+          "mean_absolute_difference": "0.004051387788176224991776558189",
+          "maximum_absolute_difference": "0.01514398876385939196581676981",
+          "mean_relative_difference": "0.02108928357277284548524911677",
+          "maximum_relative_difference": "0.06456961443834824979577606719"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    },
+    {
+      "asset_id": "lido-dao",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 8
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "2.832689104185376427456973869E-11",
+          "maximum_absolute_difference": "9.873944877446170480542345698E-10",
+          "mean_relative_difference": "2.312945475491478865281160888E-11",
+          "maximum_relative_difference": "7.902870991589239590314675088E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000003545690991755478782488581574",
+          "maximum_absolute_difference": "0.00005089111650474140182620735754",
+          "mean_relative_difference": "0.000003137869770735209681596273216",
+          "maximum_relative_difference": "0.00004305983641896935546177730725"
+        },
+        "200": {
+          "mean_absolute_difference": "0.03444432813855588967486026443",
+          "maximum_absolute_difference": "0.1287520586973460435055811671",
+          "mean_relative_difference": "0.03851619019502539181948875372",
+          "maximum_relative_difference": "0.1149307654277834641999784978"
+        }
+      },
+      "weighted_state_contribution_sum": "10.25641025641025641025641026",
+      "total_state_changes": 8
+    },
+    {
+      "asset_id": "zcash",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 1
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "9.933724071965004775150395172E-11",
+          "maximum_absolute_difference": "3.462612390799230663433029903E-9",
+          "mean_relative_difference": "2.184503395987702067810922819E-12",
+          "maximum_relative_difference": "8.609796353618233440372191907E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0002551331167373782742930354789",
+          "maximum_absolute_difference": "0.003661912219166988684244330827",
+          "mean_relative_difference": "0.000004701214297407424597443720320",
+          "maximum_relative_difference": "0.00009149711769376573577365566884"
+        },
+        "200": {
+          "mean_absolute_difference": "0.2987256960911465633076723402",
+          "maximum_absolute_difference": "1.116629367912687463662595881",
+          "mean_relative_difference": "0.003491334165093244147850894798",
+          "maximum_relative_difference": "0.02762048545500981967925730912"
+        }
+      },
+      "weighted_state_contribution_sum": "1.282051282051282051282051282",
+      "total_state_changes": 1
+    },
+    {
+      "asset_id": "hedera-hashgraph",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 1
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.913327998666229247241718131E-12",
+          "maximum_absolute_difference": "1.364074330963657220315858950E-10",
+          "mean_relative_difference": "1.703877205020235115877797218E-11",
+          "maximum_relative_difference": "5.876644896890383182337771433E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "1.575758715650172631162888222E-7",
+          "maximum_absolute_difference": "0.000002261678205122193483944275607",
+          "mean_relative_difference": "7.138694214936293516915459798E-7",
+          "maximum_relative_difference": "0.000009720936936960933645669411353"
+        },
+        "200": {
+          "mean_absolute_difference": "0.002109335612456749307320276201",
+          "maximum_absolute_difference": "0.007884645085686378856394148829",
+          "mean_relative_difference": "0.01187265516457030143945158644",
+          "maximum_relative_difference": "0.03802458699173223240276444718"
+        }
+      },
+      "weighted_state_contribution_sum": "1.282051282051282051282051282",
+      "total_state_changes": 1
+    },
+    {
+      "asset_id": "ondo-finance",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 6
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "3.111658896692290380594778817E-12",
+          "maximum_absolute_difference": "1.084635386847027066582740455E-10",
+          "mean_relative_difference": "3.269423204811541502700676052E-12",
+          "maximum_relative_difference": "1.155791090795208462143713558E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000001194055246358217461051922878",
+          "maximum_absolute_difference": "0.00001713821221217813269174298219",
+          "mean_relative_difference": "0.000001320643953370288733333891637",
+          "maximum_relative_difference": "0.00001818178685987544375712496449"
+        },
+        "200": {
+          "mean_absolute_difference": "0.01025822219318274451252872806",
+          "maximum_absolute_difference": "0.03834498442339067130419440166",
+          "mean_relative_difference": "0.01394280052838463702104734045",
+          "maximum_relative_difference": "0.04040850602578387550242476426"
+        }
+      },
+      "weighted_state_contribution_sum": "7.692307692307692307692307692",
+      "total_state_changes": 6
+    }
+  ],
+  "top_assets_by_breadth_discrepancy": [
+    {
+      "asset_id": "injective-protocol",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 31
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.281869685233482496475969808E-10",
+          "maximum_absolute_difference": "4.468231474242425253687667889E-9",
+          "mean_relative_difference": "9.623679222771552646806273342E-12",
+          "maximum_relative_difference": "3.338626578495463184847081773E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001440238026886574279184080831",
+          "maximum_absolute_difference": "0.0002067166072601122788068980833",
+          "mean_relative_difference": "0.000001169266042294461866762871666",
+          "maximum_relative_difference": "0.00001539896284839833998107355562"
+        },
+        "200": {
+          "mean_absolute_difference": "0.5375803221825051464146850828",
+          "maximum_absolute_difference": "2.009462136052045663607410618",
+          "mean_relative_difference": "0.05393731276031808239729442951",
+          "maximum_relative_difference": "0.1456208788579591157888411822"
+        }
+      },
+      "weighted_state_contribution_sum": "39.74358974358974358974358970",
+      "total_state_changes": 31
+    },
+    {
+      "asset_id": "near",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 18
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "7.415601419202444553662833246E-12",
+          "maximum_absolute_difference": "2.584866780407709563569169786E-10",
+          "mean_relative_difference": "2.871949318491555303582802027E-12",
+          "maximum_relative_difference": "1.033404610019359508604486376E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00001618248620027077210526668578",
+          "maximum_absolute_difference": "0.0002322663741621238044349301659",
+          "mean_relative_difference": "0.000006278214651127670491123276407",
+          "maximum_relative_difference": "0.00009111363967224452652997458383"
+        },
+        "200": {
+          "mean_absolute_difference": "0.08523619816676322749838684598",
+          "maximum_absolute_difference": "0.3186108303625581324524398294",
+          "mean_relative_difference": "0.03480547314562645900846273257",
+          "maximum_relative_difference": "0.1097605534079414294574593511"
+        }
+      },
+      "weighted_state_contribution_sum": "23.07692307692307692307692306",
+      "total_state_changes": 18
+    },
+    {
+      "asset_id": "bittensor",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 18
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "8.717483841224633096943077380E-9",
+          "maximum_absolute_difference": "3.038665796084015340399583419E-7",
+          "mean_relative_difference": "2.590391048240291752508423742E-11",
+          "maximum_relative_difference": "9.039530638061945075256243501E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.001348061911062457156376165775",
+          "maximum_absolute_difference": "0.01934866177876309630303792814",
+          "mean_relative_difference": "0.000003877768012302245988768847320",
+          "maximum_relative_difference": "0.00005463410694005889374348580214"
+        },
+        "200": {
+          "mean_absolute_difference": "6.841715302496735772118018661",
+          "maximum_absolute_difference": "25.57416497352304812949080913",
+          "mean_relative_difference": "0.02027746255441115178381627536",
+          "maximum_relative_difference": "0.06883274802596784254043698343"
+        }
+      },
+      "weighted_state_contribution_sum": "23.07692307692307692307692306",
+      "total_state_changes": 18
+    },
+    {
+      "asset_id": "ethereum",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 17
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.959783577273167940103347420E-8",
+          "maximum_absolute_difference": "6.831245612209329091803702248E-7",
+          "mean_relative_difference": "4.484166315630708479523943158E-12",
+          "maximum_relative_difference": "1.563134179771312773336652486E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0001726998994663271180853755332",
+          "maximum_absolute_difference": "0.002478752582933512557993392476",
+          "mean_relative_difference": "4.207099537177069073232593699E-8",
+          "maximum_relative_difference": "6.136062357298679969397518660E-7"
+        },
+        "200": {
+          "mean_absolute_difference": "120.5450603071742072997139797",
+          "maximum_absolute_difference": "450.5944960781900270197593771",
+          "mean_relative_difference": "0.03703251407882161294773410787",
+          "maximum_relative_difference": "0.1424534262378121108118510723"
+        }
+      },
+      "weighted_state_contribution_sum": "21.79487179487179487179487178",
+      "total_state_changes": 17
+    },
+    {
+      "asset_id": "optimism",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 16
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "5.649498129142851978527046872E-12",
+          "maximum_absolute_difference": "1.969253633586937218513023500E-10",
+          "mean_relative_difference": "7.777731284617615829306200727E-12",
+          "maximum_relative_difference": "2.750160841019706607029187865E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.000001698779899212415218036299229",
+          "maximum_absolute_difference": "0.00002438249863503444224451396333",
+          "mean_relative_difference": "0.000002540093621800859742857691239",
+          "maximum_relative_difference": "0.00003430806215743322003350998728"
+        },
+        "200": {
+          "mean_absolute_difference": "0.03276563728695697536483509590",
+          "maximum_absolute_difference": "0.1224771532269784369277876675",
+          "mean_relative_difference": "0.05836827409926073736102041448",
+          "maximum_relative_difference": "0.1414562452490012726397382101"
+        }
+      },
+      "weighted_state_contribution_sum": "20.51282051282051282051282050",
+      "total_state_changes": 16
+    },
+    {
+      "asset_id": "bitcoin-cash",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 15
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "6.592255898070477187205743426E-9",
+          "maximum_absolute_difference": "2.297872055898852331826469579E-7",
+          "mean_relative_difference": "1.140619680146839765591307825E-11",
+          "maximum_relative_difference": "4.047859065397081602168675522E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.0007772507545029264178846430082",
+          "maximum_absolute_difference": "0.01115583924058276352576897866",
+          "mean_relative_difference": "0.000001384002807853603159284685025",
+          "maximum_relative_difference": "0.00002017207375750512960030955411"
+        },
+        "200": {
+          "mean_absolute_difference": "11.48054637428991072563449546",
+          "maximum_absolute_difference": "42.91400240742656099677852575",
+          "mean_relative_difference": "0.02289707693274051326003146751",
+          "maximum_relative_difference": "0.09075826564235505708475855951"
+        }
+      },
+      "weighted_state_contribution_sum": "19.23076923076923076923076922",
+      "total_state_changes": 15
+    },
+    {
+      "asset_id": "uniswap",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 14
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "4.953322359634618650556576191E-11",
+          "maximum_absolute_difference": "1.726586651072638714230166282E-9",
+          "mean_relative_difference": "5.179617876478120833035912462E-12",
+          "maximum_relative_difference": "1.730705011524656710343239728E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00002673785133068216808027333986",
+          "maximum_absolute_difference": "0.0003837669752722885630999689646",
+          "mean_relative_difference": "0.000002992957024790170530504183511",
+          "maximum_relative_difference": "0.00003909870522775961350950557628"
+        },
+        "200": {
+          "mean_absolute_difference": "0.3032400547916425944615228197",
+          "maximum_absolute_difference": "1.133503930657795156186706656",
+          "mean_relative_difference": "0.04173570510540267193228335869",
+          "maximum_relative_difference": "0.1302681341796049195661973522"
+        }
+      },
+      "weighted_state_contribution_sum": "17.94871794871794871794871794",
+      "total_state_changes": 14
+    },
+    {
+      "asset_id": "tron",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.640801987165267109291335017E-13",
+          "maximum_absolute_difference": "5.719366926690360344262724407E-12",
+          "mean_relative_difference": "4.826362544122325765463211686E-13",
+          "maximum_relative_difference": "1.667181820365911920199407585E-11"
+        },
+        "50": {
+          "mean_absolute_difference": "5.159199193647386377999615566E-8",
+          "maximum_absolute_difference": "7.404971494853372237052733625E-7",
+          "mean_relative_difference": "1.556481305065600642557591274E-7",
+          "maximum_relative_difference": "0.000002219940043105178272364565704"
+        },
+        "200": {
+          "mean_absolute_difference": "0.002508640233356138563923791548",
+          "maximum_absolute_difference": "0.009377236022033065897648948100",
+          "mean_relative_difference": "0.008417533229225887292831630303",
+          "maximum_relative_difference": "0.03280144061235222117915098865"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    },
+    {
+      "asset_id": "render-token",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.600017738822546171460787087E-11",
+          "maximum_absolute_difference": "5.577204689610018771986545910E-10",
+          "mean_relative_difference": "4.422718839561599037409687041E-12",
+          "maximum_relative_difference": "1.561064643469466989658576232E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "0.00003640394736057177663706124773",
+          "maximum_absolute_difference": "0.0005225039437072001999251027596",
+          "mean_relative_difference": "0.00001055041088566652017360943496",
+          "maximum_relative_difference": "0.0001417902058701356278264934512"
+        },
+        "200": {
+          "mean_absolute_difference": "0.09941483046041661067753508577",
+          "maximum_absolute_difference": "0.3716102121469021341681998970",
+          "mean_relative_difference": "0.03147602223225807598737908844",
+          "maximum_relative_difference": "0.08840421059708619539976698585"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    },
+    {
+      "asset_id": "algorand",
+      "state_changes": {
+        "20": 0,
+        "50": 0,
+        "200": 13
+      },
+      "periods": {
+        "20": {
+          "mean_absolute_difference": "1.736855380631003846736092554E-12",
+          "maximum_absolute_difference": "6.054181612485214156123508585E-11",
+          "mean_relative_difference": "7.312214300391346468124023932E-12",
+          "maximum_relative_difference": "2.484254260226181677333729381E-10"
+        },
+        "50": {
+          "mean_absolute_difference": "7.057801737175478370482619719E-7",
+          "maximum_absolute_difference": "0.00001013002574982240829854020116",
+          "mean_relative_difference": "0.000003100154714606862490058674131",
+          "maximum_relative_difference": "0.00004135007465180502185417998295"
+        },
+        "200": {
+          "mean_absolute_difference": "0.004051387788176224991776558189",
+          "maximum_absolute_difference": "0.01514398876385939196581676981",
+          "mean_relative_difference": "0.02108928357277284548524911677",
+          "maximum_relative_difference": "0.06456961443834824979577606719"
+        }
+      },
+      "weighted_state_contribution_sum": "16.66666666666666666666666666",
+      "total_state_changes": 13
+    }
+  ],
+  "output_hashes": {
+    "A40": "4e5908c141b686fa935958ef58a49109346bc1a87f698658e867b29c70d7e3da",
+    "A39": "04046440798e406754082e2d9791db2bd8927559eaf1e8b65a568804bd7883bc",
+    "B39": "02e773a8c15105fe51baa6117b28d8755d0348701b460c5430495e5bb9c40f30"
+  },
+  "reference_comparison": {
+    "reference_present": true,
+    "reference_breadth_mean_abs": "2.159520807061790668348045397",
+    "recomputed_breadth_mean_abs": "2.159520807061790668348045397",
+    "reference_max_abs": "13.07051282051282051282051282",
+    "recomputed_max_abs": "13.07051282051282051282051282"
+  },
+  "gate_request_stats": {
+    "http_calls": 79,
+    "retries": 0,
+    "rate_limits": 0,
+    "server_errors": 0,
+    "timeouts": 0,
+    "client_errors": 0
+  },
+  "policy_evaluation": {
+    "option_1": "Current minimal warmup is reproducible per requested range but fails cross-window EMA invariance.",
+    "option_2": "Fixed genesis per research cohort preserves compatibility and comparability once the genesis boundary is versioned.",
+    "option_3": "Earliest fully clean common Gate boundary is the most defensible deterministic choice; it costs more data and may shorten eligible horizons.",
+    "recommendation": "OPTION_3_WITH_OPTION_2_PACKAGING",
+    "invariance_current_design": "FAIL"
+  }
+}

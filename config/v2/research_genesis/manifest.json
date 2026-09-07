@@ -1,0 +1,27 @@
+{
+  "as_of": "2026-09-05T10:30:00Z",
+  "contracts": {
+    "BR1-RESEARCH-v2-RETROSPECTIVE-1D-1Y-v1": {
+      "canonical_input_lineage_sha256": "fd9558e9acc29369a8b066bba87a0e66ee1a6774591437b8fd28a9361df8b0d3",
+      "compact_payload_sha256": "5c45173d26fd1c175e243c7e481bf48128c3671ea2dbc3c93a29d584f5f2865f",
+      "contract_sha256": "c23362fcd84c3c55693115ceffd698c3b168c88f5f25254aa99f4b053f983c75",
+      "path": "config/v2/research_genesis/BR1-RESEARCH-v2-RETROSPECTIVE-1D-1Y-v1.json"
+    },
+    "BR1-RESEARCH-v2-RETROSPECTIVE-1D-2Y-v1": {
+      "canonical_input_lineage_sha256": "3ac33ae6bb84d4efbfdca9014efe10405dc44248975edcf6955a73c8bb19109d",
+      "compact_payload_sha256": "0970356e7ae30c185b09fd1b03aec2b2313bec0b2311e3f53dae4dbfbd4b43ad",
+      "contract_sha256": "3564c830ec6de736e78265e4f420b37a06449633931729741ed6e3d9fdbbd307",
+      "path": "config/v2/research_genesis/BR1-RESEARCH-v2-RETROSPECTIVE-1D-2Y-v1.json"
+    },
+    "BR1-RESEARCH-v2-RETROSPECTIVE-4H-1Y-v1": {
+      "canonical_input_lineage_sha256": "1f50a89564359e8b0a4791c5e240e0e727c81cac235df2a65d45dc544f650a40",
+      "compact_payload_sha256": "88f3cb08ba9c878040b3294385610aa052b0c854a1710753e0eaf33ed7542d60",
+      "contract_sha256": "92c36277caaabc95d248047d8ee890d1cb06494da613b49ddd86b25721145b29",
+      "path": "config/v2/research_genesis/BR1-RESEARCH-v2-RETROSPECTIVE-4H-1Y-v1.json"
+    }
+  },
+  "firestore_written": false,
+  "genesis_policy": "EARLIEST_FULLY_CLEAN_COMMON_BOUNDARY",
+  "manifest_version": "research-genesis-manifest-v1",
+  "status": "FROZEN_CANDIDATE"
+}
